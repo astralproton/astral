@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astral</title>
+    <link href="css/popup.css" rel="stylesheet" type="text/css" />
+    <link href="css/boton.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 20px 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 0;
+            text-align: center;
+            color: #4299e1;
+            text-decoration: none;
+            font-size: 24px;
+        }
+
+        .main-content {
+            margin-left: 80px;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            color: #e83e8c;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .sort {
+            color: #666;
+        }
+
+        .sort span {
+            color: #e83e8c;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card.selected {
+            outline: 4px solid #e83e8c;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #e83e8c;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e83e8c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .controls {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls span {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-content">
+        <div class="header">
+            <h1 class="title">Astral‎ </h1>
+            <div class="sort">Tipo de subscripcion: <span>Perpetua</span></div>
+            <span>↑ Mover hacia arriba</span>
+            <span>↓ Mover hacia abajo</span>
+            <span>→ Mover hacia la derecha</span>
+            <span>← Mover hacia la izquierda</span>
+            <span>ENTER/↵ Iniciar el juego.</span>
+            <span>Tambien se puede controlar con el cursor.</span>
+            <span>Hay mas juegos abajo.</span>
+        </div>
+
+        <div class="grid" id="songGrid"></div>
+
+        <div class="controls">
+            <span>Gracias por probar AstralGames! ¡Lo actualizaremos pronto!</span>
+    </div>
+
+    <script>
+        const songs = [
+            {
+                id: 1,
+                title: "Five Nights at freddy's",
+                image: "img/FNAF.jpeg",
+                rating: 1,
+                url: "#fnaf",
+                isNew: false
+            },
+            {
+                id: 2,
+                title: "1v1.lol",
+                image: "img/1v1.jpg", 
+                rating: 3,
+                url: "#1v1",
+                isNew: false
+            },
+            {
+                id: 3,
+                title: "Minecraft (Presicion Client)",
+                image: "img/minecraft.jpg", 
+                rating: 5,
+                url: "#minecraft",
+                isNew: true
+            },
+            {
+                id: 4,
+                title: "Cookie Clicker",
+                image: "img/cookie.png", 
+                rating: 5,
+                url: "#cookie",
+                isNew: false
+            },
+            {
+                id: 5,
+                title: "Super Mario 64)",
+                image: "img/mario64.jpg", 
+                rating: 5,
+                url: "#sm64",
+                isNew: false
+            },
+            {
+                id: 6,
+                title: "Mario Kart 64",
+                image: "img/mk64.jpg", 
+                rating: 4,
+                url: "#mk64",
+                isNew: false
+            },
+            {
+                id: 7,
+                title: "AstralEmulator",
+                image: "img/noimg.png", 
+                rating: 4,
+                url: "#astralemu",
+                isNew: false
+            },
+            {
+                id: 8,
+                title: "Subway Surfers",
+                image: "img/SBS.jpeg", 
+                rating: 4,
+                url: "#subway",
+                isNew: false
+            },
+            {
+                id: 9,
+                title: "Slope",
+                image: "img/slope.jpg", 
+                rating: 4,
+                url: "#slope",
+                isNew: false
+            },
+            {
+                id: 10,
+                title: "Tomb of the mask",
+                image: "img/totm.jpg", 
+                rating: 5,
+                url: "#totm",
+                isNew: false
+            },
+            {
+                id: 11,
+                title: "BitLife",
+                image: "img/noimg.png", 
+                rating: 5,
+                url: "#BitLife",
+                isNew: true
+            },
+            {
+                id: 12,
+                title: "Sonic Mania",
+                image: "img/mania.jpg", 
+                rating: 5,
+                url: "#mania",
+                isNew: true
+            },
+            {
+                id: 13,
+                title: "Baldi",
+                image: "img/baldi.jpg", 
+                rating: 4,
+                url: "#baldi",
+                isNew: true
+            },
+            {
+                id: 14,
+                title: "Crossy Road",
+                image: "img/crossy.jpg", 
+                rating: 5,
+                url: "#crossy",
+                isNew: true
+            },
+            {
+                id: 15,
+                title: "Stack Ball",
+                image: "img/stackball.jpg", 
+                rating: 3,
+                url: "#stackball",
+                isNew: true
+            },
+            {
+                id: 16,
+                title: "S̴̻̩̘̻̩̘͇͕̊́̓̌͗̿̒̀͆͝Ą̷͉͇̹͇̪̹͇̃̎̋͒̔͌́̈̇N̶͚̠̮̖͎͐͒͒͋̽S̶͎̞̜͍̩͎̯̖̅̐",
+                image: "img/sans.jpg", 
+                rating: 5,
+                url: "#sans",
+                isNew: true
+            },
+        ];
+        let selectedIndex = 0;
+        const grid = document.getElementById('songGrid');
+
+        function renderSongs() {
+            grid.innerHTML = '';
+            songs.forEach((song, index) => {
+                const card = document.createElement('div');
+                card.className = `card ${index === selectedIndex ? 'selected' : ''}`;
+                card.onclick = () => window.location.href = song.url;
+                
+                card.innerHTML = `
+                    <img src="${song.image}" alt="${song.title}">
+                    ${song.isNew ? '<span class="new-badge">NUEVO</span>' : ''}
+                    <div class="card-content">
+                        <div class="card-title">${song.title}</div>
+                        <div class="rating">${'★'.repeat(song.rating)}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+
+        document.addEventListener('keydown', (e) => {
+            let newIndex = selectedIndex;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                    newIndex = Math.min(selectedIndex + 1, songs.length - 1);
+                    break;
+                case 'ArrowLeft':
+                    newIndex = Math.max(selectedIndex - 1, 0);
+                    break;
+                case 'ArrowUp':
+                    newIndex = Math.max(selectedIndex - 5, 0);
+                    break;
+                case 'ArrowDown':
+                    newIndex = Math.min(selectedIndex + 5, songs.length - 1);
+                    break;
+                case 'Enter':
+                    window.location.href = songs[selectedIndex].url;
+                    break;
+            }
+            
+            if (newIndex !== selectedIndex) {
+                selectedIndex = newIndex;
+                renderSongs();
+            }
+        });
+
+        // Initial render
+        renderSongs();
+    </script>
+    <div id="fnaf" class="overlay">
+        <div id="popupBody">
+            <h2>Five Nights at Freddy's</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>una popular serie de videojuegos de terror creada por Scott Cawthon. El juego se desarrolla en un restaurante ficticio llamado Freddy Fazbear's Pizza, donde el jugador asume el papel de un guardia de seguridad que debe sobrevivir durante cinco noches. El reto principal es vigilar las cámaras de seguridad y evitar ser atacado por los animatrónicos, personajes mecánicos que cobran vida y se vuelven peligrosos durante la noche.</p>
+                <center></br>
+                <a href = "Juegos/fnaf/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="1v1" class="overlay">
+        <div id="popupBody">
+            <h2>1v1.lol</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>1v1.lol es un juego en línea que combina elementos de construcción y disparos en tercera persona. Es conocido por sus modos de juego variados, como Battle Royale, Build Fight, Box Fight y Zone Wars. En este juego, los jugadores pueden construir estructuras defensivas y ofensivas mientras se enfrentan a otros jugadores en diferentes modos de combate.</p>
+                <center></br>
+                <a href = "Juegos/1v1/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="cookie" class="overlay">
+        <div id="popupBody">
+            <h2>Cookie Clicker</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Cookie Clicker es un juego de navegador incremental desarrollado por Julien "Orteil" Thiennot. En este juego, los jugadores comienzan haciendo clic en una gran galleta para producir galletas. A medida que acumulan galletas, pueden usar las galletas ganadas para comprar mejoras y automatizar la producción, aumentando así la cantidad de galletas producidas por segundo.</p>
+                <center></br>
+                <a href = "Juegos/cookie/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="minecraft" class="overlay">
+        <div id="popupBody">
+            <h2>Minecraft (Eaglercraft)</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Eaglercraft es un juego basado en navegador que emula la experiencia de Minecraft: Java Edition. Puedes jugarlo directamente en tu navegador web sin necesidad de descargar nada. Es compatible con la mayoría de los navegadores, incluyendo Chromebooks, y también ofrece soporte para multijugador, lo que te permite jugar con personas de todo el mundo.</p>
+                <center></br>
+                <a href = "Juegos/minecraft/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="sm64" class="overlay">
+        <div id="popupBody">
+            <h2>Super Mario 64</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Super Mario 64 es un videojuego de plataformas desarrollado y publicado por Nintendo para la consola Nintendo 64. Fue lanzado en 1996 y es uno de los primeros juegos en presentar gráficos tridimensionales, marcando un gran avance en el diseño y la jugabilidad de los videojuegos. </br></br> En el juego, los jugadores controlan a Mario en su misión de rescatar a la Princesa Peach del malvado Bowser. Los jugadores deben explorar el Castillo de Peach y sus diferentes mundos, recolectando estrellas al completar diversas tareas y desafíos.</p>
+                <center></br>
+                <a href = "Juegos/minecraft/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="mk64" class="overlay">
+        <div id="popupBody">
+            <h2>Mario Kart 64</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Mario Kart 64 es un videojuego de carreras desarrollado y publicado por Nintendo para la consola Nintendo 64. Lanzado en 1996 en Japón y en 1997 en el resto del mundo, es el segundo juego de la serie Mario Kart y el primero en contar con gráficos en 3D.</p>
+                <center></br>
+                <a href = "Juegos/MarioKart64/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="astralemu" class="overlay">
+        <div id="popupBody">
+            <h2>Astral Emulator</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Astral Emulator es una modificacion de un proyecto de codigo abierto llamado Emulator.js modificado por el creador de Astral, esta modificacion fue hecha para adaptar el programa a dispositivos de bajos recursos, este programa es capaz de emular juegos desde la Nintendo NES hasta la Nintendo DS.</p>
+                <center></br>
+                <a href = "Juegos/AstralEmu/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="subway" class="overlay">
+        <div id="popupBody">
+            <h2>Subway Surfers</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Subway Surfers es un popular juego de carreras infinito para dispositivos móviles, desarrollado por Kiloo y SYBO Games. En el juego, los jugadores asumen el papel de jóvenes grafiteros que corren por las vías del tren, escapando de un inspector gruñón y su perro. Durante la carrera, los jugadores deben esquivar obstáculos como trenes en movimiento y barreras, mientras recogen monedas y otros ítems especiales para aumentar su puntuación.</p>
+                <center></br>
+                <a href = "Juegos/AstralEmu/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="slope" class="overlay">
+        <div id="popupBody">
+            <h2>Slope</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Slope es un juego de arcade y carreras infinitas desarrollado por Rob Kay en 2014. En este juego, los jugadores controlan una pelota que rueda por una pendiente de neón sin fin. El objetivo principal es guiar la pelota, evitando obstáculos y recogiendo gemas a lo largo del camino.</p>
+                <center></br>
+                <a href = "Juegos/AstralEmu/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="totm" class="overlay">
+        <div id="popupBody">
+            <h2>Tomb of the mask</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Tomb of the Mask es un popular juego de puzles estilo arcade desarrollado por Happymagenta y publicado por Playgendary. Fue lanzado inicialmente para iOS en 2016 y posteriormente estuvo disponible para Android en 2018 y Nintendo Switch en 2021. También tiene una versión para Apple Arcade llamada Tomb of the Mask+, lanzada en junio de 2024.</p>
+                <center></br>
+                <a href = "Juegos/totm/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="BitLife" class="overlay">
+        <div id="popupBody">
+            <h2>BitLife</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>BitLife es un juego de simulación de vida desarrollado por Candywriter y lanzado en 2018. En este juego, los jugadores controlan a un personaje desde su nacimiento hasta su muerte, tomando decisiones que afectan su vida, carrera, relaciones y salu</p>
+                <center></br>
+                <a href = "Juegos/bitlife/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="mania" class="overlay">
+        <div id="popupBody">
+            <h2>Sonic Mania</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Sonic Mania es un juego de plataformas en 2D desarrollado por Christian Whitehead, Headcannon y PagodaWest Games en colaboración con Sonic Team, y publicado por SEGA en 2017. Fue lanzado para celebrar el 25º aniversario de la serie Sonic the Hedgehog.</p>
+                <center></br>
+                <a href = "Juegos/mania/RSDKv5.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="baldi" class="overlay">
+        <div id="popupBody">
+            <h2>Baldi's basics</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>En Baldi's Basics, los jugadores deben ayudar a un personaje a recolectar 7 cuadernos que ha perdido su amigo, mientras resuelven problemas matemáticos y evitan a Professor Baldi y sus amigos que los persiguen.</p>
+                <center></br>
+                <a href = "Juegos/baldi/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="crossy" class="overlay">
+        <div id="popupBody">
+            <h2>Crossy Road</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Crossy Road es un juego de arcade desarrollado por Hipster Whale y lanzado en 2014. Inspirado en el clásico juego Frogger, el objetivo es guiar a un personaje a través de un camino infinito lleno de obstáculos estáticos y en movimiento, recolectando monedas y evitando ser golpeado.</p>
+                <center></br>
+                <a href = "Juegos/crossyroad/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="stackball" class="overlay">
+        <div id="popupBody">
+            <h2>Stackball</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Stack Ball es un juego de arcade en 3D desarrollado por Abdurrahman y lanzado en 2016. En este juego, los jugadores deben guiar una pelota a través de plataformas giratorias y helicoidales para llegar al final. La mecánica del juego es simple pero desafiante: la pelota se desliza y rebota a través de plataformas coloridas, pero si golpea una plataforma negra, se rompe en pedazos y el jugador debe comenzar de nuevo.</p>
+                <center></br>
+                <a href = "Juegos/stack-ball/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <div id="sans" class="overlay">
+        <div id="popupBody">
+            <h2>S̴̻̩̘̻̩̘͇͕̊́̓̌͗̿̒̀͆͝Ą̷͉͇̹͇̪̹͇̃̎̋͒̔͌́̈̇N̶͚̠̮̖͎͐͒͒͋̽S̶͎̞̜͍̩͎̯̖̅̐</h2>
+            <a id="cerrar" href="index.html#">&times;</a>
+        </br>
+            <div class="popupContent">
+                <p>Es una simulacion de el Undertale</p>
+                <center></br>
+                <a href = "Juegos/sans/index.html">Iniciar!</a>
+            </div>
+        </div>
+    </div>
+    <audio src="titlemusic.mp3" loop="3" autoplay="true"></audio>
+</body>
+</html>
