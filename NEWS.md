@@ -12,3 +12,4 @@ Actualizacion 1:
 
 Actualizacion 1.5:
   - Super Mario Construct agregado 
+  - Imagen de portada de BitLife agregada
