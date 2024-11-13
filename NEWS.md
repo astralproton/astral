@@ -9,3 +9,6 @@ Actualizacion 1:
   - Minecraft (PreCli) reparado
   - Cookie Clicker estabilizado
   - Baldi reparado. 
+
+Actualizacion 1.5:
+  - Super Mario Construct agregado 
