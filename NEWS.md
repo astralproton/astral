@@ -14,5 +14,9 @@ Actualizacion 1.5:
   - Super Mario Construct agregado 
   - Imagen de portada de BitLife agregada
 
-Actualizacion 1.6:
+Actualizacion 2:
   - Cookie Clicker Version mas reciente.
+
+Actualizacion 2.5:
+  - Temple Run agregado
+  - Sonic Mania reparado
