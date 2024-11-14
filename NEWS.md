@@ -13,3 +13,6 @@ Actualizacion 1:
 Actualizacion 1.5:
   - Super Mario Construct agregado 
   - Imagen de portada de BitLife agregada
+
+Actualizacion 1.6:
+  - Cookie Clicker Version mas reciente.
