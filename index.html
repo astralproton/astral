@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Concert+One&family=Lilita+One&family=Titan+One&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a2a;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-section {
+            height: 70vh;
+            position: relative;
+            background: linear-gradient(45deg, #4a1b8c, #2b1259);
+            overflow: hidden;
+        }
+
+        .main-image, .overlay-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease;
+        }
+
+        .overlay-image {
+            z-index: 1;
+        }
+
+        .game-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .info-text {
+            flex: 1;
+        }
+
+        .character-container {
+            position: relative;
+            width: 340px;
+            height: 440px;
+            margin-right: 60px;
+        }
+
+        .character-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            transform: scale(1.1);
+        }
+
+        .title {
+            font-size: 4em;
+            color: #ac69ea;
+            border: white;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+            font-family: "Lilita One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .artist {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-family: "Lilita One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .score {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .star {
+            color: gold;
+        }
+
+        .dance-button {
+            position: absolute;
+            bottom: 40px;
+            left: 20px;
+            padding: 10px 40px;
+            background: #ff4081;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: "Lilita One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .dance-button:hover {
+            transform: scale(1.05);
+        }
+
+        .carousel-section {
+            height: 30vh;
+            background: #080820;
+            padding: 20px;
+            position: relative;
+        }
+
+        .carousel {
+            display: flex;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item {
+            min-width: 200px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .carousel-item:hover {
+            transform: scale(1.05);
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-item.active {
+            border: 3px solid #ff4081;
+            transform: scale(1.05);
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74, 27, 140, 0.3);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="image-section" id="imageSection">
+            <div class="overlay"></div>
+            <img src="main1.jpg" alt="Main Dance" class="main-image" id="mainImage">
+            <img src="overlay1.jpg" alt="Overlay Dance" class="overlay-image" id="overlayImage">
+            <div class="game-info">
+                <div class="info-text">
+                    <div class="title">Magic</div>
+                    <div class="artist">Kylie Minogue</div>
+                </div>
+                <div class="character-container">
+                    <img src="character.png" alt="Dance Character" class="character-image" id="characterImage">
+                </div>
+                <button class="dance-button" id="danceButton">¡Jugar!</button>
+            </div>
+        </div>
+        <div class="carousel-section">
+            <div class="carousel" id="carousel">
+                <div class="carousel-item active" 
+                     data-main-image="imgjuegos/nobg.jpg"
+                     data-overlay="imgjuegos/nobg.jpg"
+                     data-background="imgjuegos/nobg.jpg"
+                     data-song="titlemusic.mp3"
+                     data-title="Astral"
+                     data-artist="¡Bienvenido a Astral! Una nueva pagina web de juegos en linea facil de usar! Para comenzar, muevete con las teclas ← →, luego, cuando estes en el juego deseado presiona el boton ¡Jugar! Le recomendamos NO SILENCIAR la pagina. En el menú, cada juego tendra su propia musica! Y los que no tienen tendran la musica del menu normal."
+                     data-character="imgjuegos/astrallogo.png"
+                     data-dance-page="index.html">
+                    <img src="imgjuegos/astrallogo.png" alt="Astral">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/minecraft.jpg"
+                     data-overlay="imgjuegos/minecraft.jpg"
+                     data-background="minecraft.jpg"
+                     data-song="juegosmusica/mc.mp3"
+                     data-title="Minecraft: Precision Client"
+                     data-artist="Mojang/Presicion Client"
+                     data-character="personajes/steve.png"
+                     data-dance-page="Juegos/minecraft/index.html">
+                    <img src="imgjuegos/minecraft.jpg" alt="Minecraft">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="main3.jpg"
+                     data-overlay="imgjuegos/slope.jpg"
+                     data-background="imgjuegos/slope.jpg"
+                     data-song="juegosmusica/slope.mp3"
+                     data-title="Slope"
+                     data-artist="Y8"
+                     data-character="imgjuegos/slopeball.png"
+                     data-dance-page="Juegos/slope/index.html">
+                    <img src="imgjuegos/slope.jpg" alt="Slope">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="main4.jpg"
+                     data-overlay="imgjuegos/baldi.jpg"
+                     data-background="imgjuegos/baldi.jpg"
+                     data-song="juegosmusica/baldi.mp3"
+                     data-title="Baldi"
+                     data-artist="NA"
+                     data-character="personajes/baldi.png"
+                     data-dance-page="Juegos/baldi/index.html">
+                    <img src="imgjuegos/baldi.jpg" alt="Baldi">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/cookie.png"
+                     data-overlay="imgjuegos/cookie.png"
+                     data-background="imgjuegos/cookie.png"
+                     data-song="titlemusic.mp3"
+                     data-title="Cookie Clicker"
+                     data-artist="NA"
+                     data-character="personajes/cookie.png"
+                     data-dance-page="Juegos/cookie/index.html">
+                    <img src="imgjuegos/cookie.png" alt="Cookie Clicker">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/fnafbg.jpeg"
+                     data-overlay="imgjuegos/fnafbg.jpeg"
+                     data-background="imgjuegos/fnafbg.jpeg"
+                     data-song="juegosmusica/fnaf.mp3"
+                     data-title="Five Nights at Freddy's"
+                     data-artist="Scott"
+                     data-character="personajes/fnaf.png"
+                     data-dance-page="Juegos/FNAF/index.html">
+                    <img src="imgjuegos/FNAF.jpeg" alt="FNAF">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/mk64b.jpg"
+                     data-overlay="imgjuegos/mk64b.jpg"
+                     data-background="imgjuegos/mk64b.jpg"
+                     data-song="juegosmusica/mk64.mp3"
+                     data-title="Mario Kart 64"
+                     data-artist="Nintendo"
+                     data-character="personajes/mk64.png"
+                     data-dance-page="Juegos/MarioKart64/index.html">
+                    <img src="imgjuegos/mk64.jpg " alt="MK64">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/mario64.jpg"
+                     data-overlay="imgjuegos/mario64.jpg"
+                     data-background="imgjuegos/mario64.jpg"
+                     data-song="juegosmusica/mario64.mp3"
+                     data-title="Super Mario 64"
+                     data-artist="Nintendo"
+                     data-character="personajes/mario64.png"
+                     data-dance-page="Juegos/SM64/index.html">
+                    <img src="imgjuegos/mario64.jpg" alt="SM64">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/mania.jpg"
+                     data-overlay="imgjuegos/mania.jpg"
+                     data-background="imgjuegos/mania.jpg"
+                     data-song="juegosmusica/mania.mp3"
+                     data-title="Sonic Mania"
+                     data-artist="SEGA (Cuando Inicie el juego presiona ESC en tu teclado para iniciar porque el menu no sirve)"
+                     data-character="personajes/sonicmania.png"
+                     data-dance-page="Juegos/mania/index.html">
+                    <img src="imgjuegos/mania.jpg" alt="MANIA">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/smcbg.jpeg"
+                     data-overlay="imgjuegos/smcbg.jpeg"
+                     data-background="imgjuegos/smcbg.jpeg"
+                     data-song="juegosmusica/smc.mp3"
+                     data-title="Super Mario Construct"
+                     data-artist="LSS"
+                     data-character="personajes/smc.png"
+                     data-dance-page="Juegos/MARIO.html">
+                    <img src="imgjuegos/SMC.jpeg" alt="SMC">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/nobg.jpg"
+                     data-overlay="imgjuegos/nobg.jpg"
+                     data-background="imgjuegos/nobg.jpg"
+                     data-song="titlemusic.mp3"
+                     data-title="Tomb of The Mask"
+                     data-artist="NA"
+                     data-character="personajes/totm.png"
+                     data-dance-page="Juegos/totm/index.html">
+                    <img src="imgjuegos/totm.jpg" alt="TOTM">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/sbsbg.jpeg"
+                     data-overlay="imgjuegos/sbsbg.jpeg"
+                     data-background="imgjuegos/sbsbg.jpeg"
+                     data-song="juegosmusica/sbs.mp3"
+                     data-title="Subway Surfers"
+                     data-artist="SYBO Games"
+                     data-character="personajes/sbs.png"
+                     data-dance-page="Juegos/subwaysurferssanfrancisco/index.html">
+                    <img src="imgjuegos/SBS.jpeg" alt="SSSF">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/ita.jpg"
+                     data-overlay="imgjuegos/ita.jpg"
+                     data-background="imgjuegos/ita.jpg"
+                     data-song="juegosmusica/hsita.mp3"
+                     data-title="Henry Stickmin: ITA"
+                     data-artist="Puffballs United & Newgrounds (Les recomendamos usarlo en pantalla completa)"
+                     data-character="personajes/hnry.png"
+                     data-dance-page="Juegos/HSITA/index.html">
+                    <img src="imgjuegos/ita.jpg" alt="HSITA">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/isaacbg.png"
+                     data-overlay="imgjuegos/isaacbg.png"
+                     data-background="imgjuegos/isaacbg.png"
+                     data-song="juegosmusica/isaac.mp3"
+                     data-title="The Binding Of Isaac - FL"
+                     data-artist="Edmund McMillen, Florian Himsl (Les recomendamos usarlo en pantalla completa)"
+                     data-character="personajes/isaac.png"
+                     data-dance-page="Juegos/tboi/index.html">
+                    <img src="imgjuegos/isaacico.jpg" alt="Isaac">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/nobg.jpg"
+                     data-overlay="imgjuegos/nobg.jpg"
+                     data-background="imgjuegos/nobg.jpg"
+                     data-song="titlemusic.mp3"
+                     data-title="AstralEmulator"
+                     data-artist="Aplicacion basada en la app codigo abierto emulator.js modificada por AstralTeam"
+                     data-character="personajes/mk64.png"
+                     data-dance-page="Juegos/AstralEmu/index.html">
+                    <img src="imgjuegos/noimg.png" alt="AEMU">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/nobg.jpg"
+                     data-overlay="imgjuegos/nobg.jpg"
+                     data-background="imgjuegos/nobg.jpg"
+                     data-song="juegosmusica/tloi.mp3"
+                     data-title="Extras"
+                     data-artist="Aqui podrias acceder a cosas creadas por el AstralTeam que no agregamos a la pagina principal."
+                     data-character="imgjuegos/astrallogo.png"
+                     data-dance-page="Extras/index.html">
+                    <img src="imgjuegos/astrallogo.png" alt="Astral">
+                </div>
+                <div class="carousel-item"
+                     data-main-image="imgjuegos/crossybg.jpeg"
+                     data-overlay="imgjuegos/crossybg.jpeg"
+                     data-background="imgjuegos/crossybg.jpeg"
+                     data-song="juegosmusica/tloi.mp3"
+                     data-title="Crossy Road"
+                     data-artist="Hipster Whale"
+                     data-character="personajes/crossy.png"
+                     data-dance-page="Juegos/crossyroad/index.html">
+                    <img src="imgjuegos/crossy.jpg" alt="Astral">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioPlayer"></audio>
+    <audio id="buttonSound" src="button-sound.mp3"></audio>
+
+    <script>
+        const carousel = document.getElementById('carousel');
+        const items = document.querySelectorAll('.carousel-item');
+        const mainImage = document.getElementById('mainImage');
+        const overlayImage = document.getElementById('overlayImage');
+        const characterImage = document.getElementById('characterImage');
+        const imageSection = document.getElementById('imageSection');
+        const titleElement = document.querySelector('.title');
+        const artistElement = document.querySelector('.artist');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const buttonSound = document.getElementById('buttonSound');
+        const danceButton = document.getElementById('danceButton');
+        let currentIndex = 0;
+
+        function updateContent(item) {
+            mainImage.src = item.dataset.mainImage;
+            overlayImage.src = item.dataset.overlay;
+            characterImage.src = item.dataset.character;
+            
+            imageSection.style.backgroundImage = `url(${item.dataset.background})`;
+            
+            titleElement.textContent = item.dataset.title;
+            artistElement.textContent = item.dataset.artist;
+            
+            if (audioPlayer.src !== item.dataset.song) {
+                audioPlayer.src = item.dataset.song;
+                audioPlayer.play();
+            }
+
+            danceButton.onclick = () => {
+                playButtonSound();
+                window.location.href = item.dataset.dancePage;
+            };
+        }
+
+        function updateCarousel() {
+            items.forEach(item => item.classList.remove('active'));
+            items[currentIndex].classList.add('active');
+            
+            const itemWidth = items[0].offsetWidth + 20;
+            carousel.style.transform = `translateX(${-currentIndex * itemWidth}px)`;
+            
+            updateContent(items[currentIndex]);
+        }
+
+        function moveCarousel(direction) {
+            currentIndex = (currentIndex + direction + items.length) % items.length;
+            updateCarousel();
+            playButtonSound();
+        }
+
+        function playButtonSound() {
+            buttonSound.currentTime = 0;
+            buttonSound.play();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    moveCarousel(-1);
+                    break;
+                case 'ArrowRight':
+                    moveCarousel(1);
+                    break;
+            }
+        });
+
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                currentIndex = Array.from(items).indexOf(item);
+                updateCarousel();
+                playButtonSound();
+            });
+        });
+
+        updateCarousel();
+    </script>
+</body>
+</html>
+
