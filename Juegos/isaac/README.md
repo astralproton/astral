@@ -1,57 +1,68 @@
-# ruffle-selfhosted
+# Ruffle Example
 
-ruffle-selfhosted is the intended way to get Ruffle onto your website.
+This repository provides an example/demo of how to use Ruffle on your own website to emulate Flash content. Ruffle is an open-source Flash Player emulator that allows you to continue running Flash content in modern browsers.
 
-You may either include it and forget about it, and we will polyfill existing Flash content,
-or use our APIs for custom configurations or more advanced usages of the Ruffle player.
+Video Explanation: https://www.youtube.com/watch?v=TJXMGNxex24&t=81s
 
-## Using ruffle-selfhosted
+Stack Overflow Question: https://stackoverflow.com/questions/65465492/how-to-embed-ruffle-flash-player-emulator-into-html-file/65693128#65693128
 
-For more examples and in-depth documentation on how to use Ruffle on your website, please
-[check out our wiki](https://github.com/ruffle-rs/ruffle/wiki/Using-Ruffle#web).
+## Prerequisites
 
-### Host Ruffle
+Before getting started, make sure you have the following:
 
-The `selfhosted` package is configured for websites that do not use bundlers or npm and just want
-to get up and running. If you'd prefer to use Ruffle through npm and a bundler, please 
-[refer to ruffle core](https://github.com/ruffle-rs/ruffle/tree/master/web/packages/core).
+- A basic understanding of HTML, CSS, and JavaScript
+- A text editor or integrated development environment (IDE) to modify the code
+- A web server to host your website (you can use localhost for development purposes)
 
-Before you can get started with using Ruffle on your website, you must host its files yourself.
-Either take the [latest build](https://github.com/ruffle-rs/ruffle/releases)
-or [build it yourself](https://github.com/ruffle-rs/ruffle/blob/master/web/README.md), and make these files accessible by your web server.
+## Getting Started
 
-Please note that the `.wasm` file must be served properly, and some web servers may not do that
-correctly out of the box. Please see [our wiki](https://github.com/ruffle-rs/ruffle/wiki/Using-Ruffle#configure-wasm-mime-type)
-for instructions on how to configure this, if you encounter a `Incorrect response MIME type` error.
+To use Ruffle on your own website, follow these steps:
 
-### "Plug and Play"
+1. Clone or download this repository to your local machine.
 
-If you have an existing website with flash content, you can simply include Ruffle as a script and
-our polyfill magic will replace everything for you. No fuss, no mess.
-
-```html
-<script src="path/to/ruffle/ruffle.js"></script>
+```bash
+git clone https://github.com/maddox05/ruffle-example.git
 ```
-
-### Javascript API
-
-If you want to control the Ruffle player, you may use our Javascript API.
-
+2. Open the index.html file in a text editor or IDE of your choice.
+3. Locate the following section in the game HTML file:
 ```html
-<script>
-    window.RufflePlayer = window.RufflePlayer || {};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="Ruffle Example">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="language" content="English">
+  <title>Ruffle Example</title>
+  <script src="main.js"></script> 
+  <noscript>Your browser doesn't have JavaScript enabled. Please enable JavaScript or switch to a browser that
+    supports it.</noscript>
+</head>
+<body>
+<div id='ruffle' class="gameloc"></div>
+<script src='https://maddox05.github.io/ruffle-example/ruffle/index.js'></script> <!-- Theses files should be local -->
+<script id = "gabe">swfobject.embedSWF("https://maddox05.github.io/ruffle-example/1on1soccer.swf", 'ruffle', 800, 600);</script> <!-- Theses files should be local -->
+</body>
+</html>
 
-    window.addEventListener("DOMContentLoaded", () => {
-        let ruffle = window.RufflePlayer.newest();
-        let player = ruffle.createPlayer();
-        let container = document.getElementById("container");
-        container.appendChild(player);
-        player.ruffle().load("movie.swf");
-    });
-</script>
-<script src="path/to/ruffle/ruffle.js"></script>
 ```
+4. Replace "path/to/your/flash.swf" with the path to your own Flash content. Make sure the Flash file (SWF) is located in the specified path.
+5. Save the changes to the index.html file.
+6. Start a web server and navigate to the local website in your browser.
+7. You should now see your Flash content rendered using Ruffle.
 
-## Building, testing or contributing
+## Customization
+Feel free to modify the HTML, CSS, and JavaScript code to suit your needs. You can change the layout, add more Flash content, or integrate Ruffle in different parts of your website.
 
-Please see [the ruffle-web README](https://github.com/ruffle-rs/ruffle/blob/master/web/README.md).
+## Compatibility
+Ruffle is designed to work in modern browsers that lack built-in Flash support, such as Google Chrome, Mozilla Firefox, Microsoft Edge, and Safari. It is compatible with a wide range of Flash content, including animations, games, and interactive applications.
+
+## Resources
+For more information about Ruffle and its features, refer to the official Ruffle GitHub repository.
+
+## License
+This example website is licensed under the **MIT** License. Feel free to use, modify, and distribute it according to the terms of the license.
+
+
