@@ -1,0 +1,10 @@
+NotificationSystem.showNormal('Bienvenido a Astral V2.2', 'Entendido');
+NotificationSystem.showConfirmation('¿Estás seguro de que quieres continuar?', 'Sí', 'No', (confirmed) => {
+    if (confirmed) {
+        console.log('Usuario confirmó');
+    } else {
+        console.log('Usuario canceló');
+    }
+});
+NotificationSystem.showAlert('Se ha detectado una actualización disponible', 'Actualizar más tarde');
+NotificationSystem.showCritical('Error crítico: No se pudo conectar al servidor', 'Reintentar');
