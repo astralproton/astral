@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<!-- [Head section remains the same] -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astral ROMS</title>
+    <style>
+        /* Todo el CSS del primer código permanece igual */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #1a0033;
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: sticky;
+            top: 0;
+            background-color: #1a0033;
+            padding: 1rem 0;
+            z-index: 100;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: #b3b3ff;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .console-section {
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .console-title {
+            color: #00ffff;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 0.5rem;
+        }
+
+        .rom-list {
+            list-style: none;
+        }
+
+        .rom-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .rom-item:last-child {
+            border-bottom: none;
+        }
+
+        .rom-item.selected {
+            background-color: rgba(255, 0, 255, 0.2);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .rom-name {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+
+        .download-button {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .download-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+        }
+
+        .instructions {
+            text-align: center;
+            color: #b3b3ff;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            background-color: rgba(26, 0, 51, 0.9);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .rom-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .rom-name {
+                margin-right: 0;
+            }
+        }
+
+        .volume-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+            transition: transform 0.3s;
+        }
+
+        .volume-button:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-button.muted .volume-icon::after {
+            content: '🔇';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Astral ROMS</h1>
+            <p class="subtitle">Descarga tus juegos retro favoritos</p>
+            <p class="subtitle">PD: El audio esta muteado, presiona 2 veces el boton del sonido.</p>
+            <button class="volume-button" id="volumeButton">
+                <span class="volume-icon">🔊</span>
+            </button>
+        </header>
+
+        <section class="console-section">
+            <h2 class="console-title">Nintendo DS</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="ROMS/Mario Kart DS (USA) (En,Fr,De,Es,It).nds">
+                    <span class="rom-name">Mario Kart DS</span>
+                    <a href="ROMS/Mario Kart DS (USA) (En,Fr,De,Es,It).nds" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/New Super Mario Bros. (USA).nds">
+                    <span class="rom-name">New Super Mario Bros DS</span>
+                    <a href="ROMS/New Super Mario Bros. (USA).nds" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="console-section">
+            <h2 class="console-title">Nintendo 64</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="/Mario Party 2 (USA).z64">
+                    <span class="rom-name">Mario Party 2</span>
+                    <a href="Mario Party 2 (USA).z64" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/Super Mario 64 (USA).z64">
+                    <span class="rom-name">Super Mario 64</span>
+                    <a href="Super Mario 64 (USA).z64" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="console-section">
+            <h2 class="console-title">SEGA Mega Drive / Genesis</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="ROMS/Sonic & Knuckles + Sonic The Hedgehog 3 (Europe).md">
+                    <span class="rom-name">Sonic & Knuckles + Sonic The Hedgehog 3</span>
+                    <a href="Sonic & Knuckles + Sonic The Hedgehog 3 (Europe).md" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/Sonic The Hedgehog (USA, Europe).md">
+                    <span class="rom-name">Sonic The Hedgehog</span>
+                    <a href="Sonic The Hedgehog (USA, Europe).md" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/Sonic The Hedgehog 2 (World) (Rev A).md">
+                    <span class="rom-name">Sonic The Hedgehog 2</span>
+                    <a href="Sonic The Hedgehog 2 (World) (Rev A).md" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="console-section">
+            <h2 class="console-title">SEGA CD</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="ROMS/Sonic CD (USA).chd">
+                    <span class="rom-name">Sonic CD</span>
+                    <a href="Sonic CD (USA).chd" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="console-section">
+            <h2 class="console-title">Super Nintendo</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="ROMS/Super Mario All-Stars + Super Mario World (USA).sfc">
+                    <span class="rom-name">Super Mario All Stars + Super Mario World</span>
+                    <a href="Super Mario All-Stars + Super Mario World (USA).sfc" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/Super Mario World 2 - Yoshi's Island (U) (V1.1).smc">
+                    <span class="rom-name">Yoshi's Island</span>
+                    <a href="Super Mario World 2 - Yoshi's Island (U) (V1.1).smc" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="console-section">
+            <h2 class="console-title">Nintendo Entertainment System</h2>
+            <ul class="rom-list">
+                <li class="rom-item" data-url="ROMS/Super Mario Bros (PC10).nes">
+                    <span class="rom-name">Super Mario Bros</span>
+                    <a href="Super Mario Bros (PC10).nes" class="download-button">Descargar</a>
+                </li>
+                <li class="rom-item" data-url="ROMS/Super Mario Bros 3 (PC10).nes">
+                    <span class="rom-name">Super Mario Bros 3</span>
+                    <a href="Super Mario Bros 3 (PC10).nes" class="download-button">Descargar</a>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <p class="instructions">
+        Usa las flechas ↑↓ para navegar y ENTER para descargar
+    </p>
+
+    <!-- Audio Elements -->
+    <audio id="moveSound" src="sfx.mp3" preload="auto"></audio>
+    <audio id="selectSound" src="button-sound.mp3" preload="auto"></audio>
+    <audio id="titleMusic" src="wiiueshop.mp3" preload="auto"></audio>
+    <audio id="menuMusic" src="wiiueshop.mp3" preload="auto" autoplay></audio>
+
+    <script>
+        // Get all ROM items and audio elements
+        const romItems = document.querySelectorAll('.rom-item');
+        const moveSound = document.getElementById('moveSound');
+        const selectSound = document.getElementById('selectSound');
+
+        // Audio setup
+        const menuMusic = document.getElementById('menuMusic');
+        menuMusic.volume = 1;
+        menuMusic.loop = true;
+
+        // Autoplay music setup
+        function startMusic() {
+            menuMusic.play().catch(error => {
+                console.log("Menu music error:", error);
+                // Add click to play fallback for browsers that block autoplay
+                document.addEventListener('click', () => {
+                    menuMusic.play().catch(error => console.log("Music play error:", error));
+                }, { once: true });
+            });
+        }
+
+        // Start music when page loads
+        window.addEventListener('load', startMusic);
+        // Fallback for when load event has already fired
+        if (document.readyState === 'complete') {
+            startMusic();
+        }
+
+        // Volume control
+        let isMuted = false;
+        const volumeButton = document.getElementById('volumeButton');
+
+        volumeButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            volumeButton.classList.toggle('muted');
+            
+            const newVolume = isMuted ? 0 : 1;
+            menuMusic.volume = newVolume;
+            moveSound.volume = isMuted ? 0 : 0.3;
+            selectSound.volume = isMuted ? 0 : 0.5;
+            
+            playSelectSound();
+        });
+
+        // Set initial selected item
+        let currentIndex = 0;
+        romItems[currentIndex].classList.add('selected');
+
+        // Configure audio volumes
+        moveSound.volume = 0.3;
+        selectSound.volume = 0.5;
+
+        // Play move sound
+        function playMoveSound() {
+            moveSound.currentTime = 0;
+            moveSound.play().catch(error => console.log("Audio error:", error));
+        }
+
+        // Play select sound
+        function playSelectSound() {
+            selectSound.currentTime = 0;
+            selectSound.play().catch(error => console.log("Audio error:", error));
+        }
+
+        // Scroll element into view with better positioning
+        function scrollItemIntoView(element) {
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const elementRect = element.getBoundingClientRect();
+            const absoluteElementTop = elementRect.top + window.pageYOffset;
+            const middle = window.innerHeight / 2;
+            const scrollTo = absoluteElementTop - middle + (elementRect.height / 2);
+
+            window.scrollTo({
+                top: Math.max(0, scrollTo),
+                behavior: 'smooth'
+            });
+        }
+
+        // Update selection
+        function updateSelection(newIndex) {
+            if (newIndex !== currentIndex && newIndex >= 0 && newIndex < romItems.length) {
+                playMoveSound();
+                romItems[currentIndex].classList.remove('selected');
+                currentIndex = newIndex;
+                romItems[currentIndex].classList.add('selected');
+                scrollItemIntoView(romItems[currentIndex]);
+            }
+        }
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    updateSelection(currentIndex - 1);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    updateSelection(currentIndex + 1);
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    playSelectSound();
+                    const url = romItems[currentIndex].dataset.url;
+                    if (url) {
+                        window.location.href = url;
+                    }
+                    break;
+            }
+        });
+
+        // Handle mouse interactions
+        romItems.forEach((item, index) => {
+            item.addEventListener('mouseenter', () => {
+                if (index !== currentIndex) {
+                    updateSelection(index);
+                }
+            });
+
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('download-button')) {
+                    playSelectSound();
+                    const url = item.dataset.url;
+                    if (url) {
+                        window.location.href = url;
+                    }
+                }
+            });
+        });
+
+        // Handle download button clicks
+        document.querySelectorAll('.download-button').forEach(button => {
+            button.addEventListener('click', () => {
+                playSelectSound();
+            });
+        });
+
+        // Initial scroll to first item
+        window.addEventListener('load', () => {
+            scrollItemIntoView(romItems[currentIndex]);
+        });
+    </script>
+</body>
+</html>
