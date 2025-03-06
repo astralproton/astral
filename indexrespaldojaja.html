@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstralProton V 2.8</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #0a001a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Fondo espacial mejorado */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #0a001a 70%, #050010 100%);
+            z-index: -2;
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 500px;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: moveStar linear infinite;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+            opacity: 0.6;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+            opacity: 0.8;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            opacity: 1;
+        }
+
+        .star.twinkle {
+            animation: twinkle 4s ease-in-out infinite, moveStar linear infinite;
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #fff;
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0;
+            animation: shootingStar linear;
+        }
+
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+            transform: translateX(-100%);
+        }
+
+        @keyframes shootingStar {
+            0% {
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes moveStar {
+            from {
+                transform: translateZ(0) translateX(0);
+            }
+            to {
+                transform: translateZ(500px) translateX(-100px);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #0a001a 70%, #050010 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .loading-text {
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .continue-button {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            display: block;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .continue-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Title Screen Styles */
+        .title-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #0a001a 70%, #050010 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .title-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 50px;
+            transform: scale(1);
+            padding: 20px;
+        }
+
+        /* Nuevo estilo de logo basado en la imagen de referencia */
+        .cyberpunk-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: white;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            transform: skew(-5deg);
+            text-shadow: 
+                2px 0 0 #00ffff,
+                -2px 0 0 #ff00ff;
+        }
+
+        .cyberpunk-logo::before,
+        .cyberpunk-logo::after {
+            content: 'ASTRALPROTON';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: screen;
+        }
+
+        .cyberpunk-logo::before {
+            color: #00ffff;
+            transform: translateX(-2px);
+            animation: glitch-1 2s infinite linear alternate-reverse;
+        }
+
+        .cyberpunk-logo::after {
+            color: #ff00ff;
+            transform: translateX(2px);
+            animation: glitch-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(80% 0 0 0); }
+            20% { clip-path: inset(20% 0 40% 0); }
+            40% { clip-path: inset(40% 0 60% 0); }
+            60% { clip-path: inset(60% 0 20% 0); }
+            80% { clip-path: inset(10% 0 80% 0); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(0 0 80% 0); }
+            20% { clip-path: inset(0 0 20% 40%); }
+            40% { clip-path: inset(0 0 40% 60%); }
+            60% { clip-path: inset(0 0 60% 20%); }
+            80% { clip-path: inset(0 0 10% 80%); }
+        }
+
+        .press-enter {
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+            margin-top: 20px;
+        }
+
+        /* Menu Screen Styles */
+        .menu-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #0a001a 70%, #050010 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 900;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-screen.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-title {
+            font-size: 3em;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+            margin-bottom: 50px;
+        }
+
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .menu-option {
+            padding: 15px 40px;
+            background: rgba(26, 0, 51, 0.7);
+            border: 2px solid #00ffff;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-option:hover, .menu-option.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.95); }
+        }
+
+        .main-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .main-container.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-info {
+            text-align: center;
+            z-index: 2;
+            padding: 20px;
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            width: 500px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-image-container {
+            width: 300px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .artist {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #b3b3ff;
+        }
+
+        .dance-button {
+            padding: 10px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .dance-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        .carousel-section {
+            height: 150px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease;
+            margin: 0 40px;
+        }
+
+        .carousel-item {
+            min-width: 150px;
+            height: 100px;
+            margin: 0 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            background-color: rgba(26, 0, 51, 0.5);
+        }
+
+        .carousel-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .carousel-item.active {
+            border: 3px solid #ff00ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(26, 0, 51, 0.7);
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .carousel-nav:hover {
+            background: rgba(255, 0, 255, 0.7);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .cyberpunk-logo {
+                font-size: 3em;
+            }
+            
+            .press-enter {
+                font-size: 1.5em;
+            }
+
+            .game-info {
+                width: 90%;
+            }
+
+            .game-image-container {
+                width: 100%;
+                height: 150px;
+            }
+
+            .menu-option {
+                width: 200px;
+                font-size: 1.2em;
+            }
+        }
+
+        /* Alert System Styles */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 0, 26, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .alert-container {
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .alert-overlay.active .alert-container {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .alert-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .alert-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+        }
+
+        .alert-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #b3b3ff;
+        }
+
+        .alert-button {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            margin: 0 10px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .alert-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+    <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text" id="loadingText">Cargando...</div>
+        <div class="loading-spinner"></div>
+        <button class="continue-button" id="continueButton">Continuar</button>
+    </div>
+
+    <!-- Title Screen -->
+    <div class="title-screen hidden" id="titleScreen">
+        <div class="logo-container">
+            <div class="cyberpunk-logo">ASTRALPROTON</div>
+        </div>
+        <div class="press-enter">Presiona ENTER (↵) para comenzar</div>
+    </div>
+
+    <!-- Menu Screen -->
+    <div class="menu-screen" id="menuScreen">
+        <h1 class="menu-title">Menú Principal</h1>
+        <div class="menu-options" id="menuOptions">
+            <div class="menu-option active" data-action="play">¡Jugar!</div>
+            <div class="menu-option" data-action="support">¡Soporte!</div>
+            <div class="menu-option" data-action="exit">¡Salir!</div>
+        </div>
+    </div>
+
+    <div class="main-container" id="mainContainer">
+        <div class="image-section" id="imageSection">
+            <div class="game-info">
+                <div class="game-image-container">
+                    <img src="imgjuegos/astrallogo.png" alt="Game Image" class="game-image" id="gameImage">
+                </div>
+                <h1 class="title" id="gameTitle">Astral</h1>
+                <p class="artist" id="gameArtist">Bienvenido a Astral</p>
+                <button class="dance-button" id="danceButton">¡Jugar!</button>
+            </div>
+        </div>
+        <div class="carousel-section">
+            <div class="carousel" id="carousel">
+                <!-- Carousel items will be dynamically added here -->
+            </div>
+            <div class="carousel-nav carousel-prev" id="prevButton">&#10094;</div>
+            <div class="carousel-nav carousel-next" id="nextButton">&#10095;</div>
+        </div>
+    </div>
+
+    <audio id="titleMusic" preload="auto"></audio>
+    <audio id="menuMusic" src="titulonuevo.mp3" preload="auto"></audio>
+    <audio id="audioPlayer" preload="auto"></audio>
+    <audio id="buttonSound" src="button-sound.mp3" preload="auto"></audio>
+    <audio id="changeGameSound" src="sfx.mp3" preload="auto"></audio>
+    <audio id="alertSound" src="alert-sound.mp3" preload="auto"></audio>
+
+    <!-- Alert System -->
+    <div id="alertOverlay" class="alert-overlay">
+        <div id="alertContainer" class="alert-container">
+            <div id="alertContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Function declarations
+        const gameData = [
+            {
+                title: "Astral",
+                artist: "¡Bienvenido a Astral! Una nueva página web de juegos en línea fácil de usar!",
+                image: "imgjuegos/astrallogo.png",
+                song: "",
+                dancePage: "index.html",
+                alert: {
+                    type: "info",
+                    message: "¡Bienvenido a Astral!",
+                    redirect: "index.html"
+                }
+            },
+            {
+                title: "Anuncios",
+                artist: "Aqui solo veras los cambios entre las versiones.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "changes.md",
+                alert: {
+                    type: "info",
+                    message: "Verás los cambios entre versiones.",
+                    redirect: "changes.md"
+                }
+            },
+            {
+                title: "ROMS",
+                artist: "Aqui estare subiendo las ROMS que me voy encontrando y descargando.",
+                image: "imgjuegos/noimg.png",
+                song: "wiiueshop.mp3",
+                dancePage: "roms.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando la aplicacion... ¡Te recomendamos bajarte el super mario world!",
+                    redirect: "roms.html"
+                }
+            },
+            {
+                title: "Angry Birds",
+                artist: "Rovio Entertainment",
+                image: "imgjuegos/angry.jpeg",
+                song: "juegosmusica/angry.mp3",
+                dancePage: "Juegos/angrybirds/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... Nunca uses el pajaro azul :)",
+                    redirect: "Juegos/angrybirds/index.html"
+                }
+            },
+            {
+                title: "Cut the Rope",
+                artist: "Zeptolabs",
+                image: "imgjuegos/ctr.jpg",
+                song: "juegosmusica/ctr.mp3",
+                dancePage: "Juegos/ctr/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡La araña se llevara tu caramelo pronto!",
+                    redirect: "Juegos/ctr/index.html"
+                }
+            },
+            {
+                title: "DOOM",
+                artist: "NA",
+                image: "imgjuegos/doom.jpeg",
+                song: "juegosmusica/doom.mp3",
+                dancePage: "Juegos/doom/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No ejecutes esto en un cactus!",
+                    redirect: "Juegos/doom/index.html"
+                }
+            },
+            {
+                title: "Windows XP",
+                artist: "Open Source Docker",
+                image: "imgjuegos/winxp.jpeg",
+                song: "titulo.mp3",
+                dancePage: "Juegos/winxp/VirtualXP.htm",
+                alert: {
+                    type: "loading",
+                    message: "Cargando la aplicacion... ¡Dibuja el logo de Astral en PAINT!",
+                    redirect: "Juegos/winxp/VirtualXP.htm"
+                }
+            },
+            {
+                title: "Friday Night Funkin Garcello Mod",
+                artist: "NA",
+                image: "imgjuegos/fnfg.jpeg",
+                song: "juegosmusica/fnfv.mp3",
+                dancePage: "Juegos/fnfg/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No vayas a matar a Garcello!",
+                    redirect: "Juegos/fnfg/index.html"
+                }
+            },
+            {
+                title: "Friday Night Funkin (Ver. 1)",
+                artist: "ninjamuffin",
+                image: "imgjuegos/fnfviejo.jpeg",
+                song: "juegosmusica/fnfv.mp3",
+                dancePage: "Juegos/fnfviejo/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No pierdas!",
+                    redirect: "Juegos/fnfviejo/index.html"
+                }
+            },
+            {
+                title: "Friday Night Funkin MOD Vs Shaggy",
+                artist: "NA",
+                image: "imgjuegos/fnfvsshaggy.jpeg",
+                song: "juegosmusica/fnfv.mp3",
+                dancePage: "Juegos/fnfshaggy/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Valiste Churro!",
+                    redirect: "Juegos/fnfshaggy/index.html"
+                }
+            },
+            {
+                title: "Super Mario 127",
+                artist: "LSS",
+                image: "imgjuegos/mario127.jpeg",
+                song: "juegosmusica/mario127.mp3",
+                dancePage: "Juegos/MARIO127.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No te caigas al vacio!",
+                    redirect: "Juegos/MARIO127.html"
+                }
+            },
+            {
+                title: "Minecraft: Precision Client",
+                artist: "Mojang/Precision Client",
+                image: "imgjuegos/minecraft.jpg",
+                song: "juegosmusica/mc.mp3",
+                dancePage: "Juegos/minecraft/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Si quieres jugar con tus amigos abre el mundo a LAN!",
+                    redirect: "Juegos/minecraft/index.html"
+                }
+            },
+            {
+                title: "Slope",
+                artist: "Y8",
+                image: "imgjuegos/slope.jpg",
+                song: "juegosmusica/slope.mp3",
+                dancePage: "Juegos/slope/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Es hora de esquivar los obstaculos!",
+                    redirect: "Juegos/slope/index.html"
+                }
+            },
+            {
+                title: "Baldi",
+                artist: "NA",
+                image: "imgjuegos/baldi.jpg",
+                song: "juegosmusica/baldi.mp3",
+                dancePage: "Juegos/baldi/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... Recuerda: ¡1+1 = 2!",
+                    redirect: "Juegos/baldi/index.html"
+                }
+            },
+            {
+                title: "Cookie Clicker",
+                artist: "NA",
+                image: "imgjuegos/cookie.png",
+                song: "titulo.mp3",
+                dancePage: "Juegos/cookie/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Haz click en la galleta!",
+                    redirect: "Juegos/cookie/index.html"
+                }
+            },
+            {
+                title: "Five Nights at Freddy's",
+                artist: "Scott",
+                image: "imgjuegos/fnafbg.jpeg",
+                song: "juegosmusica/fnaf.mp3",
+                dancePage: "Juegos/FNAF1/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego...",
+                    redirect: "Juegos/FNAF1/index.html"
+                }
+            },
+            {
+                title: "Mario Kart 64",
+                artist: "Nintendo",
+                image: "imgjuegos/mk64b.jpg",
+                song: "juegosmusica/mk64.mp3",
+                dancePage: "Juegos/MarioKart64/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Recuerda siempre pegarle al chango!",
+                    redirect: "Juegos/MarioKart64/index.html"
+                }
+            },
+            {
+                title: "Super Mario 64",
+                artist: "Nintendo",
+                image: "imgjuegos/mario64.jpg",
+                song: "juegosmusica/mario64.mp3",
+                dancePage: "Juegos/SM64/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No olvides tirar al pinguino por el vacio!",
+                    redirect: "Juegos/SM64/index.html"
+                }
+            },
+            {
+                title: "Sonic Mania",
+                artist: "SEGA",
+                image: "imgjuegos/mania.jpg",
+                song: "juegosmusica/mania.mp3",
+                dancePage: "Juegos/mania/index.html",
+                alert: {
+                    type: "info",
+                    message: "Cuando inicie el juego presiona ESC (Escape) en tu teclado para iniciar un mod menu, ahi elije el nivel porque el menu no sirve.",
+                    redirect: "Juegos/mania/index.html"
+                }
+            },
+            {
+                title: "Super Mario Construct",
+                artist: "LSS",
+                image: "imgjuegos/SMC.jpeg",
+                song: "juegosmusica/smc.mp3",
+                dancePage: "Juegos/MARIO.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No olvides usar tu creatividad al maximo!",
+                    redirect: "Juegos/MARIO.html"
+                }
+            },
+            {
+                title: "Super Yoshi Construct",
+                artist: "LSS",
+                image: "imgjuegos/yfs.jpeg",
+                song: "juegosmusica/smc.mp3",
+                dancePage: "Juegos/YOSHI.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡No olvides usar tu creatividad al maximo!",
+                    redirect: "Juegos/YOSHI.html"
+                }
+            },
+            {
+                title: "Tomb of The Mask",
+                artist: "NA",
+                image: "imgjuegos/totm.jpg",
+                song: "titulo.mp3",
+                dancePage: "Juegos/totm/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Veremos quien es el mejor!",
+                    redirect: "Juegos/totm/index.html"
+                }
+            },
+            {
+                title: "Subway Surfers",
+                artist: "SYBO Games",
+                image: "imgjuegos/SBS.jpeg",
+                song: "juegosmusica/sbs.mp3",
+                dancePage: "Juegos/subwaysurferssanfrancisco/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¿Superaras mi bellisimo record de 28765? :o",
+                    redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+                }
+            },
+            {
+                title: "Henry Stickmin: BTB",
+                artist: "Puffballs United & Newgrounds",
+                image: "imgjuegos/btb.jpeg",
+                song: "juegosmusica/hsita.mp3",
+                dancePage: "Juegos/ita3/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita3/index.html"
+                }
+            },
+            {
+                title: "Henry Stickmin: ETP",
+                artist: "Puffballs United & Newgrounds",
+                image: "imgjuegos/etp.jpeg",
+                song: "juegosmusica/hsita.mp3",
+                dancePage: "Juegos/ita4/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita4/index.html"
+                }
+            },
+            {
+                title: "Henry Stickmin: STD",
+                artist: "Puffballs United & Newgrounds",
+                image: "imgjuegos/std.jpeg",
+                song: "juegosmusica/hsita.mp3",
+                dancePage: "Juegos/ita5/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita5/index.html"
+                }
+            },
+            {
+                title: "Henry Stickmin: ITA",
+                artist: "Puffballs United & Newgrounds",
+                image: "imgjuegos/ita.jpg",
+                song: "juegosmusica/hsita.mp3",
+                dancePage: "Juegos/ita/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita/index.html"
+                }
+            },
+            {
+                title: "Henry Stickmin: FTC",
+                artist: "Puffballs United & Newgrounds",
+                image: "imgjuegos/ftc.jpeg",
+                song: "juegosmusica/hsita.mp3",
+                dancePage: "Juegos/ita6/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita6/index.html"
+                }
+            },
+            {
+                title: "The Binding Of Isaac - FL",
+                artist: "Edmund McMillen, Florian Himsl",
+                image: "imgjuegos/isaacico.jpg",
+                song: "juegosmusica/isaac.mp3",
+                dancePage: "Juegos/ita2/index.html",
+                alert: {
+                    type: "info",
+                    message: "Recomendamos pantalla completa.",
+                    redirect: "Juegos/ita2/index.html"
+                }
+            },
+            {
+                title: "AstralEmulator",
+                artist: "Aplicacion basada en la app codigo abierto emulator.js modificada por AstralTeam",
+                image: "imgjuegos/noimg.png",
+                song: "titulo.mp3",
+                dancePage: "Juegos/AstralEmulator1.5/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Le recomendamos mucho Jugar Super Mario World!",
+                    redirect: "Juegos/AstralEmulator1.5/index.html"
+                }
+            },
+            {
+                title: "Crossy Road",
+                artist: "Hipster Whale",
+                image: "imgjuegos/crossy.jpg",
+                song: "juegosmusica/tloi.mp3",
+                dancePage: "Juegos/crossyroad/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego... ¡Mira 2 veces antes de cruzar la calle!",
+                    redirect: "Juegos/crossyroad/index.html"
+                }
+            },
+            {
+                title: "Super Smash Flash (EXPERIMENTAL)",
+                artist: "NA",
+                image: "imgjuegos/ssf2.jpeg",
+                song: "titulo.mp3",
+                dancePage: "Juegos/ita7/index.html",
+                alert: {
+                    type: "info",
+                    message: "Puede que no funcione en tu dispositivo. Igualmente, puedes intentar.",
+                    redirect: "Juegos/ita7/index.html"
+                }
+            },
+            {
+                title: "Bad Ice Cream 1",
+                artist: "NA",
+                image: "Juegos/badicecream/bad-ice-cream.png",
+                song: "titulo.mp3",
+                dancePage: "Juegos/badicecream/index.html",
+                alert: {
+                    type: "loading",
+                    message: "Cargando el juego..",
+                    redirect: "Juegos/badicecream/index.html"
+                }
+            },
+            {
+                title: "Musica",
+                artist: "AstralTeam: Aqui puede escuchar la musica de la pagina web.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "musica.html",
+                alert: {
+                    type: "critical",
+                    message: "¡Esta en desarrollo!",
+                    redirect: "musica.html"
+                }
+            }
+        ];
+
+        // Función para crear el fondo espacial mejorado
+        function createSpaceBackground() {
+            const starsContainer = document.getElementById('starsContainer');
+            starsContainer.innerHTML = '';
+            
+            // Crear estrellas
+            const numStars = 300;
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamaño aleatorio
+                const size = Math.random();
+                if (size < 0.6) {
+                    star.classList.add('small');
+                } else if (size < 0.9) {
+                    star.classList.add('medium');
+                } else {
+                    star.classList.add('large');
+                }
+                
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Profundidad aleatoria para efecto 3D
+                const depth = Math.random() * 500;
+                star.style.transform = `translateZ(${depth}px)`;
+                
+                // Velocidad de animación aleatoria
+                const duration = 20 + Math.random() * 80;
+                star.style.animationDuration = `${duration}s`;
+                
+                // Algunas estrellas parpadean
+                if (Math.random() > 0.7) {
+                    star.classList.add('twinkle');
+                }
+                
+                starsContainer.appendChild(star);
+            }
+            
+            // Crear nebulosas
+            const numNebulas = 5;
+            for (let i = 0; i < numNebulas; i++) {
+                const nebula = document.createElement('div');
+                nebula.className = 'nebula';
+                
+                // Tamaño aleatorio
+                const size = 100 + Math.random() * 200;
+                nebula.style.width = `${size}px`;
+                nebula.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                nebula.style.left = `${Math.random() * 100}%`;
+                nebula.style.top = `${Math.random() * 100}%`;
+                
+                // Color aleatorio
+                const colors = ['#ff00ff', '#00ffff', '#9900ff', '#ff6600', '#00ff99'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                nebula.style.background = color;
+                
+                starsContainer.appendChild(nebula);
+            }
+            
+            // Crear estrellas fugaces periódicamente
+            setInterval(createShootingStar, 5000);
+        }
+        
+        function createShootingStar() {
+            const starsContainer = document.getElementById('starsContainer');
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            
+            // Posición aleatoria
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            shootingStar.style.left = `${startX}%`;
+            shootingStar.style.top = `${startY}%`;
+            
+            // Ángulo aleatorio
+            const angle = Math.random() * 45;
+            shootingStar.style.transform = `rotate(${angle}deg)`;
+            
+            // Duración aleatoria
+            const duration = 1 + Math.random() * 2;
+            shootingStar.style.animationDuration = `${duration}s`;
+            
+            starsContainer.appendChild(shootingStar);
+            
+            // Eliminar la estrella fugaz después de la animación
+            setTimeout(() => {
+                shootingStar.remove();
+            }, duration * 1000);
+        }
+
+        function createCarouselItems() {
+            carousel.innerHTML = '';
+            gameData.forEach((game, index) => {
+                const item = document.createElement('div');
+                item.classList.add('carousel-item');
+                if (index === 0) item.classList.add('active');
+                item.innerHTML = `<img src="${game.image}" alt="${game.title}">`;
+                item.addEventListener('click', () => {
+                    if (!isTransitioning) {
+                        currentIndex = index;
+                        updateGame();
+                        playButtonSound();
+                    }
+                });
+                carousel.appendChild(item);
+            });
+        }
+
+        function updateGame() {
+            const game = gameData[currentIndex];
+            gameTitle.textContent = game.title;
+            gameArtist.textContent = game.artist;
+            gameImage.src = game.image;
+            
+            if (audioPlayer.src !== game.song && game.song) {
+                audioPlayer.pause();
+                menuMusic.pause();
+                audioPlayer.src = game.song;
+                const playPromise = audioPlayer.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Audio playback error:", error);
+                    });
+                }
+            }
+
+            // Reproducir el sonido de cambio de juego
+            const changeGameSound = document.getElementById('changeGameSound');
+            changeGameSound.currentTime = 0;
+            changeGameSound.play().catch(error => {
+                console.log("Change game sound error:", error);
+            });
+
+            danceButton.onclick = playGame;
+
+            document.querySelectorAll('.carousel-item').forEach((item, index) => {
+                item.classList.toggle('active', index === currentIndex);
+            });
+
+            carousel.style.transform = `translateX(-${currentIndex * 170}px)`;
+        }
+
+        function moveCarousel(direction) {
+            if (!isTransitioning) {
+                currentIndex = (currentIndex + direction + gameData.length) % gameData.length;
+                updateGame();
+                playButtonSound();
+            }
+        }
+
+        function playButtonSound() {
+            buttonSound.currentTime = 0;
+            const playPromise = buttonSound.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Button sound error:", error);
+                });
+            }
+        }
+
+        function playGame() {
+            if (isTransitioning) return;
+
+            const game = gameData[currentIndex];
+            const alert = game.alert;
+
+            if (alert) {
+                showAlert(alert.type, alert.message, alert.redirect);
+            } else {
+                window.location.href = game.dancePage;
+            }
+        }
+
+        function startGame() {
+            if (hasStarted || isTransitioning) return;
+            
+            isTransitioning = true;
+            hasStarted = true;
+            
+            titleScreen.classList.add('hidden');
+            
+            // Show menu screen after title screen fades out
+            setTimeout(() => {
+                menuScreen.classList.add('visible');
+                isTransitioning = false;
+            }, 1000);
+            
+            const fadeInterval = setInterval(() => {
+                if (titleMusic.volume > 0.1) {
+                    titleMusic.volume -= 0.1;
+                } else {
+                    clearInterval(fadeInterval);
+                    titleMusic.pause();
+                    titleMusic.currentTime = 0;
+                    menuMusic.play().catch(error => {
+                        console.log("Menu music error:", error);
+                    });
+                }
+            }, 100);
+        }
+
+        function showMainContainer() {
+            menuScreen.classList.remove('visible');
+            mainContainer.classList.add('visible');
+        }
+
+        function handleMenuSelection() {
+            const selectedOption = document.querySelector('.menu-option.active');
+            const action = selectedOption.getAttribute('data-action');
+            
+            playButtonSound();
+            
+            switch(action) {
+                case 'play':
+                    showMainContainer();
+                    break;
+                case 'support':
+                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestras redes sociales o envía un correo a soporte@astral.com');
+                    break;
+                case 'exit':
+                    showAlert('question', '¿Estás seguro que deseas salir?', 'about:blank');
+                    break;
+            }
+        }
+
+        function navigateMenu(direction) {
+            const menuOptions = document.querySelectorAll('.menu-option');
+            const activeIndex = Array.from(menuOptions).findIndex(option => option.classList.contains('active'));
+            
+            menuOptions[activeIndex].classList.remove('active');
+            
+            let newIndex = (activeIndex + direction) % menuOptions.length;
+            if (newIndex < 0) newIndex = menuOptions.length - 1;
+            
+            menuOptions[newIndex].classList.add('active');
+            playButtonSound();
+        }
+
+        function showTitleScreen() {
+            loadingScreen.style.display = 'none';
+            titleScreen.classList.remove('hidden');
+            titleMusic.play().catch(error => {
+                console.log("Title music error:", error);
+            });
+            showAlert('info', '¡Bienvenido a AstralProton V 2.8! Te recomendamos leer los cambios recientes para estar al pendiente :]');
+        }
+
+        // Get DOM elements after function declarations
+        const carousel = document.getElementById('carousel');
+        const gameTitle = document.getElementById('gameTitle');
+        const gameArtist = document.getElementById('gameArtist');
+        const gameImage = document.getElementById('gameImage');
+        const imageSection = document.getElementById('imageSection');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const buttonSound = document.getElementById('buttonSound');
+        const danceButton = document.getElementById('danceButton');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const titleScreen = document.getElementById('titleScreen');
+        const menuScreen = document.getElementById('menuScreen');
+        const mainContainer = document.getElementById('mainContainer');
+        const titleMusic = document.getElementById('titleMusic');
+        const menuMusic = document.getElementById('menuMusic');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loadingText = document.getElementById('loadingText');
+        const continueButton = document.getElementById('continueButton');
+
+        let currentIndex = 0;
+        let hasStarted = false;
+        let isTransitioning = false;
+
+        // Elegir la música de la pantalla de título aquí
+        const titleMusicSrc = "titulonuevo.mp3"; // Cambia esto para elegir otra música
+
+        titleMusic.src = titleMusicSrc;
+        titleMusic.volume = 1;
+        menuMusic.volume = 1;
+        audioPlayer.volume = 1;
+        buttonSound.volume = 0.5;
+        document.getElementById('changeGameSound').volume = 0.3;
+
+        titleMusic.loop = true;
+        menuMusic.loop = true;
+
+        prevButton.addEventListener('click', () => moveCarousel(-1));
+        nextButton.addEventListener('click', () => moveCarousel(1));
+        danceButton.addEventListener('click', playGame);
+        continueButton.addEventListener('click', showTitleScreen);
+
+        // Add event listeners for menu options
+        document.querySelectorAll('.menu-option').forEach(option => {
+            option.addEventListener('click', handleMenuSelection);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !hasStarted) {
+                startGame();
+            } else if (hasStarted && menuScreen.classList.contains('visible')) {
+                // Menu screen navigation
+                if (e.key === 'ArrowUp') navigateMenu(-1);
+                else if (e.key === 'ArrowDown') navigateMenu(1);
+                else if (e.key === 'Enter') handleMenuSelection();
+            } else if (hasStarted && !isTransitioning && mainContainer.classList.contains('visible')) {
+                // Main container navigation
+                if (e.key === 'ArrowLeft') moveCarousel(-1);
+                else if (e.key === 'ArrowRight') moveCarousel(1);
+                else if (e.key === 'Enter') playGame();
+            }
+        });
+
+        window.addEventListener('load', () => {
+            // Crear el fondo espacial mejorado
+            createSpaceBackground();
+            createCarouselItems();
+            updateGame();
+
+            // Mostrar el botón de continuar inmediatamente para evitar que se quede estancado
+            loadingText.textContent = '¡Carga completada!';
+            continueButton.style.display = 'block';
+        });
+
+        // Alert System Functions
+        function showAlert(type, message, redirect = null) {
+            const overlay = document.getElementById('alertOverlay');
+            const container = document.getElementById('alertContainer');
+            const contentDiv = document.getElementById('alertContent');
+
+            let content = '';
+            let borderColor = '';
+
+            switch(type) {
+                case 'loading':
+                    content = `
+                        <div class="loading-spinner"></div>
+                        <div class="alert-title">Cargando</div>
+                        <div class="alert-text">${message || 'Por favor espere...'}</div>
+                    `;
+                    borderColor = '#4CAF50';
+                    break;
+                case 'question':
+                    content = `
+                        <div class="alert-icon">❓</div>
+                        <div class="alert-title">Pregunta</div>
+                        <div class="alert-text">${message}</div>
+                        <button class="alert-button" onclick="hideAlert(true)">Sí</button>
+                        <button class="alert-button" onclick="hideAlert(false)">No</button>
+                    `;
+                    borderColor = '#87CEEB';
+                    break;
+                case 'info':
+                    content = `
+                        <div class="alert-icon">ℹ️</div>
+                        <div class="alert-title">Información</div>
+                        <div class="alert-text">${message}</div>
+                        <button class="alert-button" onclick="hideAlert(true)">OK</button>
+                    `;
+                    borderColor = '#0000FF';
+                    break;
+                case 'critical':
+                    content = `
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-title">Alerta Crítica</div>
+                        <div class="alert-text">${message}</div>
+                        <button class="alert-button" onclick="hideAlert()">OK</button>
+                    `;
+                    borderColor = '#DC143C';
+                    break;
+            }
+
+            contentDiv.innerHTML = content;
+            container.style.border = `2px solid ${borderColor}`;
+            overlay.classList.add('active');
+
+            // Play alert sound
+            const alertSound = document.getElementById('alertSound');
+            alertSound.currentTime = 0;
+            alertSound.play().catch(error => {
+                console.log("Alert sound error:", error);
+            });
+
+            if (type === 'loading') {
+                setTimeout(() => hideAlert(true), 1500); // Tiempo reducido para evitar estancamiento
+            }
+
+            // Store the redirect URL
+            overlay.dataset.redirect = redirect || '';
+        }
+
+        function hideAlert(result) {
+            const overlay = document.getElementById('alertOverlay');
+            overlay.classList.remove('active');
+            
+            if (result === true) {
+                const redirect = overlay.dataset.redirect;
+                if (redirect) {
+                    window.location.href = redirect;
+                }
+            }
+        }
+
+        // Exponer la función hideAlert globalmente para que pueda ser llamada desde HTML
+        window.hideAlert = hideAlert;
+    </script>
+</body>
+</html>
