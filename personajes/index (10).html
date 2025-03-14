@@ -901,6 +901,11 @@
 
         .portal-logo {
             font-size: 1.8em;
+            color:0,0,0.3);
+        }
+
+        .portal-logo {
+            font-size: 1.8em;
             color: var(--primary);
             text-shadow: 0 0 5px var(--glow-primary);
             font-weight: 700;
@@ -1670,81 +1675,6 @@
             font-weight: normal;
         }
 
-        /* Game iframe container styles */
-        .game-iframe-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 0, 26, 0.9);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            backdrop-filter: blur(10px);
-        }
-
-        .game-iframe-container.visible {
-            display: flex;
-        }
-
-        .game-iframe-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(26, 0, 51, 0.9);
-            border-bottom: 2px solid var(--secondary);
-            z-index: 10;
-        }
-
-        .game-iframe-title {
-            font-size: 1.8em;
-            color: var(--primary);
-            text-shadow: 0 0 5px var(--glow-primary);
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .game-iframe-controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        .game-iframe-button {
-            padding: 10px 20px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: var(--border-radius-md);
-            color: var(--text-primary);
-            font-size: 1em;
-            cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: var(--shadow-normal);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .game-iframe-button:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-large);
-        }
-
-        .game-iframe-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         /* Responsive Styles */
         @media (max-width: 1200px) {
             .cyberpunk-logo {
@@ -2086,20 +2016,6 @@
         </div>
     </div>
 
-    <!-- Game iframe container -->
-    <div class="game-iframe-container" id="gameIframeContainer">
-        <div class="game-iframe-header">
-            <div class="game-iframe-title" id="gameIframeTitle">Juego</div>
-            <div class="game-iframe-controls">
-                <button class="game-iframe-button" id="fullscreenButton"><i class="fas fa-expand"></i> Pantalla Completa</button>
-                <button class="game-iframe-button" id="closeIframeButton"><i class="fas fa-times"></i> Cerrar</button>
-            </div>
-        </div>
-        <div class="game-iframe-content">
-            <iframe id="gameIframe" class="game-iframe" src="about:blank" allowfullscreen></iframe>
-        </div>
-    </div>
-
     <!-- Discord Support Notice -->
     <div class="discord-support">
         <i class="fab fa-discord discord-icon"></i>
@@ -2141,6 +2057,20 @@
                 }
             },
             {
+                title: "Anuncios",
+                artist: "Aqui solo veras los cambios entre las versiones.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "changes.md",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "info",
+                    message: "Verás los cambios entre versiones.",
+                    redirect: "changes.md"
+                }
+            },
+            {
                 title: "ROMS",
                 artist: "Aqui estare subiendo las ROMS que me voy encontrando y descargando.",
                 image: "imgjuegos/noimg.png",
@@ -2155,31 +2085,17 @@
                 }
             },
             {
-                title: "8 Ball Pool",
-                artist: "?",
-                image: "imgjuegos/8ballpool.jpeg",
-                song: "titulo.mp3",
-                dancePage: "Juegos/8ballpool/index.html",
+                title: "Angry Birds",
+                artist: "Rovio Entertainment",
+                image: "imgjuegos/angry.jpeg",
+                song: "juegosmusica/angry.mp3",
+                dancePage: "Juegos/angrybirds/index.html",
                 category: "puzzle",
                 isNew: true,
                 alert: {
                     type: "loading",
-                    message: "Cargando el juego... ¿Alguien realmente lee esto?)",
-                    redirect: "Juegos/8ballpool/index.html"
-                }
-            },
-            {
-                title: "Fireboy & Watergirl",
-                artist: "?",
-                image: "imgjuegos/FYW.jpeg",
-                song: "titulo.mp3",
-                dancePage: "Juegos/firewater/index.html",
-                category: "puzzle",
-                isNew: true,
-                alert: {
-                    type: "loading",
-                    message: "Cargando el juego... ¿Alguien realmente lee esto?)",
-                    redirect: "Juegos/firewater/index.html"
+                    message: "Cargando el juego... Nunca uses el pajaro azul :)",
+                    redirect: "Juegos/angrybirds/index.html"
                 }
             },
             {
@@ -2225,7 +2141,7 @@
                 }
             },
             {
-                title: "FNF Garcello Mod",
+                title: "Friday Night Funkin Garcello Mod",
                 artist: "NA",
                 image: "imgjuegos/fnfg.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2239,7 +2155,7 @@
                 }
             },
             {
-                title: "FNF",
+                title: "Friday Night Funkin (Ver. 1)",
                 artist: "ninjamuffin",
                 image: "imgjuegos/fnfviejo.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2253,7 +2169,7 @@
                 }
             },
             {
-                title: "FNF Vs Shaggy",
+                title: "Friday Night Funkin MOD Vs Shaggy",
                 artist: "NA",
                 image: "imgjuegos/fnfvsshaggy.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2287,7 +2203,7 @@
                 song: "juegosmusica/mc.mp3",
                 dancePage: "Juegos/minecraft/index.html",
                 category: "action",
-                isNew: false,
+                isNew: true,
                 alert: {
                     type: "loading",
                     message: "Cargando el juego... ¡Si quieres jugar con tus amigos abre el mundo a LAN!",
@@ -2324,7 +2240,7 @@
             },
             {
                 title: "Cookie Clicker",
-                artist: "(En caso de no funcionar presione pantalla completa)",
+                artist: "NA",
                 image: "imgjuegos/cookie.png",
                 song: "titulo.mp3",
                 dancePage: "Juegos/cookie/index.html",
@@ -2343,7 +2259,7 @@
                 song: "juegosmusica/fnaf.mp3",
                 dancePage: "Juegos/FNAF1/index.html",
                 category: "action",
-                isNew: false,
+                isNew: true,
                 alert: {
                     type: "loading",
                     message: "Cargando el juego...",
@@ -2561,7 +2477,7 @@
                 }
             },
             {
-                title: "SSF2 (EXPERIMENTAL)",
+                title: "Super Smash Flash (EXPERIMENTAL)",
                 artist: "NA",
                 image: "imgjuegos/ssf2.jpeg",
                 song: "titulo.mp3",
@@ -2587,6 +2503,34 @@
                     message: "Cargando el juego..",
                     redirect: "Juegos/badicecream/index.html"
                 }
+            },
+            {
+                title: "Musica",
+                artist: "AstralTeam: Aqui puede escuchar la musica de la pagina web.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "musica.html",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "critical",
+                    message: "¡Esta en desarrollo!",
+                    redirect: "musica.html"
+                }
+            },
+            {
+                title: "Consejos",
+                artist: "AstralTeam: Consejos útiles para usar la plataforma.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "consejos.html",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "info",
+                    message: "Cargando consejos útiles para mejorar tu experiencia en AstralProton.",
+                    redirect: "consejos.html"
+                }
             }
         ];
 
@@ -2602,8 +2546,6 @@
         let starsCreated = false;
         let shootingStarInterval = null;
         let imageCache = {};
-        let originalMusicVolume = 1;
-        let isMusicMuted = false;
 
         // Elementos DOM
         const carousel = document.getElementById('carousel');
@@ -2631,11 +2573,6 @@
         const backToMenuButton = document.getElementById('backToMenu');
         const favoriteButton = document.getElementById('favoriteButton');
         const starsContainer = document.getElementById('starsContainer');
-        const gameIframeContainer = document.getElementById('gameIframeContainer');
-        const gameIframe = document.getElementById('gameIframe');
-        const gameIframeTitle = document.getElementById('gameIframeTitle');
-        const closeIframeButton = document.getElementById('closeIframeButton');
-        const fullscreenButton = document.getElementById('fullscreenButton');
 
         // Precarga de imágenes
         function preloadImages() {
@@ -3259,80 +3196,21 @@
             }
         }
 
-        // Nueva función para mostrar juego en iframe
-        function showGameInIframe(gameUrl, gameTitle) {
-            if (!gameIframeContainer || !gameIframe || !gameIframeTitle) return;
-            
-            // Guardar el volumen actual de la música antes de mutearla
-            if (audioPlayer && !isMusicMuted) {
-                originalMusicVolume = audioPlayer.volume;
-                audioPlayer.volume = 0;
-                isMusicMuted = true;
-            }
-            
-            if (menuMusic && !isMusicMuted) {
-                originalMusicVolume = menuMusic.volume;
-                menuMusic.volume = 0;
-                isMusicMuted = true;
-            }
-            
-            // Configurar el iframe
-            gameIframe.src = gameUrl;
-            gameIframeTitle.textContent = gameTitle;
-            
-            // Mostrar el contenedor
-            gameIframeContainer.classList.add('visible');
-            
-            // Configurar botones
-            if (fullscreenButton) {
-                fullscreenButton.onclick = () => {
-                    window.location.href = gameUrl;
-                };
-            }
-            
-            if (closeIframeButton) {
-                closeIframeButton.onclick = closeGameIframe;
-            }
-        }
-        
-        // Función para cerrar el iframe del juego
-        function closeGameIframe() {
-            if (!gameIframeContainer) return;
-            
-            // Restaurar el volumen de la música
-            if (audioPlayer && isMusicMuted) {
-                audioPlayer.volume = originalMusicVolume;
-                isMusicMuted = false;
-            }
-            
-            if (menuMusic && isMusicMuted) {
-                menuMusic.volume = originalMusicVolume;
-                isMusicMuted = false;
-            }
-            
-            // Ocultar el contenedor
-            gameIframeContainer.classList.remove('visible');
-            
-            // Limpiar el iframe
-            setTimeout(() => {
-                if (gameIframe) {
-                    gameIframe.src = 'about:blank';
-                }
-            }, 300);
-        }
-
         function playGame() {
             if (isTransitioning) return;
 
             const game = gameData[currentIndex];
             if (!game) return;
             
+            const alert = game.alert;
+
             // Registrar juego jugado
             recordGamePlayed();
 
-            // En lugar de redirigir, mostrar el juego en un iframe
-            if (game.dancePage) {
-                showGameInIframe(game.dancePage, game.title);
+            if (alert) {
+                showAlert(alert.type, alert.message, alert.redirect);
+            } else if (game.dancePage) {
+                window.location.href = game.dancePage;
             }
         }
 
@@ -3409,7 +3287,7 @@
                     showTipsScreen();
                     break;
                 case 'support':
-                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestro Discord! https://discord.gg/GEPrCZkWhs');
+                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestro Discord o envía un correo a soporte@astral.com');
                     break;
                 case 'exit':
                     showAlert('question', '¿Estás seguro que deseas salir?', 'about:blank');
@@ -3846,13 +3724,7 @@
             if (result === true) {
                 const redirect = overlay.dataset.redirect;
                 if (redirect) {
-                    // En lugar de redirigir, mostrar en iframe
-                    const game = gameData.find(g => g.dancePage === redirect);
-                    if (game) {
-                        showGameInIframe(redirect, game.title);
-                    } else {
-                        window.location.href = redirect;
-                    }
+                    window.location.href = redirect;
                 }
             }
         }
@@ -4032,11 +3904,6 @@
                     else if (e.key === 'Escape') {
                         mainContainer.classList.remove('visible');
                         if (menuScreen) menuScreen.classList.add('visible');
-                    }
-                } else if (gameIframeContainer && gameIframeContainer.classList.contains('visible')) {
-                    // Game iframe navigation
-                    if (e.key === 'Escape') {
-                        closeGameIframe();
                     }
                 }
             });

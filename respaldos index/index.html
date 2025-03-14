@@ -3,33 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstralProton V 3.0</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AstralProton V 2.8</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --primary: #ff00ff;
-            --secondary: #00ffff;
-            --accent: #9900ff;
-            --dark-bg: #0a001a;
-            --darker-bg: #050010;
-            --panel-bg: rgba(26, 0, 51, 0.7);
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3ff;
-            --glow-primary: rgba(255, 0, 255, 0.7);
-            --glow-secondary: rgba(0, 255, 255, 0.5);
-            --gradient-primary: linear-gradient(45deg, #ff00ff, #00ffff);
-            --gradient-secondary: linear-gradient(to right, #9900ff, #ff00ff);
-            --border-radius-sm: 10px;
-            --border-radius-md: 15px;
-            --border-radius-lg: 25px;
-            --transition-fast: 0.2s ease;
-            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
-            --shadow-normal: 0 0 15px rgba(255, 0, 255, 0.5);
-            --shadow-large: 0 0 25px rgba(255, 0, 255, 0.7);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
         * {
             margin: 0;
@@ -38,18 +14,13 @@
         }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-primary);
-            overflow: hidden;
-            line-height: 1.6;
-        }
-
-        h1, h2, h3, h4, h5, h6, .title-font {
             font-family: 'Orbitron', sans-serif;
+            background-color: #0a001a;
+            color: #fff;
+            overflow: hidden;
         }
 
-        /* Enhanced Space Background */
+        /* Fondo espacial optimizado */
         .space-background {
             position: fixed;
             top: 0;
@@ -57,7 +28,7 @@
             width: 100%;
             height: 100%;
             background: radial-gradient(ellipse at center, #1a0033 0%, #0a001a 70%, #050010 100%);
-            z-index: -3;
+            z-index: -2;
         }
 
         .stars-container {
@@ -67,22 +38,9 @@
             width: 100%;
             height: 100%;
             perspective: 500px;
-            z-index: -2;
+            z-index: -1;
             overflow: hidden;
         }
-
-        .parallax-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            will-change: transform;
-        }
-
-        .layer-1 { z-index: -2; }
-        .layer-2 { z-index: -1; }
-        .layer-3 { z-index: 0; }
 
         .star {
             position: absolute;
@@ -120,7 +78,6 @@
             filter: blur(30px);
             opacity: 0.15;
             z-index: -1;
-            animation: pulsate 8s ease-in-out infinite;
         }
 
         .shooting-star {
@@ -140,15 +97,10 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 60px;
+            width: 40px;
             height: 1px;
             background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
             transform: translateX(-100%);
-        }
-
-        @keyframes pulsate {
-            0%, 100% { transform: scale(1); opacity: 0.15; }
-            50% { transform: scale(1.1); opacity: 0.2; }
         }
 
         @keyframes shootingStar {
@@ -196,81 +148,40 @@
         }
 
         .loading-text {
-            font-size: 2.5em;
-            color: var(--text-primary);
-            text-shadow: 0 0 10px var(--glow-primary);
-            margin-bottom: 30px;
-            font-weight: 700;
-            letter-spacing: 2px;
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
         }
 
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: var(--secondary);
-            border-left-color: var(--primary);
+            border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
-            margin: 0 auto 30px;
-            box-shadow: 0 0 20px var(--glow-primary);
-        }
-
-        .loading-progress {
-            width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin-bottom: 30px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .loading-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--gradient-primary);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-            box-shadow: 0 0 10px var(--glow-primary);
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         .continue-button {
-            padding: 12px 30px;
-            background: var(--gradient-primary);
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
-            font-size: 1.3em;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1.2em;
             cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s;
             font-family: 'Orbitron', sans-serif;
             display: block;
-            box-shadow: var(--shadow-normal);
-            letter-spacing: 1px;
-            font-weight: 600;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .continue-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         .continue-button:hover {
             transform: scale(1.05);
-            box-shadow: var(--shadow-large);
-        }
-
-        .continue-button:hover::before {
-            left: 100%;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
         }
 
         /* Title Screen Styles */
@@ -296,30 +207,30 @@
 
         .logo-container {
             position: relative;
-            margin-bottom: 70px;
+            margin-bottom: 50px;
             transform: scale(1);
             padding: 20px;
         }
 
-        /* Enhanced Logo */
+        /* Logo mejorado */
         .cyberpunk-logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 7em;
-            font-weight: 900;
+            font-size: 6em;
+            font-weight: 700;
             text-transform: uppercase;
             color: white;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             position: relative;
             display: inline-block;
             transform: skew(-5deg);
             text-shadow: 
-                3px 0 0 var(--secondary),
-                -3px 0 0 var(--primary),
+                3px 0 0 #00ffff,
+                -3px 0 0 #ff00ff,
                 0 0 20px rgba(255, 255, 255, 0.5);
             background: linear-gradient(to bottom, #ffffff, #aaaaaa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
         }
 
         .cyberpunk-logo::before,
@@ -334,31 +245,17 @@
         }
 
         .cyberpunk-logo::before {
-            color: var(--secondary);
-            transform: translateX(-5px);
+            color: #00ffff;
+            transform: translateX(-3px);
             animation: glitch-1 2s infinite linear alternate-reverse;
-            filter: drop-shadow(0 0 8px var(--secondary));
+            filter: drop-shadow(0 0 5px #00ffff);
         }
 
         .cyberpunk-logo::after {
-            color: var(--primary);
-            transform: translateX(5px);
+            color: #ff00ff;
+            transform: translateX(3px);
             animation: glitch-2 3s infinite linear alternate-reverse;
-            filter: drop-shadow(0 0 8px var(--primary));
-        }
-
-        .logo-version {
-            position: absolute;
-            right: -20px;
-            top: 0;
-            font-size: 1.5rem;
-            color: var(--secondary);
-            background: var(--primary);
-            padding: 5px 10px;
-            border-radius: var(--border-radius-sm);
-            transform: rotate(15deg);
-            box-shadow: 0 0 10px var(--glow-primary);
-            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 5px #ff00ff);
         }
 
         @keyframes glitch-1 {
@@ -378,34 +275,14 @@
         }
 
         .press-enter {
-            font-size: 2.2em;
-            color: var(--text-primary);
-            text-shadow: 0 0 10px var(--glow-primary);
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
             animation: pulse 2s infinite;
-            margin-top: 30px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            position: relative;
+            margin-top: 20px;
         }
 
-        .press-enter::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            transition: width 0.5s ease;
-            box-shadow: 0 0 10px var(--glow-primary);
-        }
-
-        .press-enter:hover::after {
-            width: 100%;
-        }
-
-        /* Enhanced Menu Screen Styles */
+        /* Menu Screen Styles */
         .menu-screen {
             position: fixed;
             top: 0;
@@ -429,132 +306,44 @@
         }
 
         .menu-title {
-            font-size: 3.5em;
-            color: var(--primary);
-            text-shadow: 0 0 15px var(--glow-primary);
-            margin-bottom: 60px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            position: relative;
-            text-transform: uppercase;
+            font-size: 3em;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+            margin-bottom: 50px;
         }
 
-        .menu-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: var(--gradient-primary);
-            box-shadow: 0 0 10px var(--glow-primary);
-        }
-
-        /* Enhanced Menu Options Container */
         .menu-options {
             display: flex;
             flex-direction: column;
             gap: 25px;
             align-items: center;
-            position: relative;
-            perspective: 1000px;
         }
 
-        /* Enhanced menu buttons with 3D hover effect */
+        /* Botones del menú más grandes */
         .menu-option {
             padding: 20px 50px;
-            background: var(--panel-bg);
-            border: 3px solid var(--secondary);
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
+            background: rgba(26, 0, 51, 0.7);
+            border: 3px solid #00ffff;
+            border-radius: 30px;
+            color: #fff;
             font-size: 1.8em;
             cursor: pointer;
-            transition: all var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             font-family: 'Orbitron', sans-serif;
-            width: 320px;
+            width: 300px;
             text-align: center;
-            box-shadow: 0 0 15px var(--glow-secondary);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
             backdrop-filter: blur(5px);
-            letter-spacing: 2px;
-            font-weight: 600;
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
+            letter-spacing: 1px;
         }
 
-        .menu-option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.7s ease;
+        .menu-option:hover, .menu-option.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
         }
 
-        .menu-option::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient-primary);
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-option:hover::before, 
-        .menu-option.active::before {
-            left: 100%;
-        }
-
-        .menu-option:hover::after, 
-        .menu-option.active::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .menu-option:hover, 
-        .menu-option.active {
-            transform: scale(1.05) translateY(-5px) translateZ(20px);
-            box-shadow: 0 10px 25px var(--glow-primary);
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
-            border-color: var(--primary);
-        }
-
-        .menu-option i {
-            margin-right: 15px;
-            font-size: 1.1em;
-            vertical-align: middle;
-            color: var(--secondary);
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .menu-option:hover i,
-        .menu-option.active i {
-            transform: scale(1.2);
-            color: var(--primary);
-        }
-
-        /* Menu option selection indicator */
-        .menu-selection-indicator {
-            position: absolute;
-            left: -40px;
-            width: 30px;
-            height: 30px;
-            color: var(--primary);
-            font-size: 1.5em;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0.8;
-            filter: drop-shadow(0 0 5px var(--glow-primary));
-            animation: pulse 2s infinite;
-        }
-
-        /* Tips Screen Styles */
+        /* Consejos Screen Styles */
         .tips-screen {
             position: fixed;
             top: 0;
@@ -581,100 +370,485 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 30px;
         }
 
         .tips-title {
-            font-size: 2.8em;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--glow-primary);
-            font-weight: 700;
-            letter-spacing: 2px;
+            font-size: 2.5em;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
         }
 
         .back-button {
-            padding: 12px 25px;
-            background: var(--gradient-primary);
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
+            border-radius: 25px;
+            color: #fff;
             font-size: 1.2em;
             cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s;
             font-family: 'Orbitron', sans-serif;
-            box-shadow: var(--shadow-normal);
-            font-weight: 600;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         .back-button:hover {
             transform: scale(1.05);
-            box-shadow: var(--shadow-large);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
         }
 
         .tips-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 30px;
             margin-top: 20px;
         }
 
         .tip-card {
-            background: var(--panel-bg);
-            border: 2px solid var(--secondary);
-            border-radius: var(--border-radius-md);
-            padding: 25px;
-            box-shadow: 0 0 15px var(--glow-secondary);
+            background: rgba(26, 0, 51, 0.7);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
             backdrop-filter: blur(5px);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tip-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .tip-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 25px var(--glow-primary);
-        }
-
-        .tip-card:hover::before {
-            opacity: 1;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
         }
 
         .tip-title {
-            font-size: 1.6em;
-            color: var(--primary);
+            font-size: 1.5em;
+            color: #ff00ff;
             margin-bottom: 15px;
-            text-shadow: 0 0 5px var(--glow-primary);
-            font-weight: 700;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+        }
+
+        .tip-content {
+            color: #b3b3ff;
+            line-height: 1.6;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.95); }
+        }
+
+        .main-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .main-container.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Nuevas características de página de juegos */
+        .game-portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(26, 0, 51, 0.8);
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid #00ffff;
+            z-index: 10;
+        }
+
+        .portal-logo {
+            font-size: 1.5em;
+            color: #ff00ff;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.7);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            background: rgba(26, 0, 51, 0.7);
+            border: 1px solid #00ffff;
+            border-radius: 20px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            width: 250px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            width: 280px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 0, 51, 0.9);
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .search-results.visible {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.3s;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .tip-content {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 1.1em;
+        .search-result-item:hover {
+            background: rgba(0, 255, 255, 0.2);
         }
 
-        /* Auth Screen Styles */
+        .search-result-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        .user-name {
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(26, 0, 51, 0.9);
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            margin-top: 10px;
+            width: 200px;
+            overflow: hidden;
+            display: none;
+            z-index: 500;
+            backdrop-filter: blur(5px);
+        }
+
+        .user-menu.visible {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 12px 15px;
+            transition: background 0.3s;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .user-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-menu-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .user-stats {
+            padding: 15px;
+            font-size: 0.8em;
+            background: rgba(26, 0, 51, 0.5);
+            color: #b3b3ff;
+        }
+
+        .user-stat {
+            margin-bottom: 5px;
+        }
+
+        .menu-back-button {
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        .menu-back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        }
+
+        .game-categories {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .category-button {
+            padding: 8px 25px;
+            background: rgba(26, 0, 51, 0.7);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .category-button:hover, .category-button.active {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        .image-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-info {
+            text-align: center;
+            z-index: 2;
+            padding: 20px;
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            width: 500px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-image-container {
+            width: 300px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .favorite-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .favorite-button:hover {
+            transform: scale(1.1);
+            background: rgba(255, 0, 255, 0.7);
+        }
+
+        .favorite-button.active {
+            background: #ff00ff;
+        }
+
+        .favorite-button::before {
+            content: '★';
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .artist {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #b3b3ff;
+        }
+
+        .game-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .dance-button {
+            padding: 10px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .dance-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        .carousel-section {
+            height: 150px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease;
+            margin: 0 40px;
+        }
+
+        .carousel-item {
+            min-width: 150px;
+            height: 100px;
+            margin: 0 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            background-color: rgba(26, 0, 51, 0.5);
+        }
+
+        .carousel-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .carousel-item.active {
+            border: 3px solid #ff00ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(26, 0, 51, 0.7);
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .carousel-nav:hover {
+            background: rgba(255, 0, 255, 0.7);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(45deg, #ff00ff, #ff0000);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            animation: pulse 2s infinite;
+            z-index: 5;
+        }
+
+        /* Registro/Login Styles */
         .auth-screen {
             position: fixed;
             top: 0;
@@ -698,812 +872,154 @@
         }
 
         .auth-container {
-            width: 450px;
-            background: rgba(26, 0, 51, 0.8);
-            border-radius: var(--border-radius-lg);
-            padding: 40px;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
-            border: 2px solid var(--secondary);
+            width: 400px;
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 2px solid #00ffff;
             backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
         }
 
         .auth-title {
-            font-size: 2.2em;
-            color: var(--primary);
+            font-size: 2em;
+            color: #ff00ff;
             text-align: center;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px var(--glow-primary);
-            font-weight: 700;
-            letter-spacing: 2px;
-            position: relative;
-        }
-
-        .auth-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: var(--gradient-primary);
-            box-shadow: 0 0 10px var(--glow-primary);
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
         }
 
         .auth-form {
             display: flex;
             flex-direction: column;
-            gap: 25px;
-            position: relative;
-            z-index: 1;
+            gap: 20px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .form-label {
-            font-size: 1.1em;
-            color: var(--text-secondary);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
             gap: 8px;
         }
 
-        .form-label i {
-            color: var(--secondary);
+        .form-label {
+            font-size: 1em;
+            color: #b3b3ff;
         }
 
         .form-input {
-            padding: 15px;
+            padding: 10px 15px;
             background: rgba(26, 0, 51, 0.7);
-            border: 2px solid var(--secondary);
-            border-radius: var(--border-radius-md);
-            color: var(--text-primary);
-            font-family: 'Rajdhani', sans-serif;
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
             outline: none;
-            font-size: 1.1em;
-            transition: all var(--transition-normal);
         }
 
         .form-input:focus {
-            box-shadow: 0 0 15px var(--glow-secondary);
-            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
         .auth-button {
-            padding: 15px;
-            background: var(--gradient-primary);
+            padding: 12px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
-            border-radius: var(--border-radius-md);
-            color: var(--text-primary);
-            font-size: 1.3em;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.2em;
             cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s;
             font-family: 'Orbitron', sans-serif;
-            box-shadow: var(--shadow-normal);
-            font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .auth-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         .auth-button:hover {
             transform: scale(1.02);
-            box-shadow: var(--shadow-large);
-        }
-
-        .auth-button:hover::before {
-            left: 100%;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
         }
 
         .auth-toggle {
             text-align: center;
-            margin-top: 25px;
-            color: var(--text-secondary);
-            font-size: 1.1em;
+            margin-top: 20px;
+            color: #b3b3ff;
         }
 
         .auth-toggle-link {
-            color: var(--secondary);
+            color: #00ffff;
             cursor: pointer;
             text-decoration: underline;
-            transition: color var(--transition-normal);
-            font-weight: 600;
         }
 
         .auth-toggle-link:hover {
-            color: var(--primary);
+            color: #ff00ff;
         }
 
         .auth-error {
             background: rgba(255, 0, 0, 0.2);
             border: 1px solid #ff0000;
             color: #ffcccc;
-            padding: 15px;
-            border-radius: var(--border-radius-md);
+            padding: 10px;
+            border-radius: 5px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: none;
-            font-weight: 600;
         }
 
         .auth-success {
             background: rgba(0, 255, 0, 0.2);
             border: 1px solid #00ff00;
             color: #ccffcc;
-            padding: 15px;
-            border-radius: var(--border-radius-md);
+            padding: 10px;
+            border-radius: 5px;
             text-align: center;
-            margin-bottom: 20px;
-            display: none;
-            font-weight: 600;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.98); }
-        }
-
-        .main-container {
-            display: none;
-            flex-direction: column;
-            height: 100vh;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-
-        .main-container.visible {
-            display: flex;
-            opacity: 1;
-        }
-
-        /* Enhanced Game Portal Header */
-        .game-portal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(26, 0, 51, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--secondary);
-            z-index: 10;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .portal-logo {
-            font-size: 1.8em;
-            color: var(--primary);
-            text-shadow: 0 0 5px var(--glow-primary);
-            font-weight: 700;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .portal-logo i {
-            color: var(--secondary);
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        .search-input {
-            padding: 12px 20px 12px 45px;
-            background: rgba(26, 0, 51, 0.8);
-            border: 2px solid var(--secondary);
-            border-radius: 30px;
-            color: var(--text-primary);
-            font-family: 'Rajdhani', sans-serif;
-            width: 280px;
-            outline: none;
-            transition: all var(--transition-normal);
-            font-size: 1.1em;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary);
-            font-size: 1.2em;
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .search-input:focus {
-            box-shadow: 0 0 15px var(--glow-secondary);
-            width: 320px;
-            border-color: var(--primary);
-        }
-
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: rgba(26, 0, 51, 0.95);
-            border: 2px solid var(--secondary);
-            border-radius: var(--border-radius-md);
-            margin-top: 10px;
-            max-height: 350px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .search-results.visible {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            transition: background var(--transition-normal);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-result-item:hover {
-            background: rgba(0, 255, 255, 0.2);
-        }
-
-        .search-result-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--border-radius-sm);
-            object-fit: cover;
-            border: 1px solid var(--secondary);
-        }
-
-        .search-result-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .search-result-title {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .search-result-artist {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.3em;
-            color: var(--text-primary);
-            box-shadow: 0 0 10px var(--glow-primary);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-        }
-
-        .user-profile:hover .user-avatar {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px var(--glow-primary);
-        }
-
-        .user-name {
-            color: var(--text-primary);
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-
-        .user-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(26, 0, 51, 0.95);
-            border: 2px solid var(--secondary);
-            border-radius: var(--border-radius-md);
-            margin-top: 15px;
-            width: 250px;
-            overflow: hidden;
-            display: none;
-            z-index: 500;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .user-menu.visible {
-            display: block;
-        }
-
-        .user-menu-item {
-            padding: 15px;
-            transition: background var(--transition-normal);
-            cursor: pointer;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-menu-item:last-child {
-            border-bottom: none;
-        }
-
-        .user-menu-item i {
-            color: var(--secondary);
-            font-size: 1.2em;
-            width: 20px;
-            text-align: center;
-        }
-
-        .user-menu-item:hover {
-            background: rgba(0, 255, 255, 0.2);
-        }
-
-        .user-stats {
-            padding: 15px;
-            font-size: 0.9em;
-            background: rgba(26, 0, 51, 0.7);
-            color: var(--text-secondary);
-        }
-
-        .user-stat {
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-stat i {
-            color: var(--primary);
-        }
-
-        .menu-back-button {
-            padding: 10px 20px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
-            font-size: 1em;
-            cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 10px var(--glow-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
-
-        .menu-back-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px var(--glow-primary);
-        }
-
-        /* Enhanced Game Categories Navigation */
-        .game-categories {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px 0;
-            flex-wrap: wrap;
-            background: rgba(26, 0, 51, 0.5);
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            position: relative;
-        }
-
-        .game-categories::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                var(--secondary) 20%, 
-                var(--primary) 50%, 
-                var(--secondary) 80%, 
-                transparent 100%);
-            opacity: 0.6;
-        }
-
-        .category-button {
-            padding: 10px 30px;
-            background: rgba(26, 0, 51, 0.7);
-            border: 2px solid var(--secondary);
-            border-radius: 25px;
-            color: var(--text-primary);
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .category-button i {
-            color: var(--secondary);
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .category-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.7s ease;
-        }
-
-        .category-button:hover::before, 
-        .category-button.active::before {
-            left: 100%;
-        }
-
-        .category-button:hover, 
-        .category-button.active {
-            background: var(--gradient-primary);
-            transform: scale(1.05) translateY(-3px);
-            box-shadow: 0 5px 15px var(--glow-primary);
-            border-color: var(--primary);
-        }
-
-        .category-button:hover i,
-        .category-button.active i {
-            transform: scale(1.2);
-            color: var(--text-primary);
-        }
-
-        /* Image Section Styles */
-        .image-section {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .image-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(153, 0, 255, 0.1) 0%, transparent 70%);
-            animation: pulsate 8s infinite;
-        }
-
-        .game-info {
-            text-align: center;
-            z-index: 2;
-            padding: 30px;
-            background: rgba(26, 0, 51, 0.8);
-            border-radius: var(--border-radius-lg);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
-            max-width: 90%;
-            width: 600px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-info::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .game-image-container {
-            width: 350px;
-            height: 230px;
-            margin: 0 auto 30px;
-            border-radius: var(--border-radius-md);
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
-            position: relative;
-            border: 3px solid rgba(0, 255, 255, 0.3);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-        }
-
-        .game-image-container:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
-        }
-
-        .game-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .game-image-container:hover .game-image {
-            transform: scale(1.1);
-        }
-
-        .favorite-button {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 45px;
-            height: 45px;
-            background: rgba(26, 0, 51, 0.8);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            z-index: 10;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .favorite-button:hover {
-            transform: scale(1.1);
-            background: rgba(255, 0, 255, 0.7);
-        }
-
-        .favorite-button.active {
-            background: var(--primary);
-        }
-
-        .favorite-button::before {
-            content: '★';
-            color: var(--text-primary);
-            font-size: 1.8em;
-        }
-
-        .title {
-            font-size: 3.2em;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--glow-primary);
             margin-bottom: 15px;
-            font-weight: 800;
-            letter-spacing: 2px;
+            display: none;
         }
 
-        .artist {
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            max-width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        @media (max-width: 768px) {
+            .cyberpunk-logo {
+                font-size: 3em;
+            }
+            
+            .press-enter {
+                font-size: 1.5em;
+            }
 
-        .game-actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
+            .game-info {
+                width: 90%;
+            }
 
-        .dance-button {
-            padding: 15px 50px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
-            font-size: 1.4em;
-            cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: var(--shadow-normal);
-            font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            .game-image-container {
+                width: 100%;
+                height: 150px;
+            }
 
-        .dance-button i {
-            font-size: 1.2em;
-        }
+            .menu-option {
+                width: 250px;
+                font-size: 1.5em;
+                padding: 15px 30px;
+            }
 
-        .dance-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
+            .tips-container {
+                grid-template-columns: 1fr;
+            }
 
-        .dance-button:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-large);
-        }
+            .auth-container {
+                width: 90%;
+                max-width: 350px;
+            }
 
-        .dance-button:hover::before {
-            left: 100%;
-        }
+            .search-input {
+                width: 150px;
+            }
 
-        /* Enhanced Carousel */
-        .carousel-section {
-            height: 180px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            background: rgba(26, 0, 51, 0.5);
-            border-top: 1px solid rgba(0, 255, 255, 0.2);
-        }
+            .search-input:focus {
+                width: 180px;
+            }
 
-        .carousel {
-            display: flex;
-            transition: transform 0.5s ease;
-            margin: 0 60px;
-            height: 100%;
-        }
-
-        .carousel-item {
-            min-width: 180px;
-            height: 120px;
-            margin: 0 15px;
-            border-radius: var(--border-radius-md);
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            position: relative;
-            background-color: rgba(26, 0, 51, 0.7);
-            border: 2px solid rgba(0, 255, 255, 0.3);
-        }
-
-        .carousel-item:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
-            border-color: var(--primary);
-        }
-
-        .carousel-item.active {
-            border: 3px solid var(--primary);
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 0 25px var(--glow-primary);
-        }
-
-        .carousel-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .carousel-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2em;
-            color: var(--text-primary);
-            cursor: pointer;
-            z-index: 10;
-            background: rgba(26, 0, 51, 0.8);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            border-radius: 50%;
-            transition: all var(--transition-normal);
-            border: 2px solid var(--secondary);
-        }
-
-        .carousel-nav:hover {
-            background: var(--gradient-primary);
-            box-shadow: 0 0 20px var(--glow-primary);
-        }
-
-        .carousel-prev {
-            left: 15px;
-        }
-
-        .carousel-next {
-            right: 15px;
-        }
-
-        .new-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: linear-gradient(45deg, var(--primary), #ff0000);
-            color: var(--text-primary);
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-size: 0.8em;
-            font-weight: bold;
-            box-shadow: 0 0 10px var(--glow-primary);
-            animation: pulse 2s infinite;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            .user-name {
+                display: none;
+            }
         }
 
         /* Alert System Styles */
@@ -1513,7 +1029,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(10, 0, 26, 0.7);
+            background-color: rgba(10, 0, 26, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1530,32 +1046,18 @@
         }
 
         .alert-container {
-            background: rgba(26, 0, 51, 0.8);
-            border-radius: var(--border-radius-lg);
-            padding: 40px;
+            background: rgba(26, 0, 51, 0.7);
+            border-radius: 15px;
+            padding: 30px;
             text-align: center;
             max-width: 90%;
-            width: 450px;
+            width: 400px;
             transform: scale(0.9);
             opacity: 0;
             transition: transform 0.5s, opacity 0.5s;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
-            border: 2px solid var(--secondary);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .alert-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-            z-index: 0;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
         }
 
         .alert-overlay.active .alert-container {
@@ -1566,359 +1068,38 @@
         .alert-icon {
             font-size: 48px;
             margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
         }
 
         .alert-title {
-            font-size: 28px;
-            margin-bottom: 15px;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--glow-primary);
-            font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
         }
 
         .alert-text {
             font-size: 18px;
-            margin-bottom: 30px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 20px;
+            color: #b3b3ff;
         }
 
         .alert-button {
-            padding: 12px 25px;
-            background: var(--gradient-primary);
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
-            border-radius: var(--border-radius-lg);
-            color: var(--text-primary);
+            border-radius: 25px;
+            color: #fff;
             font-size: 16px;
             cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            transition: transform 0.3s, box-shadow 0.3s;
             font-family: 'Orbitron', sans-serif;
             margin: 0 10px;
-            box-shadow: var(--shadow-normal);
-            font-weight: 600;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .alert-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         .alert-button:hover {
             transform: scale(1.05);
-            box-shadow: var(--shadow-large);
-        }
-
-        .alert-button:hover::before {
-            left: 100%;
-        }
-
-        /* Discord Support Notice */
-        .discord-support {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(26, 0, 51, 0.9);
-            border: 2px solid var(--secondary);
-            border-radius: var(--border-radius-md);
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            backdrop-filter: blur(5px);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-        }
-
-        .discord-support:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px var(--glow-primary);
-        }
-
-        .discord-icon {
-            font-size: 2em;
-            color: #5865F2;
-        }
-
-        .discord-text {
-            color: var(--text-primary);
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-
-        .discord-text span {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            font-weight: normal;
-        }
-
-        /* Game iframe container styles */
-        .game-iframe-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 0, 26, 0.9);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            backdrop-filter: blur(10px);
-        }
-
-        .game-iframe-container.visible {
-            display: flex;
-        }
-
-        .game-iframe-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(26, 0, 51, 0.9);
-            border-bottom: 2px solid var(--secondary);
-            z-index: 10;
-        }
-
-        .game-iframe-title {
-            font-size: 1.8em;
-            color: var(--primary);
-            text-shadow: 0 0 5px var(--glow-primary);
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .game-iframe-controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        .game-iframe-button {
-            padding: 10px 20px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: var(--border-radius-md);
-            color: var(--text-primary);
-            font-size: 1em;
-            cursor: pointer;
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: var(--shadow-normal);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .game-iframe-button:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-large);
-        }
-
-        .game-iframe-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 1200px) {
-            .cyberpunk-logo {
-                font-size: 6em;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .cyberpunk-logo {
-                font-size: 5em;
-            }
-            
-            .game-info {
-                width: 90%;
-            }
-            
-            .search-input {
-                width: 220px;
-            }
-            
-            .search-input:focus {
-                width: 260px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .cyberpunk-logo {
-                font-size: 4em;
-            }
-            
-            .press-enter {
-                font-size: 1.8em;
-            }
-
-            .game-info {
-                width: 95%;
-                padding: 20px;
-            }
-
-            .game-image-container {
-                width: 100%;
-                height: 180px;
-            }
-
-            .menu-option {
-                width: 280px;
-                font-size: 1.6em;
-                padding: 15px 30px;
-            }
-
-            .tips-container {
-                grid-template-columns: 1fr;
-            }
-
-            .auth-container {
-                width: 90%;
-                max-width: 400px;
-                padding: 30px;
-            }
-
-            .search-input {
-                width: 180px;
-            }
-
-            .search-input:focus {
-                width: 220px;
-            }
-
-            .user-name {
-                display: none;
-            }
-            
-            .title {
-                font-size: 2.5em;
-            }
-            
-            .artist {
-                font-size: 1.1em;
-            }
-            
-            .dance-button {
-                padding: 12px 30px;
-                font-size: 1.2em;
-            }
-            
-            .carousel-item {
-                min-width: 150px;
-                height: 100px;
-                margin: 0 10px;
-            }
-            
-            .discord-support {
-                bottom: 10px;
-                right: 10px;
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .cyberpunk-logo {
-                font-size: 3em;
-            }
-            
-            .logo-version {
-                font-size: 1rem;
-                right: -10px;
-            }
-            
-            .press-enter {
-                font-size: 1.5em;
-            }
-            
-            .menu-title {
-                font-size: 2.5em;
-            }
-            
-            .menu-option {
-                width: 250px;
-                font-size: 1.4em;
-                padding: 12px 25px;
-            }
-            
-            .tips-title {
-                font-size: 2em;
-            }
-            
-            .auth-title {
-                font-size: 1.8em;
-            }
-            
-            .portal-logo {
-                font-size: 1.5em;
-            }
-            
-            .search-input {
-                width: 150px;
-                padding: 10px 15px 10px 40px;
-            }
-            
-            .search-input:focus {
-                width: 180px;
-            }
-            
-            .game-categories {
-                gap: 10px;
-                padding: 15px 0;
-            }
-            
-            .category-button {
-                padding: 8px 20px;
-                font-size: 0.9em;
-            }
-            
-            .title {
-                font-size: 2em;
-            }
-            
-            .artist {
-                font-size: 1em;
-            }
-            
-            .carousel-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 1.5em;
-            }
-            
-            .discord-icon {
-                font-size: 1.5em;
-            }
-            
-            .discord-text {
-                font-size: 0.9em;
-            }
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
         }
 
         @keyframes spin {
@@ -1932,33 +1113,28 @@
 
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-text" id="loadingText">Cargando AstralProton...</div>
+        <div class="loading-text" id="loadingText">Cargando...</div>
         <div class="loading-spinner"></div>
-        <div class="loading-progress">
-            <div class="loading-progress-bar" id="loadingProgressBar"></div>
-        </div>
-        <button class="continue-button" id="continueButton"><i class="fas fa-rocket"></i> Continuar</button>
+        <button class="continue-button" id="continueButton">Continuar</button>
     </div>
 
     <!-- Title Screen -->
     <div class="title-screen hidden" id="titleScreen">
         <div class="logo-container">
             <div class="cyberpunk-logo">ASTRALPROTON</div>
-            <div class="logo-version">V 3.0</div>
         </div>
         <div class="press-enter">Presiona ENTER (↵) para comenzar</div>
     </div>
 
-    <!-- Enhanced Menu Screen -->
+    <!-- Menu Screen -->
     <div class="menu-screen" id="menuScreen">
         <h1 class="menu-title">Menú Principal</h1>
         <div class="menu-options" id="menuOptions">
-            <div class="menu-selection-indicator" id="menuIndicator">▶</div>
-            <div class="menu-option active" data-action="play"><i class="fas fa-gamepad"></i> ¡Jugar!</div>
-            <div class="menu-option" data-action="register"><i class="fas fa-user-plus"></i> ¡Registrarse!</div>
-            <div class="menu-option" data-action="tips"><i class="fas fa-lightbulb"></i> ¡Consejos!</div>
-            <div class="menu-option" data-action="support"><i class="fas fa-headset"></i> ¡Soporte!</div>
-            <div class="menu-option" data-action="exit"><i class="fas fa-sign-out-alt"></i> ¡Salir!</div>
+            <div class="menu-option active" data-action="play">¡Jugar!</div>
+            <div class="menu-option" data-action="register">¡Registrarse!</div>
+            <div class="menu-option" data-action="tips">¡Consejos!</div>
+            <div class="menu-option" data-action="support">¡Soporte!</div>
+            <div class="menu-option" data-action="exit">¡Salir!</div>
         </div>
     </div>
 
@@ -1966,31 +1142,31 @@
     <div class="tips-screen" id="tipsScreen">
         <div class="tips-header">
             <h1 class="tips-title">Consejos para AstralProton</h1>
-            <button class="back-button" id="backFromTips"><i class="fas fa-arrow-left"></i> Volver al Menú</button>
+            <button class="back-button" id="backFromTips">Volver al Menú</button>
         </div>
         <div class="tips-container">
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-keyboard"></i> Navegación Rápida</h2>
+                <h2 class="tip-title">Navegación Rápida</h2>
                 <p class="tip-content">Usa las teclas de flecha para navegar entre juegos y opciones. Presiona ENTER para seleccionar. Esto te permitirá moverte rápidamente por la interfaz sin necesidad de usar el ratón.</p>
             </div>
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-star"></i> Juegos Recomendados</h2>
+                <h2 class="tip-title">Juegos Recomendados</h2>
                 <p class="tip-content">Si eres nuevo en AstralProton, te recomendamos comenzar con juegos como Super Mario 64, Minecraft o Angry Birds. Son fáciles de aprender y muy divertidos.</p>
             </div>
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-wrench"></i> Solución de Problemas</h2>
-                <p class="tip-content">Si un juego no carga correctamente, intenta refrescar la página. Si el problema persiste, revisa tu conexión a internet o contacta con soporte a través de nuestro Discord.</p>
+                <h2 class="tip-title">Solución de Problemas</h2>
+                <p class="tip-content">Si un juego no carga correctamente, intenta refrescar la página. Si el problema persiste, revisa tu conexión a internet o contacta con soporte.</p>
             </div>
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-expand"></i> Pantalla Completa</h2>
+                <h2 class="tip-title">Pantalla Completa</h2>
                 <p class="tip-content">Para una mejor experiencia, juega en modo pantalla completa presionando F11 en tu navegador o buscando la opción dentro del juego.</p>
             </div>
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-save"></i> Guardado de Progreso</h2>
+                <h2 class="tip-title">Guardado de Progreso</h2>
                 <p class="tip-content">Muchos juegos guardan automáticamente tu progreso en el navegador. No cierres la página mientras se esté guardando para evitar pérdida de datos.</p>
             </div>
             <div class="tip-card">
-                <h2 class="tip-title"><i class="fas fa-cog"></i> Controles Personalizados</h2>
+                <h2 class="tip-title">Controles Personalizados</h2>
                 <p class="tip-content">Algunos juegos permiten personalizar los controles. Busca la opción de configuración dentro del juego para adaptarlo a tus preferencias.</p>
             </div>
         </div>
@@ -2004,15 +1180,15 @@
             <div class="auth-success" id="authSuccess"></div>
             <form class="auth-form" id="authForm">
                 <div class="form-group" id="nameGroup">
-                    <label for="name" class="form-label"><i class="fas fa-user"></i> Nombre:</label>
+                    <label for="name" class="form-label">Nombre:</label>
                     <input type="text" id="name" class="form-input" placeholder="Tu nombre de usuario">
                 </div>
                 <div class="form-group" id="emailGroup">
-                    <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email:</label>
+                    <label for="email" class="form-label">Email:</label>
                     <input type="email" id="email" class="form-input" placeholder="tu@email.com">
                 </div>
                 <div class="form-group">
-                    <label for="password" class="form-label"><i class="fas fa-lock"></i> Contraseña:</label>
+                    <label for="password" class="form-label">Contraseña:</label>
                     <input type="password" id="password" class="form-input" placeholder="Tu contraseña">
                 </div>
                 <button type="submit" class="auth-button" id="authButton">Registrarse</button>
@@ -2028,14 +1204,13 @@
     </div>
 
     <div class="main-container" id="mainContainer">
-        <!-- Enhanced Game Portal Header -->
+        <!-- Nueva barra superior con características de portal de juegos -->
         <div class="game-portal-header">
             <div class="header-controls">
-                <button class="menu-back-button" id="backToMenu"><i class="fas fa-chevron-left"></i> Menú Principal</button>
-                <div class="portal-logo"><i class="fas fa-gamepad"></i> AstralProton</div>
+                <button class="menu-back-button" id="backToMenu">Menú Principal</button>
+                <div class="portal-logo">AstralProton</div>
             </div>
             <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
                 <input type="text" class="search-input" placeholder="Buscar juegos..." id="searchGames">
                 <div class="search-results" id="searchResults"></div>
             </div>
@@ -2044,24 +1219,21 @@
                 <span class="user-name" id="userName">Invitado</span>
                 <div class="user-menu" id="userMenu">
                     <div class="user-stats">
-                        <div class="user-stat" id="userTimeStat"><i class="fas fa-clock"></i> Tiempo en línea: 0 min</div>
-                        <div class="user-stat" id="userFavoritesStat"><i class="fas fa-star"></i> Favoritos: 0</div>
-                        <div class="user-stat" id="userPlayedStat"><i class="fas fa-gamepad"></i> Juegos jugados: 0</div>
+                        <div class="user-stat" id="userTimeStat">Tiempo en línea: 0 min</div>
+                        <div class="user-stat" id="userFavoritesStat">Favoritos: 0</div>
+                        <div class="user-stat" id="userPlayedStat">Juegos jugados: 0</div>
                     </div>
-                    <div class="user-menu-item" id="viewProfileBtn"><i class="fas fa-user"></i> Ver perfil</div>
-                    <div class="user-menu-item" id="editProfileBtn"><i class="fas fa-edit"></i> Editar perfil</div>
-                    <div class="user-menu-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</div>
+                    <div class="user-menu-item" id="viewProfileBtn">Ver perfil</div>
+                    <div class="user-menu-item" id="editProfileBtn">Editar perfil</div>
+                    <div class="user-menu-item" id="logoutBtn">Cerrar sesión</div>
                 </div>
             </div>
         </div>
 
-        <!-- Enhanced Game Categories Navigation -->
+        <!-- Categorías de juegos - Solo Todos y Favoritos -->
         <div class="game-categories">
-            <div class="category-button active" data-category="all"><i class="fas fa-th-large"></i> Todos</div>
-            <div class="category-button" data-category="favorites"><i class="fas fa-star"></i> Favoritos</div>
-            <div class="category-button" data-category="action"><i class="fas fa-running"></i> Acción</div>
-            <div class="category-button" data-category="arcade"><i class="fas fa-arcade"></i> Arcade</div>
-            <div class="category-button" data-category="retro"><i class="fas fa-ghost"></i> Retro</div>
+            <div class="category-button active" data-category="all">Todos</div>
+            <div class="category-button" data-category="favorites">Favoritos</div>
         </div>
 
         <div class="image-section" id="imageSection">
@@ -2073,7 +1245,7 @@
                 <h1 class="title" id="gameTitle">Astral</h1>
                 <p class="artist" id="gameArtist">Bienvenido a Astral</p>
                 <div class="game-actions">
-                    <button class="dance-button" id="danceButton"><i class="fas fa-play"></i> ¡Jugar!</button>
+                    <button class="dance-button" id="danceButton">¡Jugar!</button>
                 </div>
             </div>
         </div>
@@ -2081,38 +1253,8 @@
             <div class="carousel" id="carousel">
                 <!-- Carousel items will be dynamically added here -->
             </div>
-            <div class="carousel-nav carousel-prev" id="prevButton"><i class="fas fa-chevron-left"></i></div>
-            <div class="carousel-nav carousel-next" id="nextButton"><i class="fas fa-chevron-right"></i></div>
-        </div>
-    </div>
-
-    <!-- Game iframe container -->
-    <div class="game-iframe-container" id="gameIframeContainer">
-        <div class="game-iframe-header">
-            <div class="game-iframe-title" id="gameIframeTitle">Juego</div>
-            <div class="game-iframe-controls">
-                <button class="game-iframe-button" id="fullscreenButton"><i class="fas fa-expand"></i> Pantalla Completa</button>
-                <button class="game-iframe-button" id="closeIframeButton"><i class="fas fa-times"></i> Cerrar</button>
-            </div>
-        </div>
-        <div class="game-iframe-content">
-            <iframe id="gameIframe" class="game-iframe" src="about:blank" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <!-- Discord Support Notice -->
-    <div class="discord-support">
-        <i class="fab fa-discord discord-icon"></i>
-        <div class="discord-text">
-            Soporte disponible en Discord
-            <span>¡Únete a nuestra comunidad!</span>
-        </div>
-    </div>
-
-    <!-- Alert System -->
-    <div id="alertOverlay" class="alert-overlay">
-        <div id="alertContainer" class="alert-container">
-            <div id="alertContent"></div>
+            <div class="carousel-nav carousel-prev" id="prevButton">&#10094;</div>
+            <div class="carousel-nav carousel-next" id="nextButton">&#10095;</div>
         </div>
     </div>
 
@@ -2122,6 +1264,13 @@
     <audio id="buttonSound" src="button-sound.mp3" preload="auto"></audio>
     <audio id="changeGameSound" src="sfx.mp3" preload="auto"></audio>
     <audio id="alertSound" src="alert-sound.mp3" preload="auto"></audio>
+
+    <!-- Alert System -->
+    <div id="alertOverlay" class="alert-overlay">
+        <div id="alertContainer" class="alert-container">
+            <div id="alertContent"></div>
+        </div>
+    </div>
 
     <script>
         // Datos de juegos
@@ -2141,6 +1290,20 @@
                 }
             },
             {
+                title: "Anuncios",
+                artist: "Aqui solo veras los cambios entre las versiones.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "changes.md",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "info",
+                    message: "Verás los cambios entre versiones.",
+                    redirect: "changes.md"
+                }
+            },
+            {
                 title: "ROMS",
                 artist: "Aqui estare subiendo las ROMS que me voy encontrando y descargando.",
                 image: "imgjuegos/noimg.png",
@@ -2155,31 +1318,17 @@
                 }
             },
             {
-                title: "8 Ball Pool",
-                artist: "?",
-                image: "imgjuegos/8ballpool.jpeg",
-                song: "titulo.mp3",
-                dancePage: "Juegos/8ballpool/index.html",
+                title: "Angry Birds",
+                artist: "Rovio Entertainment",
+                image: "imgjuegos/angry.jpeg",
+                song: "juegosmusica/angry.mp3",
+                dancePage: "Juegos/angrybirds/index.html",
                 category: "puzzle",
                 isNew: true,
                 alert: {
                     type: "loading",
-                    message: "Cargando el juego... ¿Alguien realmente lee esto?)",
-                    redirect: "Juegos/8ballpool/index.html"
-                }
-            },
-            {
-                title: "Fireboy & Watergirl",
-                artist: "?",
-                image: "imgjuegos/FYW.jpeg",
-                song: "titulo.mp3",
-                dancePage: "Juegos/firewater/index.html",
-                category: "puzzle",
-                isNew: true,
-                alert: {
-                    type: "loading",
-                    message: "Cargando el juego... ¿Alguien realmente lee esto?)",
-                    redirect: "Juegos/firewater/index.html"
+                    message: "Cargando el juego... Nunca uses el pajaro azul :)",
+                    redirect: "Juegos/angrybirds/index.html"
                 }
             },
             {
@@ -2225,7 +1374,7 @@
                 }
             },
             {
-                title: "FNF Garcello Mod",
+                title: "Friday Night Funkin Garcello Mod",
                 artist: "NA",
                 image: "imgjuegos/fnfg.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2239,7 +1388,7 @@
                 }
             },
             {
-                title: "FNF",
+                title: "Friday Night Funkin (Ver. 1)",
                 artist: "ninjamuffin",
                 image: "imgjuegos/fnfviejo.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2253,7 +1402,7 @@
                 }
             },
             {
-                title: "FNF Vs Shaggy",
+                title: "Friday Night Funkin MOD Vs Shaggy",
                 artist: "NA",
                 image: "imgjuegos/fnfvsshaggy.jpeg",
                 song: "juegosmusica/fnfv.mp3",
@@ -2287,7 +1436,7 @@
                 song: "juegosmusica/mc.mp3",
                 dancePage: "Juegos/minecraft/index.html",
                 category: "action",
-                isNew: false,
+                isNew: true,
                 alert: {
                     type: "loading",
                     message: "Cargando el juego... ¡Si quieres jugar con tus amigos abre el mundo a LAN!",
@@ -2324,7 +1473,7 @@
             },
             {
                 title: "Cookie Clicker",
-                artist: "(En caso de no funcionar presione pantalla completa)",
+                artist: "NA",
                 image: "imgjuegos/cookie.png",
                 song: "titulo.mp3",
                 dancePage: "Juegos/cookie/index.html",
@@ -2343,7 +1492,7 @@
                 song: "juegosmusica/fnaf.mp3",
                 dancePage: "Juegos/FNAF1/index.html",
                 category: "action",
-                isNew: false,
+                isNew: true,
                 alert: {
                     type: "loading",
                     message: "Cargando el juego...",
@@ -2561,7 +1710,7 @@
                 }
             },
             {
-                title: "SSF2 (EXPERIMENTAL)",
+                title: "Super Smash Flash (EXPERIMENTAL)",
                 artist: "NA",
                 image: "imgjuegos/ssf2.jpeg",
                 song: "titulo.mp3",
@@ -2587,6 +1736,34 @@
                     message: "Cargando el juego..",
                     redirect: "Juegos/badicecream/index.html"
                 }
+            },
+            {
+                title: "Musica",
+                artist: "AstralTeam: Aqui puede escuchar la musica de la pagina web.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "musica.html",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "critical",
+                    message: "¡Esta en desarrollo!",
+                    redirect: "musica.html"
+                }
+            },
+            {
+                title: "Consejos",
+                artist: "AstralTeam: Consejos útiles para usar la plataforma.",
+                image: "imgjuegos/astrallogo.png",
+                song: "titulo.mp3",
+                dancePage: "consejos.html",
+                category: "all",
+                isNew: false,
+                alert: {
+                    type: "info",
+                    message: "Cargando consejos útiles para mejorar tu experiencia en AstralProton.",
+                    redirect: "consejos.html"
+                }
             }
         ];
 
@@ -2602,8 +1779,6 @@
         let starsCreated = false;
         let shootingStarInterval = null;
         let imageCache = {};
-        let originalMusicVolume = 1;
-        let isMusicMuted = false;
 
         // Elementos DOM
         const carousel = document.getElementById('carousel');
@@ -2625,17 +1800,11 @@
         const menuMusic = document.getElementById('menuMusic');
         const loadingScreen = document.getElementById('loadingScreen');
         const loadingText = document.getElementById('loadingText');
-        const loadingProgressBar = document.getElementById('loadingProgressBar');
         const continueButton = document.getElementById('continueButton');
         const backFromTipsButton = document.getElementById('backFromTips');
         const backToMenuButton = document.getElementById('backToMenu');
         const favoriteButton = document.getElementById('favoriteButton');
         const starsContainer = document.getElementById('starsContainer');
-        const gameIframeContainer = document.getElementById('gameIframeContainer');
-        const gameIframe = document.getElementById('gameIframe');
-        const gameIframeTitle = document.getElementById('gameIframeTitle');
-        const closeIframeButton = document.getElementById('closeIframeButton');
-        const fullscreenButton = document.getElementById('fullscreenButton');
 
         // Precarga de imágenes
         function preloadImages() {
@@ -2648,99 +1817,81 @@
             });
         }
 
-        // Función para crear el fondo espacial mejorado
+        // Función para crear el fondo espacial optimizado
         function createSpaceBackground() {
             if (starsCreated) return; // Evitar crear estrellas múltiples veces
             
             starsContainer.innerHTML = '';
             
-            // Crear capas para efecto parallax
-            for (let layer = 1; layer <= 3; layer++) {
-                const layerDiv = document.createElement('div');
-                layerDiv.className = `parallax-layer layer-${layer}`;
-                starsContainer.appendChild(layerDiv);
+            // Crear estrellas (reducido para mejor rendimiento)
+            const numStars = 150; // Reducido de 300
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
                 
-                // Número de estrellas por capa
-                const numStars = 100 - (layer * 20); // Menos estrellas en capas más lejanas
-                
-                // Crear estrellas para esta capa
-                for (let i = 0; i < numStars; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    
-                    // Tamaño aleatorio
-                    const size = Math.random();
-                    if (size < 0.6) {
-                        star.classList.add('small');
-                    } else if (size < 0.9) {
-                        star.classList.add('medium');
-                    } else {
-                        star.classList.add('large');
-                    }
-                    
-                    // Posición aleatoria
-                    star.style.left = `${Math.random() * 100}%`;
-                    star.style.top = `${Math.random() * 100}%`;
-                    
-                    // Velocidad de animación basada en la capa (más lenta para capas más lejanas)
-                    const duration = 20 + (layer * 30) + Math.random() * 50;
-                    star.style.animationDuration = `${duration}s`;
-                    
-                    // Solo algunas estrellas parpadean
-                    if (Math.random() > 0.7) {
-                        star.classList.add('twinkle');
-                    }
-                    
-                    layerDiv.appendChild(star);
+                // Tamaño aleatorio
+                const size = Math.random();
+                if (size < 0.6) {
+                    star.classList.add('small');
+                } else if (size < 0.9) {
+                    star.classList.add('medium');
+                } else {
+                    star.classList.add('large');
                 }
                 
-                // Crear nebulosas para esta capa
-                if (layer === 1) { // Solo en la primera capa
-                    const numNebulas = 3;
-                    for (let i = 0; i < numNebulas; i++) {
-                        const nebula = document.createElement('div');
-                        nebula.className = 'nebula';
-                        
-                        // Tamaño aleatorio
-                        const size = 150 + Math.random() * 250;
-                        nebula.style.width = `${size}px`;
-                        nebula.style.height = `${size}px`;
-                        
-                        // Posición aleatoria
-                        nebula.style.left = `${Math.random() * 100}%`;
-                        nebula.style.top = `${Math.random() * 100}%`;
-                        
-                        // Color aleatorio
-                        const colors = ['#ff00ff', '#00ffff', '#9900ff'];
-                        const color = colors[Math.floor(Math.random() * colors.length)];
-                        nebula.style.background = color;
-                        
-                        layerDiv.appendChild(nebula);
-                    }
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Profundidad aleatoria para efecto 3D
+                const depth = Math.random() * 500;
+                star.style.transform = `translateZ(${depth}px)`;
+                
+                // Velocidad de animación aleatoria
+                const duration = 20 + Math.random() * 80;
+                star.style.animationDuration = `${duration}s`;
+                
+                // Solo algunas estrellas parpadean para mejorar rendimiento
+                if (Math.random() > 0.8) {
+                    star.classList.add('twinkle');
                 }
+                
+                fragment.appendChild(star);
             }
             
+            // Crear nebulosas (reducido para mejor rendimiento)
+            const numNebulas = 3; // Reducido de 5
+            for (let i = 0; i < numNebulas; i++) {
+                const nebula = document.createElement('div');
+                nebula.className = 'nebula';
+                
+                // Tamaño aleatorio
+                const size = 100 + Math.random() * 200;
+                nebula.style.width = `${size}px`;
+                nebula.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                nebula.style.left = `${Math.random() * 100}%`;
+                nebula.style.top = `${Math.random() * 100}%`;
+                
+                // Color aleatorio
+                const colors = ['#ff00ff', '#00ffff', '#9900ff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                nebula.style.background = color;
+                
+                fragment.appendChild(nebula);
+            }
+            
+            starsContainer.appendChild(fragment);
             starsCreated = true;
             
-            // Crear estrellas fugaces periódicamente
+            // Crear estrellas fugaces periódicamente (menos frecuente)
             if (shootingStarInterval) {
                 clearInterval(shootingStarInterval);
             }
-            shootingStarInterval = setInterval(createShootingStar, 6000);
-            
-            // Efecto parallax al mover el mouse
-            document.addEventListener('mousemove', function(e) {
-                const layers = document.querySelectorAll('.parallax-layer');
-                const mouseX = e.clientX / window.innerWidth;
-                const mouseY = e.clientY / window.innerHeight;
-                
-                layers.forEach((layer, index) => {
-                    const depth = (index + 1) * 5;
-                    const moveX = (mouseX * depth);
-                    const moveY = (mouseY * depth);
-                    layer.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
-                });
-            });
+            shootingStarInterval = setInterval(createShootingStar, 8000); // Reducido de 5000
         }
         
         function createShootingStar() {
@@ -2817,13 +1968,13 @@
             if (currentUser) {
                 userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
                 userName.textContent = currentUser.name;
-                userFavoritesStat.innerHTML = `<i class="fas fa-star"></i> Favoritos: ${userFavorites.length}`;
-                userPlayedStat.innerHTML = `<i class="fas fa-gamepad"></i> Juegos jugados: ${userPlayedGames.length}`;
+                userFavoritesStat.textContent = `Favoritos: ${userFavorites.length}`;
+                userPlayedStat.textContent = `Juegos jugados: ${userPlayedGames.length}`;
             } else {
                 userAvatar.textContent = '?';
                 userName.textContent = 'Invitado';
-                userFavoritesStat.innerHTML = `<i class="fas fa-star"></i> Favoritos: 0`;
-                userPlayedStat.innerHTML = `<i class="fas fa-gamepad"></i> Juegos jugados: 0`;
+                userFavoritesStat.textContent = 'Favoritos: 0';
+                userPlayedStat.textContent = 'Juegos jugados: 0';
             }
 
             // Actualizar el estado del botón de favoritos para el juego actual
@@ -2842,7 +1993,7 @@
                 const diffMinutes = Math.floor((now - userSessionStartTime) / (1000 * 60));
                 const userTimeStat = document.getElementById('userTimeStat');
                 if (userTimeStat) {
-                    userTimeStat.innerHTML = `<i class="fas fa-clock"></i> Tiempo en línea: ${diffMinutes} min`;
+                    userTimeStat.textContent = `Tiempo en línea: ${diffMinutes} min`;
                 }
             }, 60000);
         }
@@ -3022,7 +2173,7 @@
                 // Mostrar mensaje si no hay juegos en esta categoría
                 const emptyItem = document.createElement('div');
                 emptyItem.classList.add('carousel-item');
-                emptyItem.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:var(--text-secondary);font-size:1.1em;">No hay juegos en esta categoría</div>`;
+                emptyItem.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#b3b3ff;">No hay juegos en esta categoría</div>`;
                 carousel.appendChild(emptyItem);
                 
                 // Si no hay juegos y estamos en favoritos, mostrar mensaje
@@ -3067,7 +2218,7 @@
                 if (game.isNew) {
                     const newBadge = document.createElement('div');
                     newBadge.className = 'new-badge';
-                    newBadge.innerHTML = '<i class="fas fa-fire"></i> NUEVO';
+                    newBadge.textContent = 'NUEVO';
                     item.appendChild(newBadge);
                 }
                 
@@ -3188,7 +2339,7 @@
                 if (game.isNew) {
                     const newBadge = document.createElement('div');
                     newBadge.className = 'new-badge';
-                    newBadge.innerHTML = '<i class="fas fa-fire"></i> NUEVO';
+                    newBadge.textContent = 'NUEVO';
                     gameImageContainer.appendChild(newBadge);
                 }
             }
@@ -3198,7 +2349,7 @@
                 const activeItem = document.querySelector('.carousel-item.active');
                 if (activeItem) {
                     const itemIndex = Array.from(carouselItems).indexOf(activeItem);
-                    const scrollAmount = Math.max(0, itemIndex * 210 - 100);
+                    const scrollAmount = Math.max(0, itemIndex * 170 - 100);
                     carousel.style.transform = `translateX(-${scrollAmount}px)`;
                 }
             }
@@ -3259,80 +2410,21 @@
             }
         }
 
-        // Nueva función para mostrar juego en iframe
-        function showGameInIframe(gameUrl, gameTitle) {
-            if (!gameIframeContainer || !gameIframe || !gameIframeTitle) return;
-            
-            // Guardar el volumen actual de la música antes de mutearla
-            if (audioPlayer && !isMusicMuted) {
-                originalMusicVolume = audioPlayer.volume;
-                audioPlayer.volume = 0;
-                isMusicMuted = true;
-            }
-            
-            if (menuMusic && !isMusicMuted) {
-                originalMusicVolume = menuMusic.volume;
-                menuMusic.volume = 0;
-                isMusicMuted = true;
-            }
-            
-            // Configurar el iframe
-            gameIframe.src = gameUrl;
-            gameIframeTitle.textContent = gameTitle;
-            
-            // Mostrar el contenedor
-            gameIframeContainer.classList.add('visible');
-            
-            // Configurar botones
-            if (fullscreenButton) {
-                fullscreenButton.onclick = () => {
-                    window.location.href = gameUrl;
-                };
-            }
-            
-            if (closeIframeButton) {
-                closeIframeButton.onclick = closeGameIframe;
-            }
-        }
-        
-        // Función para cerrar el iframe del juego
-        function closeGameIframe() {
-            if (!gameIframeContainer) return;
-            
-            // Restaurar el volumen de la música
-            if (audioPlayer && isMusicMuted) {
-                audioPlayer.volume = originalMusicVolume;
-                isMusicMuted = false;
-            }
-            
-            if (menuMusic && isMusicMuted) {
-                menuMusic.volume = originalMusicVolume;
-                isMusicMuted = false;
-            }
-            
-            // Ocultar el contenedor
-            gameIframeContainer.classList.remove('visible');
-            
-            // Limpiar el iframe
-            setTimeout(() => {
-                if (gameIframe) {
-                    gameIframe.src = 'about:blank';
-                }
-            }, 300);
-        }
-
         function playGame() {
             if (isTransitioning) return;
 
             const game = gameData[currentIndex];
             if (!game) return;
             
+            const alert = game.alert;
+
             // Registrar juego jugado
             recordGamePlayed();
 
-            // En lugar de redirigir, mostrar el juego en un iframe
-            if (game.dancePage) {
-                showGameInIframe(game.dancePage, game.title);
+            if (alert) {
+                showAlert(alert.type, alert.message, alert.redirect);
+            } else if (game.dancePage) {
+                window.location.href = game.dancePage;
             }
         }
 
@@ -3409,7 +2501,7 @@
                     showTipsScreen();
                     break;
                 case 'support':
-                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestro Discord! https://discord.gg/GEPrCZkWhs');
+                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestras redes sociales o envía un correo a soporte@astral.com');
                     break;
                 case 'exit':
                     showAlert('question', '¿Estás seguro que deseas salir?', 'about:blank');
@@ -3430,15 +2522,6 @@
             
             menuOptions[newIndex].classList.add('active');
             playButtonSound();
-            
-            // Actualizar posición del indicador de selección
-            const menuIndicator = document.getElementById('menuIndicator');
-            if (menuIndicator) {
-                const activeOption = menuOptions[newIndex];
-                const menuRect = document.getElementById('menuOptions').getBoundingClientRect();
-                const activeRect = activeOption.getBoundingClientRect();
-                menuIndicator.style.top = (activeRect.top - menuRect.top + activeRect.height/2 - 15) + 'px';
-            }
         }
 
         function showTitleScreen() {
@@ -3451,32 +2534,7 @@
                 });
             }
             
-            showAlert('info', '¡Bienvenido a AstralProton V 3.0! Te recomendamos leer los cambios recientes para estar al pendiente :]');
-        }
-
-        // Función para simular carga
-        function simulateLoading() {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    
-                    // Mostrar el botón de continuar
-                    if (loadingText) {
-                        loadingText.textContent = '¡Carga completada!';
-                    }
-                    
-                    if (continueButton) {
-                        continueButton.style.display = 'block';
-                    }
-                }
-                
-                if (loadingProgressBar) {
-                    loadingProgressBar.style.width = `${progress}%`;
-                }
-            }, 200);
+            showAlert('info', '¡Bienvenido a AstralProton V 2.8! Te recomendamos leer los cambios recientes para estar al pendiente :]');
         }
 
         // Función para buscar juegos optimizada
@@ -3523,27 +2581,13 @@
                                 imgClone.alt = game.title;
                                 resultItem.appendChild(imgClone);
                                 
-                                const infoDiv = document.createElement('div');
-                                infoDiv.className = 'search-result-info';
-                                
-                                const titleSpan = document.createElement('span');
-                                titleSpan.className = 'search-result-title';
-                                titleSpan.textContent = game.title;
-                                
-                                const artistSpan = document.createElement('span');
-                                artistSpan.className = 'search-result-artist';
-                                artistSpan.textContent = game.artist.split(':')[0];
-                                
-                                infoDiv.appendChild(titleSpan);
-                                infoDiv.appendChild(artistSpan);
-                                resultItem.appendChild(infoDiv);
+                                const span = document.createElement('span');
+                                span.textContent = game.title;
+                                resultItem.appendChild(span);
                             } else {
                                 resultItem.innerHTML = `
                                     <img src="${game.image}" alt="${game.title}" onerror="this.src='imgjuegos/noimg.png'">
-                                    <div class="search-result-info">
-                                        <span class="search-result-title">${game.title}</span>
-                                        <span class="search-result-artist">${game.artist.split(':')[0]}</span>
-                                    </div>
+                                    <span>${game.title}</span>
                                 `;
                             }
                             
@@ -3788,7 +2832,7 @@
                     break;
                 case 'question':
                     content = `
-                        <div class="alert-icon"><i class="fas fa-question-circle"></i></div>
+                        <div class="alert-icon">❓</div>
                         <div class="alert-title">Pregunta</div>
                         <div class="alert-text">${message}</div>
                         <button class="alert-button" onclick="hideAlert(true)">Sí</button>
@@ -3798,7 +2842,7 @@
                     break;
                 case 'info':
                     content = `
-                        <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
+                        <div class="alert-icon">ℹ️</div>
                         <div class="alert-title">Información</div>
                         <div class="alert-text">${message}</div>
                         <button class="alert-button" onclick="hideAlert(true)">OK</button>
@@ -3807,7 +2851,7 @@
                     break;
                 case 'critical':
                     content = `
-                        <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="alert-icon">⚠️</div>
                         <div class="alert-title">Alerta Crítica</div>
                         <div class="alert-text">${message}</div>
                         <button class="alert-button" onclick="hideAlert()">OK</button>
@@ -3846,68 +2890,13 @@
             if (result === true) {
                 const redirect = overlay.dataset.redirect;
                 if (redirect) {
-                    // En lugar de redirigir, mostrar en iframe
-                    const game = gameData.find(g => g.dancePage === redirect);
-                    if (game) {
-                        showGameInIframe(redirect, game.title);
-                    } else {
-                        window.location.href = redirect;
-                    }
+                    window.location.href = redirect;
                 }
             }
-        }
-
-        // Mejorar la navegación del menú principal
-        function setupMenuNavigation() {
-            const menuOptions = document.querySelectorAll('.menu-option');
-            const menuIndicator = document.getElementById('menuIndicator');
-            
-            // Posicionar el indicador junto a la opción activa
-            function updateIndicatorPosition() {
-                const activeOption = document.querySelector('.menu-option.active');
-                if (activeOption && menuIndicator) {
-                    const activeRect = activeOption.getBoundingClientRect();
-                    const menuRect = document.getElementById('menuOptions').getBoundingClientRect();
-                    menuIndicator.style.top = (activeRect.top - menuRect.top + activeRect.height/2 - 15) + 'px';
-                }
-            }
-            
-            // Actualizar posición inicial
-            setTimeout(updateIndicatorPosition, 100);
-            
-            // Actualizar cuando se cambia la opción activa
-            menuOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelector('.menu-option.active').classList.remove('active');
-                    this.classList.add('active');
-                    updateIndicatorPosition();
-                    
-                    // Reproducir sonido al hacer clic (si existe)
-                    playButtonSound();
-                });
-                
-                // Efecto hover con sonido
-                option.addEventListener('mouseenter', function() {
-                    const hoverSound = document.getElementById('changeGameSound');
-                    if (hoverSound) {
-                        hoverSound.volume = 0.1;
-                        hoverSound.currentTime = 0;
-                        hoverSound.play().catch(e => console.log("Error reproduciendo sonido:", e));
-                    }
-                });
-            });
         }
 
         // Inicialización
         function init() {
-            // Ocultar botón de continuar hasta que termine la carga
-            if (continueButton) {
-                continueButton.style.display = 'none';
-            }
-            
-            // Simular carga
-            simulateLoading();
-            
             // Precarga de imágenes
             preloadImages();
             
@@ -3935,9 +2924,6 @@
             // Configurar formulario de autenticación
             setupAuthForm();
             
-            // Configurar navegación del menú mejorada
-            setupMenuNavigation();
-            
             // Configurar música
             if (titleMusic) {
                 titleMusic.src = "titulonuevo.mp3";
@@ -3961,6 +2947,15 @@
             const changeGameSound = document.getElementById('changeGameSound');
             if (changeGameSound) {
                 changeGameSound.volume = 0.3;
+            }
+            
+            // Mostrar el botón de continuar
+            if (loadingText) {
+                loadingText.textContent = '¡Carga completada!';
+            }
+            
+            if (continueButton) {
+                continueButton.style.display = 'block';
             }
             
             // Configurar event listeners
@@ -4032,11 +3027,6 @@
                     else if (e.key === 'Escape') {
                         mainContainer.classList.remove('visible');
                         if (menuScreen) menuScreen.classList.add('visible');
-                    }
-                } else if (gameIframeContainer && gameIframeContainer.classList.contains('visible')) {
-                    // Game iframe navigation
-                    if (e.key === 'Escape') {
-                        closeGameIframe();
                     }
                 }
             });
