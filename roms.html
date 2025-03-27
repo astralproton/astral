@@ -5,21 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Astral ROMS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
 <style>
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Orbitron', sans-serif;
-        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%2300ffff"><circle cx="12" cy="12" r="8" fill="%2300ffff" fill-opacity="0.4"/><circle cx="12" cy="12" r="4" fill="%2300ffff"/></svg>') 12 12, auto;
+        font-family: 'Chakra Petch', sans-serif;
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%232dccff"><circle cx="12" cy="12" r="8" fill="%232dccff" fill-opacity="0.4"/><circle cx="12" cy="12" r="4" fill="%232dccff"/></svg>') 12 12, auto;
+    }
+
+    :root {
+        --primary: #ff2d55;
+        --primary-dark: #cc2347;
+        --secondary: #2dccff;
+        --secondary-dark: #1a9bcc;
+        --accent: #8a2be2;
+        --accent-dark: #6a1cb2;
+        --dark-bg: #0f0f1a;
+        --darker-bg: #080812;
+        --panel-bg: rgba(15, 15, 26, 0.85);
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3cc;
+        --glow-primary: rgba(255, 45, 85, 0.6);
+        --glow-secondary: rgba(45, 204, 255, 0.5);
+        --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+        --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--accent));
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --transition-fast: 0.2s ease;
+        --transition-normal: 0.3s ease;
+        --transition-slow: 0.5s ease;
+        --shadow-normal: 0 0 15px rgba(255, 45, 85, 0.4);
+        --shadow-large: 0 0 25px rgba(255, 45, 85, 0.6);
     }
 
     body {
-        background-color: #1a0033;
-        color: #fff;
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
         overflow-x: hidden;
         position: relative;
+    }
+
+    h1, h2, h3, h4, h5, h6, .title-font {
+        font-family: 'Russo One', sans-serif;
+        letter-spacing: 1px;
     }
 
     /* Fondo animado */
@@ -30,7 +61,7 @@
         width: 100%;
         height: 100%;
         z-index: -2;
-        background: linear-gradient(125deg, #1a0033, #4a0080, #000066, #330066);
+        background: linear-gradient(125deg, var(--darker-bg), #1a1a33, #0f0f1a, #1a1a33);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
     }
@@ -59,9 +90,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(125deg, #1a0033, #4a0080);
-        background-size: 400% 400%;
-        animation: gradientBG 10s ease infinite;
+        background: radial-gradient(ellipse at center, #1a1a33 0%, #0f0f1a 70%, #080812 100%);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -77,11 +106,12 @@
     .loading-animation {
         width: 120px;
         height: 120px;
-        border: 6px solid rgba(0, 255, 255, 0.3);
+        border: 6px solid rgba(45, 204, 255, 0.3);
         border-radius: 50%;
-        border-top-color: #00ffff;
+        border-top-color: var(--secondary);
+        border-left-color: var(--primary);
         animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
-        box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        box-shadow: 0 0 30px var(--glow-secondary);
     }
 
     @keyframes spin {
@@ -100,7 +130,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(26, 0, 51, 0.95);
+        background: rgba(15, 15, 26, 0.95);
         display: none;
         justify-content: center;
         align-items: center;
@@ -116,19 +146,19 @@
 
     .thank-you-content {
         text-align: center;
-        background: rgba(0, 255, 255, 0.1);
+        background: rgba(45, 204, 255, 0.1);
         padding: 50px;
-        border-radius: 20px;
-        border: 3px solid #00ffff;
-        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.2);
+        border-radius: var(--border-radius-lg);
+        border: 3px solid var(--secondary);
+        box-shadow: 0 0 30px var(--glow-secondary), inset 0 0 20px rgba(45, 204, 255, 0.2);
         transform: scale(0.8) translateY(50px);
         transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         animation: glow 3s infinite alternate;
     }
 
     @keyframes glow {
-        0% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.2); }
-        100% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.3); }
+        0% { box-shadow: 0 0 30px var(--glow-secondary), inset 0 0 20px rgba(45, 204, 255, 0.2); }
+        100% { box-shadow: 0 0 50px var(--glow-secondary), inset 0 0 30px rgba(45, 204, 255, 0.3); }
     }
 
     .thank-you-screen.active .thank-you-content {
@@ -136,21 +166,21 @@
     }
 
     .thank-you-content h2 {
-        color: #00ffff;
+        color: var(--secondary);
         margin-bottom: 20px;
         font-size: 2.5em;
-        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        text-shadow: 0 0 10px var(--glow-secondary);
     }
 
     .thank-you-content p {
-        color: #fff;
+        color: var(--text-primary);
         margin-bottom: 30px;
         font-size: 1.2em;
     }
 
     .thank-you-button {
-        background: linear-gradient(45deg, #00ffff, #0066ff);
-        color: #fff;
+        background: var(--gradient-primary);
+        color: var(--text-primary);
         border: none;
         padding: 15px 30px;
         border-radius: 25px;
@@ -159,11 +189,12 @@
         transition: transform 0.3s, box-shadow 0.3s;
         position: relative;
         overflow: hidden;
+        font-family: 'Russo One', sans-serif;
     }
 
     .thank-you-button:hover {
         transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        box-shadow: var(--shadow-large);
     }
 
     .thank-you-button::after {
@@ -199,10 +230,10 @@
         transform: translateY(0);
     }
 
-    /* Sidebar */
+    /* Sidebar - FIXED */
     .sidebar {
         width: 220px;
-        background: rgba(0, 0, 0, 0.7);
+        background: var(--panel-bg);
         backdrop-filter: blur(10px);
         padding: 25px;
         position: fixed;
@@ -210,8 +241,10 @@
         z-index: 100;
         transform: translateX(-100%);
         transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border-right: 2px solid rgba(0, 255, 255, 0.3);
+        border-right: 2px solid rgba(45, 204, 255, 0.3);
         box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+        overflow-y: auto; /* Permitir scroll si es necesario */
+        top: 0; /* Asegurar que esté en la parte superior */
     }
 
     .container.loaded .sidebar {
@@ -222,20 +255,20 @@
         display: flex;
         align-items: center;
         padding: 15px;
-        color: #fff;
+        color: var(--text-primary);
         text-decoration: none;
         margin-bottom: 15px;
-        border-radius: 10px;
+        border-radius: var(--border-radius-md);
         transition: all 0.4s ease;
         border: 1px solid rgba(255, 255, 255, 0.1);
         background: rgba(255, 255, 255, 0.05);
     }
 
     .sidebar-item:hover {
-        background: rgba(0, 255, 255, 0.1);
+        background: rgba(45, 204, 255, 0.1);
         transform: translateX(10px);
-        border-color: rgba(0, 255, 255, 0.3);
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        border-color: rgba(45, 204, 255, 0.3);
+        box-shadow: 0 0 15px var(--glow-secondary);
     }
 
     .sidebar-item i {
@@ -246,17 +279,18 @@
 
     .sidebar-item:hover i {
         transform: scale(1.2);
-        color: #00ffff;
+        color: var(--secondary);
     }
 
     /* Main Content */
     .main-content {
         flex: 1;
-        margin-left: 220px;
+        margin-left: 220px; /* Igual al ancho de la barra lateral */
         padding: 30px;
         opacity: 0;
         transform: translateY(30px);
         transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+        min-height: 100vh; /* Asegurar que ocupe al menos toda la altura de la ventana */
     }
 
     .container.loaded .main-content {
@@ -266,14 +300,15 @@
 
     /* Search Bar */
     .search-bar {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(15, 15, 26, 0.7);
         padding: 20px;
-        border-radius: 15px;
+        border-radius: var(--border-radius-md);
         margin-bottom: 30px;
         transform: translateY(-20px);
         opacity: 0;
         transition: all 0.8s ease 0.5s;
         backdrop-filter: blur(5px);
+        border: 2px solid rgba(45, 204, 255, 0.2);
     }
 
     .container.loaded .search-bar {
@@ -286,16 +321,18 @@
         padding: 15px;
         border: none;
         border-radius: 25px;
-        background: rgba(255, 255, 255, 0.2);
-        color: #fff;
+        background: rgba(15, 15, 26, 0.8);
+        color: var(--text-primary);
         font-size: 16px;
         outline: none;
         transition: all 0.4s ease;
+        border: 2px solid var(--secondary);
     }
 
     .search-input:focus {
-        background: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        background: rgba(15, 15, 26, 0.9);
+        box-shadow: 0 0 20px var(--glow-secondary);
+        border-color: var(--primary);
     }
 
     /* Games Grid */
@@ -307,15 +344,15 @@
     }
 
     .game-card {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+        background: rgba(15, 15, 26, 0.7);
+        border-radius: var(--border-radius-md);
         overflow: hidden;
         cursor: pointer;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         opacity: 0;
         transform: translateY(30px);
         position: relative;
-        border: 2px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(45, 204, 255, 0.2);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
@@ -326,8 +363,39 @@
 
     .game-card:hover {
         transform: translateY(-10px) scale(1.03);
-        box-shadow: 0 15px 30px rgba(0, 255, 255, 0.3);
-        border-color: rgba(0, 255, 255, 0.3);
+        box-shadow: 0 15px 30px var(--glow-primary);
+        border-color: var(--primary);
+    }
+
+    /* Estilo para juegos no disponibles */
+    .game-card.unavailable {
+        opacity: 0.7;
+        filter: grayscale(0.7);
+        cursor: not-allowed;
+    }
+
+    .game-card.unavailable:hover {
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
+        border-color: rgba(255, 0, 0, 0.5);
+    }
+
+    .unavailable-badge {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-15deg);
+        background: rgba(255, 0, 0, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border-radius: var(--border-radius-md);
+        font-size: 1.2em;
+        font-weight: bold;
+        z-index: 5;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        text-transform: uppercase;
+        pointer-events: none;
     }
 
     .game-image {
@@ -335,10 +403,10 @@
         height: 200px;
         object-fit: cover;
         transition: transform 0.5s ease;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid rgba(45, 204, 255, 0.2);
     }
 
-    .game-card:hover .game-image {
+    .game-card:not(.unavailable):hover .game-image {
         transform: scale(1.1);
     }
 
@@ -348,19 +416,19 @@
         transition: transform 0.5s ease;
     }
 
-    .game-card:hover .game-info {
+    .game-card:not(.unavailable):hover .game-info {
         transform: translateY(-5px);
     }
 
     .game-title {
         font-size: 1.3em;
-        color: #fff;
+        color: var(--text-primary);
         transition: color 0.3s ease, text-shadow 0.3s ease;
     }
 
-    .game-card:hover .game-title {
-        color: #00ffff;
-        text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    .game-card:not(.unavailable):hover .game-title {
+        color: var(--primary);
+        text-shadow: 0 0 8px var(--glow-primary);
     }
 
     /* Console Tag and Wishlist Badge */
@@ -368,16 +436,18 @@
         position: absolute;
         top: 15px;
         left: 15px;
-        background: rgba(0, 255, 255, 0.8);
-        color: #000;
+        background: rgba(45, 204, 255, 0.8);
+        color: var(--darker-bg);
         padding: 8px 15px;
         border-radius: 15px;
         font-size: 0.9em;
         transform: translateY(-100%);
         opacity: 0;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid rgba(0, 255, 255, 0.5);
+        border: 1px solid rgba(45, 204, 255, 0.5);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        z-index: 10;
     }
 
     .game-card:hover .console-tag {
@@ -389,7 +459,7 @@
         position: absolute;
         top: 15px;
         right: 15px;
-        background: rgba(255, 0, 255, 0.8);
+        background: rgba(255, 45, 85, 0.8);
         color: white;
         padding: 8px 15px;
         border-radius: 15px;
@@ -397,8 +467,10 @@
         transform: translateX(100%);
         opacity: 0;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid rgba(255, 0, 255, 0.5);
+        border: 1px solid rgba(255, 45, 85, 0.5);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        z-index: 10;
     }
 
     .game-card:hover .wishlist-badge {
@@ -414,12 +486,13 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(8, 8, 18, 0.9);
         z-index: 1000;
         overflow-y: auto;
         padding: 20px;
         opacity: 0;
         transition: opacity 0.8s ease;
+        backdrop-filter: blur(10px);
     }
 
     .game-details.active {
@@ -436,15 +509,15 @@
     .details-container {
         max-width: 800px;
         margin: 40px auto;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
+        background: rgba(15, 15, 26, 0.8);
+        border-radius: var(--border-radius-lg);
         padding: 40px;
         position: relative;
         transform: translateY(50px);
         opacity: 0;
         transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 2px solid rgba(0, 255, 255, 0.2);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+        border: 2px solid var(--secondary);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(45, 204, 255, 0.1);
     }
 
     .game-details.active .details-container {
@@ -456,28 +529,42 @@
         width: 100%;
         max-height: 300px;
         object-fit: contain;
-        border-radius: 10px;
+        border-radius: var(--border-radius-md);
         margin-bottom: 25px;
-        border: 2px solid rgba(0, 255, 255, 0.2);
+        border: 2px solid var(--secondary);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.5s ease, box-shadow 0.5s ease;
     }
 
     .details-image:hover {
         transform: scale(1.02);
-        box-shadow: 0 15px 30px rgba(0, 255, 255, 0.3);
+        box-shadow: 0 15px 30px var(--glow-secondary);
+    }
+
+    .details-info h2 {
+        color: var(--primary);
+        margin-bottom: 15px;
+        font-size: 2em;
+        text-shadow: 0 0 10px var(--glow-primary);
+    }
+
+    .details-info p {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        line-height: 1.6;
     }
 
     /* Download Section */
     .download-section {
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(15, 15, 26, 0.7);
         padding: 25px;
-        border-radius: 15px;
+        border-radius: var(--border-radius-md);
         margin-top: 25px;
         transform: translateY(30px);
         opacity: 0;
         transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 2px solid rgba(0, 255, 255, 0.2);
+        border: 2px solid var(--secondary);
     }
 
     .download-section.active {
@@ -485,22 +572,28 @@
         opacity: 1;
     }
 
+    .download-section h3 {
+        color: var(--secondary);
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+
     .progress-bar {
         width: 100%;
         height: 20px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(15, 15, 26, 0.8);
         border-radius: 10px;
         overflow: hidden;
         margin: 15px 0;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(45, 204, 255, 0.2);
     }
 
     .progress {
         width: 0%;
         height: 100%;
-        background: linear-gradient(45deg, #00ffff, #ff00ff);
+        background: var(--gradient-primary);
         transition: width 0.3s ease;
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        box-shadow: 0 0 10px var(--glow-primary);
         position: relative;
         overflow: hidden;
     }
@@ -537,6 +630,7 @@
         position: relative;
         overflow: hidden;
         border: 2px solid transparent;
+        font-family: 'Russo One', sans-serif;
     }
 
     .action-button::after {
@@ -558,38 +652,51 @@
     }
 
     .download-button {
-        background: linear-gradient(45deg, #00ffff, #0066ff);
-        color: #fff;
-        box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+        background: var(--gradient-primary);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-normal);
     }
 
     .download-button:hover {
-        box-shadow: 0 8px 25px rgba(0, 102, 255, 0.5);
+        box-shadow: var(--shadow-large);
         transform: translateY(-3px);
-        border-color: rgba(0, 255, 255, 0.5);
+        border-color: rgba(255, 45, 85, 0.5);
+    }
+
+    .download-button.disabled {
+        background: #666;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .download-button.disabled:hover {
+        box-shadow: none;
+        transform: none;
+        border-color: transparent;
     }
 
     .wishlist-button {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(15, 15, 26, 0.7);
+        color: var(--text-primary);
+        border: 2px solid rgba(45, 204, 255, 0.3);
     }
 
     .wishlist-button:hover {
-        background: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        background: rgba(15, 15, 26, 0.9);
+        box-shadow: 0 5px 15px var(--glow-secondary);
         transform: translateY(-3px);
+        border-color: var(--secondary);
     }
 
     .wishlist-button.in-wishlist {
-        background: rgba(255, 0, 255, 0.3);
-        color: #ff00ff;
-        border-color: rgba(255, 0, 255, 0.5);
+        background: rgba(255, 45, 85, 0.2);
+        color: var(--primary);
+        border-color: rgba(255, 45, 85, 0.5);
     }
 
     .wishlist-button.in-wishlist:hover {
-        background: rgba(255, 0, 255, 0.4);
-        box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+        background: rgba(255, 45, 85, 0.3);
+        box-shadow: 0 5px 15px var(--glow-primary);
     }
 
     /* Notifications */
@@ -597,15 +704,16 @@
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: rgba(0, 255, 255, 0.9);
-        color: #fff;
+        background: var(--gradient-primary);
+        color: var(--text-primary);
         padding: 15px 25px;
-        border-radius: 10px;
+        border-radius: var(--border-radius-md);
         transform: translateX(200%);
         transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         z-index: 2000;
-        border: 2px solid rgba(0, 255, 255, 0.5);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 45, 85, 0.5);
+        box-shadow: var(--shadow-normal);
+        font-family: 'Russo One', sans-serif;
     }
 
     .notification.show {
@@ -620,7 +728,8 @@
             position: relative;
             transform: translateX(0);
             border-right: none;
-            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+            border-bottom: 2px solid rgba(45, 204, 255, 0.3);
+            overflow-y: visible;
         }
 
         .sidebar-items {
@@ -649,10 +758,10 @@
         right: 20px;
         width: 50px;
         height: 50px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(15, 15, 26, 0.7);
+        border: 2px solid var(--secondary);
         border-radius: 50%;
-        color: #fff;
+        color: var(--text-primary);
         font-size: 24px;
         cursor: pointer;
         display: flex;
@@ -664,23 +773,24 @@
     }
 
     .close-details:hover {
-        background: rgba(255, 0, 0, 0.3);
-        border-color: rgba(255, 0, 0, 0.5);
+        background: rgba(255, 45, 85, 0.3);
+        border-color: var(--primary);
         transform: rotate(90deg) scale(1.1);
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        box-shadow: 0 0 20px var(--glow-primary);
+        color: var(--primary);
     }
 
     /* Estilos para la sección de lista de deseos */
     .wishlist-section {
         display: none;
         padding: 25px;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 15px;
+        background: rgba(15, 15, 26, 0.7);
+        border-radius: var(--border-radius-md);
         margin-top: 25px;
         opacity: 0;
         transform: translateY(30px);
         transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 2px solid rgba(255, 0, 255, 0.2);
+        border: 2px solid var(--primary);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
@@ -703,13 +813,13 @@
     }
 
     .wishlist-title {
-        color: #ff00ff;
+        color: var(--primary);
         font-size: 1.8em;
         margin-bottom: 25px;
         display: flex;
         align-items: center;
         gap: 15px;
-        text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        text-shadow: 0 0 10px var(--glow-primary);
     }
 
     .wishlist-grid {
@@ -719,27 +829,27 @@
     }
 
     .wishlist-item {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+        background: rgba(15, 15, 26, 0.7);
+        border-radius: var(--border-radius-md);
         padding: 20px;
         display: flex;
         flex-direction: column;
         gap: 15px;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
-        border: 2px solid rgba(255, 0, 255, 0.2);
+        border: 2px solid var(--primary);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .wishlist-item:hover {
         transform: translateY(-10px) scale(1.03);
-        box-shadow: 0 15px 30px rgba(255, 0, 255, 0.3);
-        border-color: rgba(255, 0, 255, 0.4);
+        box-shadow: 0 15px 30px var(--glow-primary);
+        border-color: var(--primary);
     }
 
     .wishlist-item img {
         width: 100%;
-        border-radius: 10px;
+        border-radius: var(--border-radius-sm);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: transform 0.5s ease;
     }
@@ -750,21 +860,21 @@
 
     .wishlist-item-title {
         font-size: 1.1em;
-        color: #fff;
+        color: var(--text-primary);
         transition: color 0.3s ease;
     }
 
     .wishlist-item:hover .wishlist-item-title {
-        color: #ff00ff;
+        color: var(--primary);
     }
 
     .remove-from-wishlist {
         position: absolute;
         top: 10px;
         right: 10px;
-        background: rgba(255, 0, 0, 0.3);
-        border: 1px solid rgba(255, 0, 0, 0.5);
-        color: #fff;
+        background: rgba(255, 45, 85, 0.3);
+        border: 1px solid rgba(255, 45, 85, 0.5);
+        color: var(--text-primary);
         width: 30px;
         height: 30px;
         border-radius: 50%;
@@ -777,21 +887,21 @@
     }
 
     .remove-from-wishlist:hover {
-        background: rgba(255, 0, 0, 0.5);
+        background: rgba(255, 45, 85, 0.5);
         transform: rotate(90deg) scale(1.1);
-        box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        box-shadow: 0 0 15px var(--glow-primary);
     }
 
     /* Indicador de cantidad en lista de deseos */
     .wishlist-count {
-        background: #ff00ff;
+        background: var(--primary);
         color: white;
         padding: 3px 10px;
         border-radius: 15px;
         font-size: 0.9em;
         margin-left: 8px;
         border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        box-shadow: 0 0 10px var(--glow-primary);
     }
 
     /* Botón de lista de deseos en la barra lateral */
@@ -803,7 +913,7 @@
         position: absolute;
         top: -8px;
         right: -8px;
-        background: #ff00ff;
+        background: var(--primary);
         color: white;
         padding: 3px 8px;
         border-radius: 15px;
@@ -811,13 +921,13 @@
         min-width: 25px;
         text-align: center;
         border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        box-shadow: 0 0 10px var(--glow-primary);
         transition: all 0.3s ease;
     }
 
     .wishlist-nav-button:hover .wishlist-nav-count {
         transform: scale(1.1);
-        box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        box-shadow: 0 0 15px var(--glow-primary);
     }
 </style>
 </head>
@@ -943,7 +1053,7 @@
         }
         
         getRandomColor() {
-            const colors = ['#00ffff', '#ff00ff', '#ffffff', '#0066ff'];
+            const colors = ['#2dccff', '#ff2d55', '#ffffff', '#8a2be2'];
             return colors[Math.floor(Math.random() * colors.length)];
         }
         
@@ -1013,7 +1123,8 @@
             console: "NES",
             size: "31 KB",
             romFile: "SMB1.nes",
-            description: "El clásico juego de plataformas que definió un género. Acompaña a Mario en su aventura para rescatar a la princesa Peach de las garras de Bowser."
+            description: "El clásico juego de plataformas que definió un género. Acompaña a Mario en su aventura para rescatar a la princesa Peach de las garras de Bowser.",
+            isAvailable: true
         },
         {
             id: 2,
@@ -1022,7 +1133,8 @@
             console: "NES",
             size: "384 KB",
             romFile: "SMB3.nes",
-            description: "Una de las mejores entregas de la serie Mario Bros. Explora 8 mundos diferentes con nuevos power-ups y habilidades."
+            description: "Una de las mejores entregas de la serie Mario Bros. Explora 8 mundos diferentes con nuevos power-ups y habilidades.",
+            isAvailable: true
         },
         {
             id: 3,
@@ -1031,7 +1143,8 @@
             console: "SNES",
             size: "512 KB",
             romFile: "SMW.sfc",
-            description: "La aventura definitiva de Mario en Super Nintendo. Conoce a Yoshi y explora la misteriosa Isla Dinosaurio."
+            description: "La aventura definitiva de Mario en Super Nintendo. Conoce a Yoshi y explora la misteriosa Isla Dinosaurio.",
+            isAvailable: true
         },
         {
             id: 4,
@@ -1040,7 +1153,8 @@
             console: "SEGA",
             size: "512 KB",
             romFile: "Sonic1.md",
-            description: "El inicio de la legendaria saga de Sonic. Corre a velocidades supersónicas para derrotar al Dr. Robotnik."
+            description: "El inicio de la legendaria saga de Sonic. Corre a velocidades supersónicas para derrotar al Dr. Robotnik.",
+            isAvailable: false
         },
         {
             id: 5,
@@ -1049,7 +1163,8 @@
             console: "SNES",
             size: "1 MB",
             romFile: "Zelda3.sfc",
-            description: "Una de las mejores aventuras de la saga Zelda. Explora Hyrule y el Mundo Oscuro en esta épica aventura."
+            description: "Una de las mejores aventuras de la saga Zelda. Explora Hyrule y el Mundo Oscuro en esta épica aventura.",
+            isAvailable: true
         },
         {
             id: 6,
@@ -1058,7 +1173,8 @@
             console: "SNES",
             size: "1 MB",
             romFile: "SMASSMW.sfc",
-            description: "Una tremenda reco de los juegos de mario de la nes hasta la snes"
+            description: "Una tremenda reco de los juegos de mario de la nes hasta la snes",
+            isAvailable: true
         },
         {
             id: 7,
@@ -1067,16 +1183,28 @@
             console: "SNES NOTA: Se descarga en formato .md.txt, cambialo manualmente una vez descargado a .md.",
             size: "1 MB",
             romFile: "Sonic2.md.txt",
-            description: "Una de las mejores aventuras de la saga Sonic."
+            description: "Una de las mejores aventuras de la saga Sonic.",
+            isAvailable: false
         },
         {
             id: 8,
+            title: "Pokemon Esmeralda",
+            image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23FFB74D'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EPokemon Esmeralda%3C/text%3E%3C/svg%3E",
+            console: "GBA",
+            size: "1 MB",
+            romFile: "Sonic2.md.txt",
+            description: "PIKACHU",
+            isAvailable: false
+        },
+        {
+            id: 9,
             title: "¡Espera mas roms en la proxima actualizacion!",
             image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23FFB74D'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EAstralUpdate%3C/text%3E%3C/svg%3E",
             console: "Astral.",
             size: "1 MB",
             romFile: "",
-            description: "AVISO: DESCARGAR EL ARCHIVO DE ESTE APARTADO PUEDE DESCARGAR TODA LA BASE DE DATOS Y PUEDE LLENAR TU DISPOSITIVO!!!"
+            description: "AVISO: DESCARGAR EL ARCHIVO DE ESTE APARTADO PUEDE DESCARGAR TODA LA BASE DE DATOS Y PUEDE LLENAR TU DISPOSITIVO!!!",
+            isAvailable: false
         }
     ];
 
@@ -1111,10 +1239,12 @@
         grid.innerHTML = '';
         gamesToShow.forEach((game, index) => {
             const card = document.createElement('div');
-            card.className = 'game-card';
+            card.className = `game-card ${!game.isAvailable ? 'unavailable' : ''}`;
             card.style.transitionDelay = `${index * 0.1}s`;
             const isWishlisted = wishlist.includes(game.id);
-            card.innerHTML = `
+            
+            // Contenido HTML del card
+            let cardHTML = `
                 <span class="console-tag">${game.console}</span>
                 ${isWishlisted ? '<span class="wishlist-badge">En lista de deseos</span>' : ''}
                 <img src="${game.image}" alt="${game.title}" class="game-image">
@@ -1122,12 +1252,31 @@
                     <h3 class="game-title">${game.title}</h3>
                 </div>
             `;
-            card.addEventListener('click', () => showGameDetails(game));
+            
+            // Añadir badge de no disponible si corresponde
+            if (!game.isAvailable) {
+                cardHTML += `<div class="unavailable-badge">No disponible</div>`;
+            }
+            
+            card.innerHTML = cardHTML;
+            
+            // Añadir evento click solo si está disponible
+            if (game.isAvailable) {
+                card.addEventListener('click', () => showGameDetails(game));
+            } else {
+                card.addEventListener('click', () => showNotification('Este juego no está disponible actualmente'));
+            }
+            
             grid.appendChild(card);
         });
     }
 
     function showGameDetails(game) {
+        if (!game.isAvailable) {
+            showNotification('Este juego no está disponible actualmente');
+            return;
+        }
+        
         const details = document.getElementById('gameDetails');
         document.getElementById('detailsImage').src = game.image;
         document.getElementById('detailsTitle').textContent = game.title;
@@ -1145,7 +1294,21 @@
         `;
         detailWishlistButton.onclick = () => toggleWishlist(game.id);
 
-        document.getElementById('downloadButton').onclick = () => downloadGame(game);
+        // Configurar botón de descarga
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.onclick = () => downloadGame(game);
+        
+        // Verificar disponibilidad
+        if (!game.isAvailable) {
+            downloadButton.classList.add('disabled');
+            downloadButton.disabled = true;
+            downloadButton.innerHTML = '<i class="fas fa-ban"></i> No disponible';
+            downloadButton.onclick = null;
+        } else {
+            downloadButton.classList.remove('disabled');
+            downloadButton.disabled = false;
+            downloadButton.innerHTML = '<i class="fas fa-download"></i> Descargar';
+        }
 
         details.classList.add('active');
         setTimeout(() => {
@@ -1199,7 +1362,8 @@
         wishlistGames.forEach(game => {
             const item = document.createElement('div');
             item.className = 'wishlist-item';
-            item.innerHTML = `
+            
+            let itemHTML = `
                 <img src="${game.image}" alt="${game.title}">
                 <h3 class="wishlist-item-title">${game.title}</h3>
                 <p class="wishlist-item-console">${game.console}</p>
@@ -1207,12 +1371,31 @@
                     <i class="fas fa-times"></i>
                 </button>
             `;
-            item.addEventListener('click', () => showGameDetails(game));
+            
+            // Añadir indicador de disponibilidad
+            if (!game.isAvailable) {
+                itemHTML += `<div style="color: #ff2d55; font-size: 0.9em; margin-top: 5px;"><i class="fas fa-exclamation-circle"></i> No disponible</div>`;
+            }
+            
+            item.innerHTML = itemHTML;
+            
+            // Añadir evento click solo si está disponible
+            if (game.isAvailable) {
+                item.addEventListener('click', () => showGameDetails(game));
+            } else {
+                item.addEventListener('click', () => showNotification('Este juego no está disponible actualmente'));
+            }
+            
             wishlistGrid.appendChild(item);
         });
     }
 
     function downloadGame(game) {
+        if (!game.isAvailable) {
+            showNotification('Este juego no está disponible actualmente');
+            return;
+        }
+        
         const downloadSection = document.getElementById('downloadSection');
         downloadSection.innerHTML = `
             <div class="download-section">
@@ -1398,4 +1581,3 @@
 </script>
 </body>
 </html>
-

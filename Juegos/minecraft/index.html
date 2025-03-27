@@ -1,160 +1,566 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-	<title>Precision Client (1.5.2-beta_0.2)</title>
-	<meta charset="UTF-8" />
-	<meta content="Precision Client is a custom eaglercraft client with QOL features, custom texture packs, and more."
-		name="description" />
-	<meta content="//precisionclient.vercel.app" name="url" />
-	<meta content="EtcherFX" name="author" />
-	<meta content="Precision Client" property="og:title" />
-	<meta content="en-US" property="og:locale" />
-	<meta content="website" property="og:type" />
-	<meta content="//precisionclient.vercel.app" property="og:url" />
-	<!--meta content="IMAGE" property="og:image"/>-->
-	<meta content="Precision Client is a custom eaglercraft client with QOL features, custom texture packs, and more."
-		property="og:description" />
-	<script type="text/javascript" src="eagswebrtc.js"></script>
-	<script type="text/javascript" src="classes.js"></script>
-	<script async src="https://arc.io/widget.min.js#pchPqjfw"></script>
-	<style>
-		@font-face {
-			font-family: "Product Sans";
-			src: url(ProductSans.ttf);
-		}
-	</style>
+    <title>Precision Client (1.5.2-beta_0.2) - AstralProton</title>
+    <meta charset="UTF-8" />
+    <meta content="Precision Client is a custom eaglercraft client with QOL features, custom texture packs, and more."
+        name="description" />
+    <meta content="//precisionclient.vercel.app" name="url" />
+    <meta content="EtcherFX" name="author" />
+    <meta content="Precision Client" property="og:title" />
+    <meta content="en-US" property="og:locale" />
+    <meta content="website" property="og:type" />
+    <meta content="//precisionclient.vercel.app" property="og:url" />
+    <meta content="Precision Client is a custom eaglercraft client with QOL features, custom texture packs, and more."
+        property="og:description" />
+    <script type="text/javascript" src="eagswebrtc.js"></script>
+    <script type="text/javascript" src="classes.js"></script>
+    <script async src="https://arc.io/widget.min.js#pchPqjfw"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="logo.ico">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap');
+        @font-face {
+            font-family: "Product Sans";
+            src: url(ProductSans.ttf);
+        }
+
+        /* AstralProton Theme Variables */
+        :root {
+            --primary: #ff2d55;
+            --primary-dark: #cc2347;
+            --secondary: #2dccff;
+            --secondary-dark: #1a9bcc;
+            --accent: #8a2be2;
+            --accent-dark: #6a1cb2;
+            --dark-bg: #0f0f1a;
+            --darker-bg: #080812;
+            --panel-bg: rgba(15, 15, 26, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3cc;
+            --glow-primary: rgba(255, 45, 85, 0.6);
+            --glow-secondary: rgba(45, 204, 255, 0.5);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--accent));
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --shadow-normal: 0 0 15px rgba(255, 45, 85, 0.4);
+            --shadow-large: 0 0 25px rgba(255, 45, 85, 0.6);
+        }
+
+        /* Original styles from the page */
+        html {
+            color: #fff;
+        }
+
+        body, html {
+            height: 100%;
+            color: white;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Game background - keep the original background for the game */
+        .gameframe {
+            background-image: url("bg.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        /* Space Background - only for the selection screen */
+        #astral-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a1a33 0%, #0f0f1a 70%, #080812 100%);
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 500px;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .layer-1 { z-index: -2; }
+        .layer-2 { z-index: -1; }
+        .layer-3 { z-index: 0; }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: moveStar linear infinite;
+            will-change: transform;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+            opacity: 0.6;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+            opacity: 0.8;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            opacity: 1;
+        }
+
+        .star.twinkle {
+            animation: twinkle 4s ease-in-out infinite, moveStar linear infinite;
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: pulsate 8s ease-in-out infinite;
+        }
+
+        @keyframes pulsate {
+            0%, 100% { transform: scale(1); opacity: 0.15; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        @keyframes moveStar {
+            from {
+                transform: translateZ(0) translateX(0);
+            }
+            to {
+                transform: translateZ(500px) translateX(-100px);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Selection Panel Styles */
+        #Selection {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border-radius: var(--border-radius-lg);
+            border: 2px solid var(--secondary);
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(45, 204, 255, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            font-family: 'Chakra Petch', sans-serif;
+            z-index: 10;
+        }
+
+        #Selection::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(45, 204, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #Selection h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.5em;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--glow-primary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        #Selection h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-primary);
+            box-shadow: 0 0 10px var(--glow-primary);
+        }
+
+        #Selection h3 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.3em;
+            color: var(--secondary);
+            margin: 25px 0 15px;
+            text-shadow: 0 0 5px var(--glow-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(15, 15, 26, 0.7);
+            border: 2px solid var(--secondary);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232dccff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dropdown:hover, .dropdown:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--glow-primary);
+        }
+
+        .dropdown option {
+            background-color: var(--darker-bg);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        /* Launch Button Styles */
+        .starter {
+            margin-top: 10px;
+            padding: 12px 40px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            color: var(--text-primary);
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.2em;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: 0 0 15px var(--glow-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .starter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .starter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--glow-primary);
+        }
+
+        .starter:hover::before {
+            left: 100%;
+        }
+
+        /* Minecraft Logo */
+        .minecraft-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px var(--glow-primary));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Portal Logo */
+        .portal-logo {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.5em;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--glow-primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-family: 'Russo One', sans-serif;
+            z-index: 100;
+        }
+
+        .portal-logo i {
+            color: var(--secondary);
+        }
+
+        /* Hide all AstralProton elements when game starts */
+        .astral-element {
+            transition: opacity 0.5s ease;
+        }
+    </style>
 </head>
 
-<body style="margin: 0; width: 100vw; height: 100vh; font-family:
-'Product Sans'" id="game_frame" class="gameframe">
-	<div id="Selection"
-		style="display: inline-block; position: absolute; top:50%; left: 50%; transform: translate(-50%, -50%)">
-		<style>
-			html {
-				color: #fff;
-			}
+<body style="font-family: 'Product Sans'" id="game_frame" class="gameframe">
+    <!-- AstralProton elements (will be hidden when game starts) -->
+    <div id="astral-background" class="astral-element"></div>
+    <div id="stars-container" class="astral-element"></div>
+    <a href="index.html" class="portal-logo astral-element">
+        <i class="fas fa-gamepad"></i> AstralProton
+    </a>
 
-			.starter {
-				border-radius: 5px;
-				border: 1px solid #fff;
-				background-color: #0d0c0c;
-				color: #fff;
-			}
+    <!-- Selection screen - this is what we're styling -->
+    <div id="Selection">
+        <img src="assetoverrides/precision/logo.png" alt="Minecraft Logo" class="minecraft-logo">
+        <h1>AstralProton x Precision Client</h1>
+        <h3>Selecciona un paquete de texturas:</h3>
+        <select id="Packs" class="dropdown">
+            <option>-- Elige uno --</option>
+            <option value="defaultold">Default Old</option>
+            <option value="defaultnew">Default 1.17+</option>
+            <option value="bombies">Bombies 180k</option>
+            <option value="bones">Bare Bones</option>
+            <option value="modifiednew">Modified 1.17+</option>
+            <option value="miamiprivate">Miami Private</option>
+            <option value="nebula">Nebula</option>
+            <option value="rhedd">Rhedd</option>
+            <option value="ricefault">Ricefault</option>
+            <option value="tightfault">Tightfault</option>
+            <option value="walifault">Walifault</option>
+        </select>
+        <input class="starter" type="button" value="Iniciar Juego" onclick="Start();" />
+    </div>
 
-			.dropdown {
-				position: relative;
-				display: inline-block;
-				border-radius: 5px;
-				border: 1px solid #fff;
-				background-color: #0d0c0c;
-				color: #fff;
-			}
+    <script type="text/javascript">
+        // Función para crear el fondo espacial mejorado
+        function createSpaceBackground() {
+            const starsContainer = document.getElementById('stars-container');
+            if (!starsContainer) return;
+            
+            starsContainer.innerHTML = '';
+            
+            // Crear capas para efecto parallax
+            for (let layer = 1; layer <= 3; layer++) {
+                const layerDiv = document.createElement('div');
+                layerDiv.className = `parallax-layer layer-${layer}`;
+                starsContainer.appendChild(layerDiv);
+                
+                // Número de estrellas por capa
+                const numStars = 100 - (layer * 20); // Menos estrellas en capas más lejanas
+                
+                // Crear estrellas para esta capa
+                for (let i = 0; i < numStars; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random();
+                    if (size < 0.6) {
+                        star.classList.add('small');
+                    } else if (size < 0.9) {
+                        star.classList.add('medium');
+                    } else {
+                        star.classList.add('large');
+                    }
+                    
+                    // Posición aleatoria
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    // Velocidad de animación basada en la capa (más lenta para capas más lejanas)
+                    const duration = 20 + (layer * 30) + Math.random() * 50;
+                    star.style.animationDuration = `${duration}s`;
+                    
+                    // Solo algunas estrellas parpadean
+                    if (Math.random() > 0.7) {
+                        star.classList.add('twinkle');
+                    }
+                    
+                    layerDiv.appendChild(star);
+                }
+                
+                // Crear nebulosas para esta capa
+                if (layer === 1) { // Solo en la primera capa
+                    const numNebulas = 3;
+                    for (let i = 0; i < numNebulas; i++) {
+                        const nebula = document.createElement('div');
+                        nebula.className = 'nebula';
+                        
+                        // Tamaño aleatorio
+                        const size = 150 + Math.random() * 250;
+                        nebula.style.width = `${size}px`;
+                        nebula.style.height = `${size}px`;
+                        
+                        // Posición aleatoria
+                        nebula.style.left = `${Math.random() * 100}%`;
+                        nebula.style.top = `${Math.random() * 100}%`;
+                        
+                        // Color aleatorio
+                        const colors = ['#ff2d55', '#2dccff', '#8a2be2'];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        nebula.style.background = color;
+                        
+                        layerDiv.appendChild(nebula);
+                    }
+                }
+            }
+            
+            // Efecto parallax al mover el mouse
+            document.addEventListener('mousemove', function(e) {
+                const layers = document.querySelectorAll('.parallax-layer');
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                layers.forEach((layer, index) => {
+                    const depth = (index + 1) * 5;
+                    const moveX = (mouseX * depth);
+                    const moveY = (mouseY * depth);
+                    layer.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+                });
+            });
+        }
 
-			.gameframe {
-				background-image: url("bg.png");
-				background-size: cover;
-				background-repeat: no-repeat;
-			}
-		</style>
-		<h1>Precision Client</h1>
-		<h3>Select a texture pack:</h3>
-		<select id="Packs" class="dropdown">
-			<option>-- Choose one --</option>
-			<option value="defaultold">Default Old</option>
-			<option value="defaultnew">Default 1.17+</option>
-			<option value="bombies">Bombies 180k</option>
-			<option value="bones">Bare Bones</option>
-			<option value="modifiednew">Modified 1.17+</option>
-			<option value="miamiprivate">Miami Private</option>
-			<option value="nebula">Nebula</option>
-			<option value="rhedd">Rhedd</option>
-			<option value="ricefault">Ricefault</option>
-			<option value="tightfault">Tightfault</option>
-			<option value="walifault">Walifault</option>
-		</select>
-		<br /><br />
-		<input class="starter" type="button" value="Launch" onclick="Start();" />
-	</div>
-	<script type="text/javascript">
-		if (document.location.href.startsWith("file:")) {
-			alert("You cannot 'open' this file in your browser, the code doesn't work. Upload this folder to your HTTP(s) server and access it via the internet to launch the stable-download game. This is not a bug, please read the documentation.");
-		} else {
-			var PackSelect = document.getElementById("Packs");
-			function Start() {
-				if (PackSelect.selectedIndex !== 0) {
-					var Selected = PackSelect.options[PackSelect.selectedIndex].value;
-					document.getElementById("Selection").style.display = "none";
-					localStorage.LastPack = Selected;
-					const relayId = Math.floor(Math.random() * 3);
-					window.eaglercraftOpts = {
-						container: "game_frame",
-						assetsURI: `packs/${Selected}.epk`,
-						serverWorkerURI: "worker_bootstrap.js",
-						worldsFolder: "MAIN",
-						assetOverrides: {
-							"records/wait.mp3": "wait.mp3",
-							"records/mellohi.mp3": "https://stream.nightride.fm/chillsynth.m4a",
-							"records/far.mp3": "https://stream.nightride.fm/nightride.m4a",
-							"records/cat.mp3": "http://usa9.fastcast4u.com/proxy/jamz?mp=/1",
-							"records/ward.mp3": "http://fr4.1mix.co.uk:8000/192h",
-							"records/strad.mp3": "http://listen.011fm.com:8028/stream15",
-							"records/blocks.mp3": "https://www.ophanim.net:8444/s/9780",
-							"records/13.mp3": "https://s2.radio.co/s2b2b68744/listen",
-							//"records/ward.mp3": wardUrl,
-							"credits.txt": "assetoverrides/credits.txt",
-							"precision/gui.png": "assetoverrides/precision/gui.png",
-							"precision/gui2.png": "assetoverrides/precision/gui2.png",
-							"precision/guismall.png": "assetoverrides/precision/guismall.png",
-							"precision/logo.png": "assetoverrides/precision/logo.png",
-							"precision/precision.png": "assetoverrides/precision/precision.png",
-							"precision/precision2.png": "assetoverrides/precision/precision2.png",
-							"lang/en_US.lang": "assetoverrides/lang/en_US.lang",
-							"gui/demo_bg.png": "assetoverrides/gui/demo_bg.png",
-							"title/bg/panorama0.png": "assetoverrides/title/bg/panorama0.png",
-							"title/bg/panorama1.png": "assetoverrides/title/bg/panorama1.png",
-							"title/bg/panorama2.png": "assetoverrides/title/bg/panorama2.png",
-							"title/bg/panorama3.png": "assetoverrides/title/bg/panorama3.png",
-							"title/bg/panorama4.png": "assetoverrides/title/bg/panorama4.png",
-							"title/bg/panorama5.png": "assetoverrides/title/bg/panorama5.png"
-						},
-						servers: [
-							{ serverName: "A*spixel", serverAddress: "wss://web.asspixel.net/CAPixel/", hideAddress: true },
-							{ serverName: "VanillaCraft", serverAddress: "wss://play.vanillacraftsmp.org/", hideAddress: true },
-							{ serverName: "ArchMC", serverAddress: "wss://web.arch.lol/join", hideAddress: true },
-							{ serverName: "Ayunboom", serverAddress: "wss://sus.shhnowisnottheti.me", hideAddress: true },
-							{ serverName: "Aeon Network", serverAddress: "wss://aeon-network.net/aeon", hideAddress: true },
-							{ serverName: "Sealcraft", serverAddress: "wss://sealcraft.ddns.net:442/servers", hideAddress: true }
-						],
-						relays: [
-							{ addr: "wss://relay.deev.is/", name: "lax1dude relay #1", primary: relayId == 0 },
-							{ addr: "wss://relay.lax1dude.net/", name: "lax1dude relay #2", primary: relayId == 1 },
-							{ addr: "wss://relay.shhnowisnottheti.me/", name: "ayunami relay #1", primary: relayId == 2 }
-						],
-						mainMenu: {
-							splashes: [], eaglerLogo: false
-						}
-					};
-					(function () {
-						var q = window.location.search;
-						if (typeof q === 'string' && q.startsWith("?")) {
-							q = new URLSearchParams(q);
-							var s = q.get("server");
-							if (s) window.minecraftOpts.push(s);
-						}
-					})();
-					main();
-				} else
-					alert("You need to select a pack");
-			}
-		}
-		if (localStorage.LastPack)
-			for (Pack of PackSelect.children)
-				if (Pack.value === localStorage.LastPack) {
-					Pack.selected = "selected";
-					break;
-				}
-	</script>
+        // Inicializar el fondo espacial cuando se cargue la página
+        window.addEventListener('load', createSpaceBackground);
+
+        // Precision Client functionality - original code
+        if (document.location.href.startsWith("file:")) {
+            alert("No puedes 'abrir' este archivo en tu navegador, el código no funciona. Sube esta carpeta a tu servidor HTTP(s) y accede a ella a través de internet para iniciar el juego. Esto no es un error, por favor lee la documentación.");
+        } else {
+            var PackSelect = document.getElementById("Packs");
+            function Start() {
+                if (PackSelect.selectedIndex !== 0) {
+                    var Selected = PackSelect.options[PackSelect.selectedIndex].value;
+                    
+                    // Hide the selection screen
+                    document.getElementById("Selection").style.display = "none";
+                    
+                    // Hide all AstralProton elements to ensure they don't interfere with the game
+                    const astralElements = document.querySelectorAll('.astral-element');
+                    astralElements.forEach(el => {
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.style.display = 'none';
+                        }, 500);
+                    });
+                    
+                    localStorage.LastPack = Selected;
+                    const relayId = Math.floor(Math.random() * 3);
+                    window.eaglercraftOpts = {
+                        container: "game_frame",
+                        assetsURI: `packs/${Selected}.epk`,
+                        serverWorkerURI: "worker_bootstrap.js",
+                        worldsFolder: "MAIN",
+                        assetOverrides: {
+                            "records/wait.mp3": "wait.mp3",
+                            "records/mellohi.mp3": "https://stream.nightride.fm/chillsynth.m4a",
+                            "records/far.mp3": "https://stream.nightride.fm/nightride.m4a",
+                            "records/cat.mp3": "http://usa9.fastcast4u.com/proxy/jamz?mp=/1",
+                            "records/ward.mp3": "http://fr4.1mix.co.uk:8000/192h",
+                            "records/strad.mp3": "http://listen.011fm.com:8028/stream15",
+                            "records/blocks.mp3": "https://www.ophanim.net:8444/s/9780",
+                            "records/13.mp3": "https://s2.radio.co/s2b2b68744/listen",
+                            "credits.txt": "assetoverrides/credits.txt",
+                            "precision/gui.png": "assetoverrides/precision/gui.png",
+                            "precision/gui2.png": "assetoverrides/precision/gui2.png",
+                            "precision/guismall.png": "assetoverrides/precision/guismall.png",
+                            "precision/logo.png": "assetoverrides/precision/logo.png",
+                            "precision/precision.png": "assetoverrides/precision/precision.png",
+                            "precision/precision2.png": "assetoverrides/precision/precision2.png",
+                            "lang/en_US.lang": "assetoverrides/lang/en_US.lang",
+                            "gui/demo_bg.png": "assetoverrides/gui/demo_bg.png",
+                            "title/bg/panorama0.png": "assetoverrides/title/bg/panorama0.png",
+                            "title/bg/panorama1.png": "assetoverrides/title/bg/panorama1.png",
+                            "title/bg/panorama2.png": "assetoverrides/title/bg/panorama2.png",
+                            "title/bg/panorama3.png": "assetoverrides/title/bg/panorama3.png",
+                            "title/bg/panorama4.png": "assetoverrides/title/bg/panorama4.png",
+                            "title/bg/panorama5.png": "assetoverrides/title/bg/panorama5.png"
+                        },
+                        servers: [
+                            { serverName: "A*spixel", serverAddress: "wss://web.asspixel.net/CAPixel/", hideAddress: true },
+                            { serverName: "VanillaCraft", serverAddress: "wss://play.vanillacraftsmp.org/", hideAddress: true },
+                            { serverName: "ArchMC", serverAddress: "wss://web.arch.lol/join", hideAddress: true },
+                            { serverName: "Ayunboom", serverAddress: "wss://sus.shhnowisnottheti.me", hideAddress: true },
+                            { serverName: "Aeon Network", serverAddress: "wss://aeon-network.net/aeon", hideAddress: true },
+                            { serverName: "Sealcraft", serverAddress: "wss://sealcraft.ddns.net:442/servers", hideAddress: true }
+                        ],
+                        relays: [
+                            { addr: "wss://relay.deev.is/", name: "lax1dude relay #1", primary: relayId == 0 },
+                            { addr: "wss://relay.lax1dude.net/", name: "lax1dude relay #2", primary: relayId == 1 },
+                            { addr: "wss://relay.shhnowisnottheti.me/", name: "ayunami relay #1", primary: relayId == 2 }
+                        ],
+                        mainMenu: {
+                            splashes: [], eaglerLogo: false
+                        }
+                    };
+                    (function () {
+                        var q = window.location.search;
+                        if (typeof q === 'string' && q.startsWith("?")) {
+                            q = new URLSearchParams(q);
+                            var s = q.get("server");
+                            if (s) window.minecraftOpts.push(s);
+                        }
+                    })();
+                    main();
+                } else
+                    alert("Necesitas seleccionar un paquete de texturas");
+            }
+        }
+        if (localStorage.LastPack)
+            for (Pack of PackSelect.children)
+                if (Pack.value === localStorage.LastPack) {
+                    Pack.selected = "selected";
+                    break;
+                }
+    </script>
 </body>
-
 </html>
+
