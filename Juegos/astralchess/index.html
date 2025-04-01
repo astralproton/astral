@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez Astral</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap');
+
+        :root {
+            --primary: #ff2d55;
+            --primary-dark: #cc2347;
+            --secondary: #2dccff;
+            --secondary-dark: #1a9bcc;
+            --accent: #8a2be2;
+            --accent-dark: #6a1cb2;
+            --dark-bg: #0f0f1a;
+            --darker-bg: #080812;
+            --panel-bg: rgba(15, 15, 26, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3cc;
+            --glow-primary: rgba(255, 45, 85, 0.6);
+            --glow-secondary: rgba(45, 204, 255, 0.5);
+            --valid-move: rgba(45, 204, 255, 0.4);
+            --valid-capture: rgba(255, 45, 85, 0.4);
+            --selected: rgba(138, 43, 226, 0.6);
+            --check: rgba(255, 45, 85, 0.4);
+            --last-move: rgba(255, 215, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Russo One', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* Fondo espacial */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a1a33 0%, #0f0f1a 70%, #080812 100%);
+            z-index: -3;
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 500px;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .layer-1 { z-index: -2; }
+        .layer-2 { z-index: -1; }
+        .layer-3 { z-index: 0; }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: moveStar linear infinite;
+            will-change: transform;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+            opacity: 0.6;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+            opacity: 0.8;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            opacity: 1;
+        }
+
+        .star.twinkle {
+            animation: twinkle 4s ease-in-out infinite, moveStar linear infinite;
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: pulsate 8s ease-in-out infinite;
+        }
+
+        @keyframes pulsate {
+            0%, 100% { transform: scale(1); opacity: 0.15; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        @keyframes moveStar {
+            from { transform: translateZ(0) translateX(0); }
+            to { transform: translateZ(500px) translateX(-100px); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Cabecera */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(15, 15, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--secondary);
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--glow-primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Russo One', sans-serif;
+            box-shadow: 0 0 10px var(--glow-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--glow-primary);
+        }
+
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.5em;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--glow-primary);
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 0 10px var(--glow-primary);
+        }
+
+        /* Contenedor del juego */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 992px) {
+            .game-container {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+                gap: 30px;
+            }
+        }
+
+        /* Tablero de ajedrez */
+        .chess-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--panel-bg);
+            border-radius: 16px;
+            border: 2px solid var(--secondary);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(45, 204, 255, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            padding: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .chess-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(45, 204, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .board-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            padding-left: 10px; /* Añadir padding a la izquierda */
+        }
+
+        .coordinates {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 5px 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .coordinates.files {
+            padding-left: 30px; /* Aumentar de 20px a 30px */
+            padding-right: 20px;
+        }
+
+        .coordinates.ranks {
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 30px; /* Aumentar de 20px a 30px */
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            aspect-ratio: 1/1;
+            border: 5px solid var(--secondary);
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--glow-secondary);
+            margin-left: 30px; /* Aumentar de 20px a 30px */
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .square.light {
+            background-color: #C99468;
+        }
+
+        .square.dark {
+            background-color: #774C3B;
+        }
+
+        .square.selected {
+            background-color: var(--selected);
+        }
+
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            border-radius: 50%;
+            background-color: var(--valid-move);
+            z-index: 1;
+        }
+
+        .square.valid-capture::before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border: 3px solid var(--valid-capture);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .square.last-move {
+            background-color: var(--last-move);
+        }
+
+        .square.check {
+            background-color: var(--check);
+        }
+
+        .piece {
+            font-size: 2.5rem;
+            z-index: 2;
+            cursor: grab;
+            transition: transform 0.2s ease;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .piece:hover {
+            transform: scale(1.1);
+        }
+
+        .piece.white {
+            color: #ffffff;
+        }
+
+        .piece.black {
+            color: #000000;
+        }
+
+        /* Panel de información */
+        .info-panel {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            border: 2px solid var(--secondary);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(45, 204, 255, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .game-status {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(15, 15, 26, 0.5);
+            font-weight: 600;
+        }
+
+        .game-status.check {
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--glow-primary);
+        }
+
+        .game-status.checkmate, .game-status.stalemate {
+            color: var(--primary);
+            text-shadow: 0 0 8px var(--glow-primary);
+            font-size: 1.2em;
+        }
+
+        .turn-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(15, 15, 26, 0.5);
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .player-color.white {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+
+        .player-color.black {
+            background-color: #000000;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .active-player {
+            font-weight: 700;
+            color: var(--secondary);
+            text-shadow: 0 0 5px var(--glow-secondary);
+        }
+
+        .move-history {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(15, 15, 26, 0.5);
+        }
+
+        .move-history h3 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+            text-align: center;
+        }
+
+        .moves-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .moves-table th, .moves-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .moves-table th {
+            color: var(--text-secondary);
+        }
+
+        .captured-pieces {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(15, 15, 26, 0.5);
+        }
+
+        .captured-pieces h3 {
+            margin-bottom: 5px;
+            color: var(--secondary);
+            text-align: center;
+        }
+
+        .captured-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .captured-piece {
+            font-size: 1.5rem;
+        }
+
+        .promotion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .promotion-content {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            border: 2px solid var(--secondary);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--glow-secondary);
+        }
+
+        .promotion-content h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .promotion-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .promotion-option {
+            font-size: 3rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .promotion-option:hover {
+            transform: scale(1.1);
+            background-color: rgba(45, 204, 255, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(15, 15, 26, 0.7);
+            border-top: 1px solid var(--secondary);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+            }
+
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .back-button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+
+            .page-title {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            .piece {
+                font-size: 2rem;
+            }
+
+            .coordinates {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.8em;
+            }
+
+            .piece {
+                font-size: 1.8rem;
+            }
+
+            .chess-wrapper {
+                padding: 10px;
+            }
+
+            .coordinates {
+                font-size: 0.7rem;
+            }
+        }
+
+    /* Panel de control de música */
+    .music-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--panel-bg);
+        border-radius: 16px;
+        border: 2px solid var(--secondary);
+        padding: 15px;
+        box-shadow: 0 0 20px var(--glow-secondary);
+        backdrop-filter: blur(10px);
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .music-panel:hover {
+        transform: scale(1.05);
+    }
+
+    .music-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .music-btn {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-primary);
+        cursor: pointer;
+        box-shadow: 0 0 10px var(--glow-primary);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .music-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px var(--glow-primary);
+    }
+
+    .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+    }
+
+    .volume-control input[type="range"] {
+        -webkit-appearance: none;
+        width: 100px;
+        height: 6px;
+        background: linear-gradient(to right, var(--secondary) 0%, var(--secondary) 70%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0.2) 100%);
+        border-radius: 3px;
+        outline: none;
+    }
+
+    .volume-control input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--primary);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 5px var(--glow-primary);
+    }
+
+    .volume-control input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: var(--primary);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 5px var(--glow-primary);
+        border: none;
+    }
+
+    .track-selection select {
+        width: 100%;
+        padding: 8px;
+        background: rgba(15, 15, 26, 0.5);
+        color: var(--text-primary);
+        border: 1px solid var(--secondary);
+        border-radius: 8px;
+        outline: none;
+        cursor: pointer;
+        font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .track-selection select:focus {
+        box-shadow: 0 0 5px var(--glow-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .music-panel {
+            bottom: 10px;
+            right: 10px;
+            padding: 10px;
+        }
+        
+        .volume-control input[type="range"] {
+            width: 60px;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+    <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Cabecera -->
+    <header class="header">
+        <a href="#" class="logo">
+            <i class="fas fa-chess"></i> AstralChess
+        </a>
+        <a href="#" class="back-button">
+            <i class="fas fa-chevron-left"></i> Volver
+        </a>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <h1 class="page-title">Ajedrez Astral</h1>
+        
+        
+        <div class="game-container">
+    <!-- Tablero de ajedrez -->
+    <div class="chess-wrapper">
+        <div class="board-container">
+            <div class="coordinates ranks" id="ranks"></div>
+            <div class="chess-board" id="chessBoard"></div>
+            <div class="coordinates files" id="files"></div>
+        </div>
+    </div>
+    
+    <!-- Panel de información -->
+    <div class="info-panel">
+        <div class="game-status" id="gameStatus">Partida en curso</div>
+        
+        <div class="turn-indicator">
+            <div class="player">
+                <div class="player-color white"></div>
+                <span id="whitePlayer" class="active-player">Blancas</span>
+            </div>
+            <div class="player">
+                <div class="player-color black"></div>
+                <span id="blackPlayer">Negras</span>
+            </div>
+        </div>
+        
+        <div class="captured-pieces">
+            <h3>Piezas capturadas</h3>
+            <div class="captured-container" id="capturedWhite"></div>
+            <div class="captured-container" id="capturedBlack"></div>
+        </div>
+        
+        <div class="move-history">
+            <h3>Historial de movimientos</h3>
+            <table class="moves-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Blancas</th>
+                        <th>Negras</th>
+                    </tr>
+                </thead>
+                <tbody id="moveHistory"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        
+    <!-- Panel de control de música -->
+    <div class="music-panel">
+        <div class="music-controls">
+            <button id="toggleMusic" class="music-btn">
+                <i class="fas fa-play"></i>
+            </button>
+            <div class="volume-control">
+                <i class="fas fa-volume-down"></i>
+                <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                <i class="fas fa-volume-up"></i>
+            </div>
+        </div>
+        <div class="track-selection">
+            <select id="trackSelector">
+                <option value="cosmic-journey">Musica Tranquila</option>
+            </select>
+        </div>
+        <audio id="backgroundMusic" loop>
+            <source src="tranqui.mp3" type="audio/mp3">
+            Tu navegador no soporta el elemento de audio.
+        </audio>
+    </div>
+        <!-- Modal de promoción de peón -->
+        <div class="promotion-modal" id="promotionModal">
+            <div class="promotion-content">
+                <h3>Elige una pieza para promocionar</h3>
+                <div class="promotion-options" id="promotionOptions"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Este pagina web del juego Ajedrez fue creada y programada enteramente por el equipo de AstralTeam.</p>
+        <br/>
+        <p class="footer-text">AstralProton Gaming Portal &copy; 2025 - Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        // Crear fondo espacial
+        function createSpaceBackground() {
+            const starsContainer = document.getElementById('starsContainer');
+            if (!starsContainer) return;
+            
+            starsContainer.innerHTML = '';
+            
+            // Crear capas de paralaje
+            for (let layer = 1; layer <= 3; layer++) {
+                const layerDiv = document.createElement('div');
+                layerDiv.className = `parallax-layer layer-${layer}`;
+                starsContainer.appendChild(layerDiv);
+                
+                // Número de estrellas por capa
+                const numStars = 100 - (layer * 20);
+                
+                // Crear estrellas para esta capa
+                for (let i = 0; i < numStars; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random();
+                    if (size < 0.6) {
+                        star.classList.add('small');
+                    } else if (size < 0.9) {
+                        star.classList.add('medium');
+                    } else {
+                        star.classList.add('large');
+                    }
+                    
+                    // Posición aleatoria
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    // Velocidad de animación basada en la capa
+                    const duration = 20 + (layer * 30) + Math.random() * 50;
+                    star.style.animationDuration = `${duration}s`;
+                    
+                    // Solo algunas estrellas parpadean
+                    if (Math.random() > 0.7) {
+                        star.classList.add('twinkle');
+                    }
+                    
+                    layerDiv.appendChild(star);
+                }
+                
+                // Crear nebulosas para esta capa
+                if (layer === 1) {
+                    const numNebulas = 3;
+                    for (let i = 0; i < numNebulas; i++) {
+                        const nebula = document.createElement('div');
+                        nebula.className = 'nebula';
+                        
+                        // Tamaño aleatorio
+                        const size = 150 + Math.random() * 250;
+                        nebula.style.width = `${size}px`;
+                        nebula.style.height = `${size}px`;
+                        
+                        // Posición aleatoria
+                        nebula.style.left = `${Math.random() * 100}%`;
+                        nebula.style.top = `${Math.random() * 100}%`;
+                        
+                        // Color aleatorio
+                        const colors = ['#ff2d55', '#2dccff', '#8a2be2'];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        nebula.style.background = color;
+                        
+                        layerDiv.appendChild(nebula);
+                    }
+                }
+            }
+            
+            // Efecto de paralaje con el movimiento del ratón
+            document.addEventListener('mousemove', function(e) {
+                const layers = document.querySelectorAll('.parallax-layer');
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                layers.forEach((layer, index) => {
+                    const depth = (index + 1) * 5;
+                    const moveX = (mouseX * depth);
+                    const moveY = (mouseY * depth);
+                    layer.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+                });
+            });
+        }
+
+        // Clase para el juego de ajedrez
+        class ChessGame {
+            constructor() {
+                // Elementos del DOM
+                this.boardElement = document.getElementById('chessBoard');
+                this.ranksElement = document.getElementById('ranks');
+                this.filesElement = document.getElementById('files');
+                this.gameStatusElement = document.getElementById('gameStatus');
+                this.whitePlayerElement = document.getElementById('whitePlayer');
+                this.blackPlayerElement = document.getElementById('blackPlayer');
+                this.capturedWhiteElement = document.getElementById('capturedWhite');
+                this.capturedBlackElement = document.getElementById('capturedBlack');
+                this.moveHistoryElement = document.getElementById('moveHistory');
+                this.promotionModalElement = document.getElementById('promotionModal');
+                this.promotionOptionsElement = document.getElementById('promotionOptions');
+                
+                // Estado del juego
+                this.board = this.createInitialBoard();
+                this.currentPlayer = 'white';
+                this.selectedSquare = null;
+                this.lastMove = null;
+                this.gameOver = false;
+                this.moveHistory = [];
+                this.capturedPieces = { white: [], black: [] };
+                this.kingPositions = {
+                    white: { row: 7, col: 4 },
+                    black: { row: 0, col: 4 }
+                };
+                this.castlingRights = {
+                    white: { kingSide: true, queenSide: true },
+                    black: { kingSide: true, queenSide: true }
+                };
+                this.enPassantTarget = null;
+                this.halfMoveClock = 0;
+                this.fullMoveNumber = 1;
+                this.pendingPromotion = null;
+                
+                // Inicializar el tablero
+                this.initializeBoard();
+                this.setupEventListeners();
+            }
+            
+            // Crear el tablero inicial
+            createInitialBoard() {
+                return [
+                    ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+                    ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+                    ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+                ];
+            }
+            
+            // Inicializar el tablero en el DOM
+            initializeBoard() {
+                // Limpiar el tablero
+                this.boardElement.innerHTML = '';
+                this.ranksElement.innerHTML = '';
+                this.filesElement.innerHTML = '';
+                
+                // Crear coordenadas de filas (ranks)
+                for (let row = 0; row < 8; row++) {
+                    const rankElement = document.createElement('div');
+                    rankElement.textContent = 8 - row;
+                    this.ranksElement.appendChild(rankElement);
+                }
+                
+                // Crear coordenadas de columnas (files)
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                for (let col = 0; col < 8; col++) {
+                    const fileElement = document.createElement('div');
+                    fileElement.textContent = files[col];
+                    this.filesElement.appendChild(fileElement);
+                }
+                
+                // Crear casillas del tablero
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                        square.dataset.row = row;
+                        square.dataset.col = col;
+                        
+                        // Añadir pieza si existe en esta posición
+                        if (this.board[row][col]) {
+                            const piece = document.createElement('div');
+                            piece.className = `piece ${this.board[row][col].charAt(0) === 'w' ? 'white' : 'black'}`;
+                            piece.textContent = this.getUnicodeChar(this.board[row][col]);
+                            piece.dataset.piece = this.board[row][col];
+                            square.appendChild(piece);
+                        }
+                        
+                        this.boardElement.appendChild(square);
+                    }
+                }
+                
+                // Actualizar indicadores de turno
+                this.updateTurnIndicator();
+            }
+            
+            // Configurar event listeners
+            setupEventListeners() {
+                this.boardElement.addEventListener('click', this.handleSquareClick.bind(this));
+                
+                // Event listener para opciones de promoción
+                this.promotionOptionsElement.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('promotion-option')) {
+                        const pieceType = e.target.dataset.piece;
+                        if (this.pendingPromotion && pieceType) {
+                            this.completePromotion(pieceType);
+                        }
+                    }
+                });
+            }
+            
+            // Manejar clic en una casilla
+            handleSquareClick(e) {
+                if (this.gameOver || this.pendingPromotion) return;
+                
+                const square = e.target.closest('.square');
+                if (!square) return;
+                
+                const row = parseInt(square.dataset.row);
+                const col = parseInt(square.dataset.col);
+                
+                // Si ya hay una casilla seleccionada
+                if (this.selectedSquare) {
+                    // Si se hace clic en la misma casilla, deseleccionarla
+                    if (this.selectedSquare.row === row && this.selectedSquare.col === col) {
+                        this.clearSelection();
+                        return;
+                    }
+                    
+                    // Comprobar si el movimiento es válido
+                    if (this.isValidMove(this.selectedSquare.row, this.selectedSquare.col, row, col)) {
+                        this.makeMove(this.selectedSquare.row, this.selectedSquare.col, row, col);
+                        this.clearSelection();
+                    } else {
+                        // Si se hace clic en otra pieza del mismo color, seleccionar esa pieza
+                        const piece = this.board[row][col];
+                        if (piece && this.isPieceOfCurrentPlayer(piece)) {
+                            this.clearSelection();
+                            this.selectSquare(row, col);
+                        } else {
+                            // Si se hace clic en una casilla inválida, limpiar selección
+                            this.clearSelection();
+                        }
+                    }
+                } else {
+                    // Si no hay casilla seleccionada, seleccionar la casilla clicada si tiene una pieza del jugador actual
+                    const piece = this.board[row][col];
+                    if (piece && this.isPieceOfCurrentPlayer(piece)) {
+                        this.selectSquare(row, col);
+                    }
+                }
+            }
+            
+            // Comprobar si una pieza pertenece al jugador actual
+            isPieceOfCurrentPlayer(piece) {
+                return (this.currentPlayer === 'white' && piece.charAt(0) === 'w') ||
+                       (this.currentPlayer === 'black' && piece.charAt(0) === 'b');
+            }
+            
+            // Seleccionar una casilla
+            selectSquare(row, col) {
+                this.selectedSquare = { row, col };
+                
+                // Resaltar la casilla seleccionada
+                const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+                square.classList.add('selected');
+                
+                // Mostrar movimientos válidos
+                this.showValidMoves(row, col);
+            }
+            
+            // Limpiar selección
+            clearSelection() {
+                if (!this.selectedSquare) return;
+                
+                // Quitar resaltado de la casilla seleccionada
+                const square = document.querySelector(`.square[data-row="${this.selectedSquare.row}"][data-col="${this.selectedSquare.col}"]`);
+                square.classList.remove('selected');
+                
+                // Limpiar indicadores de movimientos válidos
+                const squares = document.querySelectorAll('.square');
+                squares.forEach(sq => {
+                    sq.classList.remove('valid-move');
+                    sq.classList.remove('valid-capture');
+                });
+                
+                this.selectedSquare = null;
+            }
+            
+            // Mostrar movimientos válidos
+            showValidMoves(row, col) {
+                const piece = this.board[row][col];
+                if (!piece) return;
+                
+                const validMoves = this.getValidMovesForPiece(row, col);
+                
+                validMoves.forEach(move => {
+                    const targetSquare = document.querySelector(`.square[data-row="${move.row}"][data-col="${move.col}"]`);
+                    if (this.board[move.row][move.col]) {
+                        targetSquare.classList.add('valid-capture');
+                    } else {
+                        targetSquare.classList.add('valid-move');
+                    }
+                });
+            }
+            
+            // Obtener carácter Unicode para una pieza
+            getUnicodeChar(piece) {
+                const pieceMap = {
+                    'wP': '♙', 'wR': '♖', 'wN': '♘', 'wB': '♗', 'wQ': '♕', 'wK': '♔',
+                    'bP': '♟', 'bR': '♜', 'bN': '♞', 'bB': '♝', 'bQ': '♛', 'bK': '♚'
+                };
+                
+                return pieceMap[piece] || '';
+            }
+            
+            // Obtener movimientos válidos para una pieza
+            getValidMovesForPiece(row, col) {
+                const piece = this.board[row][col];
+                if (!piece) return [];
+                
+                const pieceType = piece.charAt(1);
+                const color = piece.charAt(0) === 'w' ? 'white' : 'black';
+                
+                let moves = [];
+                
+                switch (pieceType) {
+                    case 'P':
+                        moves = this.getPawnMoves(row, col, color);
+                        break;
+                    case 'R':
+                        moves = this.getRookMoves(row, col, color);
+                        break;
+                    case 'N':
+                        moves = this.getKnightMoves(row, col, color);
+                        break;
+                    case 'B':
+                        moves = this.getBishopMoves(row, col, color);
+                        break;
+                    case 'Q':
+                        moves = this.getQueenMoves(row, col, color);
+                        break;
+                    case 'K':
+                        moves = this.getKingMoves(row, col, color);
+                        break;
+                }
+                
+                // Filtrar movimientos que pondrían o dejarían al rey en jaque
+                return moves.filter(move => {
+                    return !this.wouldBeInCheckAfterMove(row, col, move.row, move.col, color);
+                });
+            }
+            
+            // Comprobar si el rey estaría en jaque después de un movimiento
+            wouldBeInCheckAfterMove(fromRow, fromCol, toRow, toCol, color) {
+                // Hacer una copia profunda del tablero
+                const tempBoard = this.board.map(row => [...row]);
+                
+                // Seguir la posición del rey
+                let kingPos = {...this.kingPositions[color]};
+                
+                // Si el rey se está moviendo, actualizar su posición
+                if (tempBoard[fromRow][fromCol].charAt(1) === 'K') {
+                    kingPos = { row: toRow, col: toCol };
+                }
+                
+                // Realizar el movimiento en el tablero temporal
+                tempBoard[toRow][toCol] = tempBoard[fromRow][fromCol];
+                tempBoard[fromRow][fromCol] = null;
+                
+                // Comprobar si el rey estaría en jaque
+                return this.isSquareAttacked(kingPos.row, kingPos.col, color, tempBoard);
+            }
+            
+            // Comprobar si una casilla está atacada
+            isSquareAttacked(row, col, color, board = this.board) {
+                const opponentColor = color === 'white' ? 'b' : 'w';
+                
+                // Comprobar ataques de peones
+                const pawnOffsets = color === 'white' ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+                for (const [rowOffset, colOffset] of pawnOffsets) {
+                    const r = row + rowOffset;
+                    const c = col + colOffset;
+                    if (this.isValidPosition(r, c) && board[r][c] === `${opponentColor}P`) {
+                        return true;
+                    }
+                }
+                
+                // Comprobar ataques de caballos
+                const knightOffsets = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+                for (const [rowOffset, colOffset] of knightOffsets) {
+                    const r = row + rowOffset;
+                    const c = col + colOffset;
+                    if (this.isValidPosition(r, c) && board[r][c] === `${opponentColor}N`) {
+                        return true;
+                    }
+                }
+                
+                // Comprobar ataques de reyes
+                const kingOffsets = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+                for (const [rowOffset, colOffset] of kingOffsets) {
+                    const r = row + rowOffset;
+                    const c = col + colOffset;
+                    if (this.isValidPosition(r, c) && board[r][c] === `${opponentColor}K`) {
+                        return true;
+                    }
+                }
+                
+                // Comprobar ataques de torres y damas (horizontal y vertical)
+                const straightDirections = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (const [rowDir, colDir] of straightDirections) {
+                    let r = row + rowDir;
+                    let c = col + colDir;
+                    
+                    while (this.isValidPosition(r, c)) {
+                        if (board[r][c]) {
+                            if (board[r][c] === `${opponentColor}R` || board[r][c] === `${opponentColor}Q`) {
+                                return true;
+                            }
+                            break; // Bloqueado por otra pieza
+                        }
+                        r += rowDir;
+                        c += colDir;
+                    }
+                }
+                
+                // Comprobar ataques de alfiles y damas (diagonal)
+                const diagonalDirections = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+                for (const [rowDir, colDir] of diagonalDirections) {
+                    let r = row + rowDir;
+                    let c = col + colDir;
+                    
+                    while (this.isValidPosition(r, c)) {
+                        if (board[r][c]) {
+                            if (board[r][c] === `${opponentColor}B` || board[r][c] === `${opponentColor}Q`) {
+                                return true;
+                            }
+                            break; // Bloqueado por otra pieza
+                        }
+                        r += rowDir;
+                        c += colDir;
+                    }
+                }
+                
+                return false;
+            }
+            
+            // Obtener movimientos de peón
+            getPawnMoves(row, col, color) {
+                const moves = [];
+                const direction = color === 'white' ? -1 : 1;
+                const startRow = color === 'white' ? 6 : 1;
+                const opponentColor = color === 'white' ? 'b' : 'w';
+                
+                // Mover hacia adelante una casilla
+                if (this.isValidPosition(row + direction, col) && !this.board[row + direction][col]) {
+                    moves.push({ row: row + direction, col: col });
+                    
+                    // Mover hacia adelante dos casillas desde la posición inicial
+                    if (row === startRow && !this.board[row + 2 * direction][col]) {
+                        moves.push({ row: row + 2 * direction, col: col });
+                    }
+                }
+                
+                // Capturar en diagonal
+                const captureOffsets = [{ r: direction, c: -1 }, { r: direction, c: 1 }];
+                captureOffsets.forEach(offset => {
+                    const newRow = row + offset.r;
+                    const newCol = col + offset.c;
+                    
+                    if (this.isValidPosition(newRow, newCol)) {
+                        // Captura normal
+                        if (this.board[newRow][newCol] && this.board[newRow][newCol].charAt(0) === opponentColor.charAt(0)) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                        
+                        // Captura al paso (en passant)
+                        if (this.enPassantTarget && 
+                            newRow === this.enPassantTarget.row && 
+                            newCol === this.enPassantTarget.col) {
+                            moves.push({ row: newRow, col: newCol, isEnPassant: true });
+                        }
+                    }
+                });
+                
+                return moves;
+            }
+            
+            // Obtener movimientos de torre
+            getRookMoves(row, col, color) {
+                const moves = [];
+                const directions = [
+                    { r: -1, c: 0 }, // Arriba
+                    { r: 1, c: 0 },  // Abajo
+                    { r: 0, c: -1 }, // Izquierda
+                    { r: 0, c: 1 }   // Derecha
+                ];
+                
+                this.getSlidingMoves(row, col, color, directions, moves);
+                return moves;
+            }
+            
+            // Obtener movimientos de caballo
+            getKnightMoves(row, col, color) {
+                const moves = [];
+                const offsets = [
+                    { r: -2, c: -1 }, { r: -2, c: 1 },
+                    { r: -1, c: -2 }, { r: -1, c: 2 },
+                    { r: 1, c: -2 }, { r: 1, c: 2 },
+                    { r: 2, c: -1 }, { r: 2, c: 1 }
+                ];
+                
+                offsets.forEach(offset => {
+                    const newRow = row + offset.r;
+                    const newCol = col + offset.c;
+                    
+                    if (this.isValidPosition(newRow, newCol)) {
+                        const targetPiece = this.board[newRow][newCol];
+                        if (!targetPiece || targetPiece.charAt(0) !== (color === 'white' ? 'w' : 'b')) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                    }
+                });
+                
+                return moves;
+            }
+            
+            // Obtener movimientos de alfil
+            getBishopMoves(row, col, color) {
+                const moves = [];
+                const directions = [
+                    { r: -1, c: -1 }, // Arriba-Izquierda
+                    { r: -1, c: 1 },  // Arriba-Derecha
+                    { r: 1, c: -1 },  // Abajo-Izquierda
+                    { r: 1, c: 1 }    // Abajo-Derecha
+                ];
+                
+                this.getSlidingMoves(row, col, color, directions, moves);
+                return moves;
+            }
+            
+            // Obtener movimientos de dama
+            getQueenMoves(row, col, color) {
+                const moves = [];
+                // La dama se mueve como una torre y un alfil combinados
+                const directions = [
+                    { r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }, // Movimientos de torre
+                    { r: -1, c: -1 }, { r: -1, c: 1 }, { r: 1, c: -1 }, { r: 1, c: 1 } // Movimientos de alfil
+                ];
+                
+                this.getSlidingMoves(row, col, color, directions, moves);
+                return moves;
+            }
+            
+            // Obtener movimientos de rey
+            getKingMoves(row, col, color) {
+                const moves = [];
+                const offsets = [
+                    { r: -1, c: -1 }, { r: -1, c: 0 }, { r: -1, c: 1 },
+                    { r: 0, c: -1 }, { r: 0, c: 1 },
+                    { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 }
+                ];
+                
+                // Movimientos normales del rey
+                offsets.forEach(offset => {
+                    const newRow = row + offset.r;
+                    const newCol = col + offset.c;
+                    
+                    if (this.isValidPosition(newRow, newCol)) {
+                        const targetPiece = this.board[newRow][newCol];
+                        if (!targetPiece || targetPiece.charAt(0) !== (color === 'white' ? 'w' : 'b')) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                    }
+                });
+                
+                // Enroque
+                if (color === 'white' && row === 7 && col === 4) {
+                    // Enroque corto
+                    if (this.castlingRights.white.kingSide && 
+                        !this.board[7][5] && !this.board[7][6] && 
+                        this.board[7][7] === 'wR') {
+                        // Comprobar si el rey no está en jaque y no pasa por jaque
+                        if (!this.isSquareAttacked(7, 4, 'white') && 
+                            !this.isSquareAttacked(7, 5, 'white') && 
+                            !this.isSquareAttacked(7, 6, 'white')) {
+                            moves.push({ row: 7, col: 6, isCastling: 'kingside' });
+                        }
+                    }
+                    
+                    // Enroque largo
+                    if (this.castlingRights.white.queenSide && 
+                        !this.board[7][3] && !this.board[7][2] && !this.board[7][1] && 
+                        this.board[7][0] === 'wR') {
+                        // Comprobar si el rey no está en jaque y no pasa por jaque
+                        if (!this.isSquareAttacked(7, 4, 'white') && 
+                            !this.isSquareAttacked(7, 3, 'white') && 
+                            !this.isSquareAttacked(7, 2, 'white')) {
+                            moves.push({ row: 7, col: 2, isCastling: 'queenside' });
+                        }
+                    }
+                } else if (color === 'black' && row === 0 && col === 4) {
+                    // Enroque corto
+                    if (this.castlingRights.black.kingSide && 
+                        !this.board[0][5] && !this.board[0][6] && 
+                        this.board[0][7] === 'bR') {
+                        // Comprobar si el rey no está en jaque y no pasa por jaque
+                        if (!this.isSquareAttacked(0, 4, 'black') && 
+                            !this.isSquareAttacked(0, 5, 'black') && 
+                            !this.isSquareAttacked(0, 6, 'black')) {
+                            moves.push({ row: 0, col: 6, isCastling: 'kingside' });
+                        }
+                    }
+                    
+                    // Enroque largo
+                    if (this.castlingRights.black.queenSide && 
+                        !this.board[0][3] && !this.board[0][2] && !this.board[0][1] && 
+                        this.board[0][0] === 'bR') {
+                        // Comprobar si el rey no está en jaque y no pasa por jaque
+                        if (!this.isSquareAttacked(0, 4, 'black') && 
+                            !this.isSquareAttacked(0, 3, 'black') && 
+                            !this.isSquareAttacked(0, 2, 'black')) {
+                            moves.push({ row: 0, col: 2, isCastling: 'queenside' });
+                        }
+                    }
+                }
+                
+                return moves;
+            }
+            
+            // Obtener movimientos deslizantes (torre, alfil, dama)
+            getSlidingMoves(row, col, color, directions, moves) {
+                const colorChar = color === 'white' ? 'w' : 'b';
+                
+                directions.forEach(dir => {
+                    let newRow = row + dir.r;
+                    let newCol = col + dir.c;
+                    
+                    while (this.isValidPosition(newRow, newCol)) {
+                        const targetPiece = this.board[newRow][newCol];
+                        
+                        if (!targetPiece) {
+                            // Casilla vacía, puede moverse aquí
+                            moves.push({ row: newRow, col: newCol });
+                        } else {
+                            // La casilla tiene una pieza
+                            if (targetPiece.charAt(0) !== colorChar) {
+                                // Puede capturar la pieza del oponente
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                            // Parar en cualquier caso - no puede moverse a través de piezas
+                            break;
+                        }
+                        
+                        newRow += dir.r;
+                        newCol += dir.c;
+                    }
+                });
+            }
+            
+            // Comprobar si una posición es válida
+            isValidPosition(row, col) {
+                return row >= 0 && row < 8 && col >= 0 && col < 8;
+            }
+            
+            // Comprobar si un movimiento es válido
+            isValidMove(fromRow, fromCol, toRow, toCol) {
+                const piece = this.board[fromRow][fromCol];
+                if (!piece) return false;
+                
+                const color = piece.charAt(0) === 'w' ? 'white' : 'black';
+                if (color !== this.currentPlayer) return false;
+                
+                const validMoves = this.getValidMovesForPiece(fromRow, fromCol);
+                return validMoves.some(move => move.row === toRow && move.col === toCol);
+            }
+            
+            // Realizar un movimiento
+            makeMove(fromRow, fromCol, toRow, toCol) {
+                const piece = this.board[fromRow][fromCol];
+                const pieceType = piece.charAt(1);
+                const color = piece.charAt(0) === 'w' ? 'white' : 'black';
+                
+                // Comprobar movimientos especiales
+                const validMoves = this.getValidMovesForPiece(fromRow, fromCol);
+                const moveDetails = validMoves.find(move => move.row === toRow && move.col === toCol);
+                
+                if (!moveDetails) return false;
+                
+                // Registrar la pieza capturada si la hay
+                let capturedPiece = this.board[toRow][toCol];
+                
+                // Manejar captura al paso
+                if (moveDetails.isEnPassant) {
+                    const capturedPawnRow = color === 'white' ? toRow + 1 : toRow - 1;
+                    capturedPiece = this.board[capturedPawnRow][toCol];
+                    this.board[capturedPawnRow][toCol] = null;
+                    
+                    // Actualizar el DOM
+                    const capturedSquare = document.querySelector(`.square[data-row="${capturedPawnRow}"][data-col="${toCol}"]`);
+                    capturedSquare.innerHTML = '';
+                }
+                
+                // Manejar enroque
+                if (moveDetails.isCastling) {
+                    if (moveDetails.isCastling === 'kingside') {
+                        // Mover la torre para el enroque corto
+                        const rookFromCol = 7;
+                        const rookToCol = 5;
+                        const rookRow = color === 'white' ? 7 : 0;
+                        
+                        this.board[rookRow][rookToCol] = this.board[rookRow][rookFromCol];
+                        this.board[rookRow][rookFromCol] = null;
+                        
+                        // Actualizar el DOM para la torre
+                        const rookFromSquare = document.querySelector(`.square[data-row="${rookRow}"][data-col="${rookFromCol}"]`);
+                        const rookToSquare = document.querySelector(`.square[data-row="${rookRow}"][data-col="${rookToCol}"]`);
+                        
+                        rookToSquare.innerHTML = rookFromSquare.innerHTML;
+                        rookFromSquare.innerHTML = '';
+                    } else if (moveDetails.isCastling === 'queenside') {
+                        // Mover la torre para el enroque largo
+                        const rookFromCol = 0;
+                        const rookToCol = 3;
+                        const rookRow = color === 'white' ? 7 : 0;
+                        
+                        this.board[rookRow][rookToCol] = this.board[rookRow][rookFromCol];
+                        this.board[rookRow][rookFromCol] = null;
+                        
+                        // Actualizar el DOM para la torre
+                        const rookFromSquare = document.querySelector(`.square[data-row="${rookRow}"][data-col="${rookFromCol}"]`);
+                        const rookToSquare = document.querySelector(`.square[data-row="${rookRow}"][data-col="${rookToCol}"]`);
+                        
+                        rookToSquare.innerHTML = rookFromSquare.innerHTML;
+                        rookFromSquare.innerHTML = '';
+                    }
+                }
+                
+                // Actualizar derechos de enroque
+                if (pieceType === 'K') {
+                    if (color === 'white') {
+                        this.castlingRights.white.kingSide = false;
+                        this.castlingRights.white.queenSide = false;
+                        this.kingPositions.white = { row: toRow, col: toCol };
+                    } else {
+                        this.castlingRights.black.kingSide = false;
+                        this.castlingRights.black.queenSide = false;
+                        this.kingPositions.black = { row: toRow, col: toCol };
+                    }
+                }
+                
+                if (pieceType === 'R') {
+                    if (color === 'white') {
+                        if (fromRow === 7 && fromCol === 0) {
+                            this.castlingRights.white.queenSide = false;
+                        } else if (fromRow === 7 && fromCol === 7) {
+                            this.castlingRights.white.kingSide = false;
+                        }
+                    } else {
+                        if (fromRow === 0 && fromCol === 0) {
+                            this.castlingRights.black.queenSide = false;
+                        } else if (fromRow === 0 && fromCol === 7) {
+                            this.castlingRights.black.kingSide = false;
+                        }
+                    }
+                }
+                
+                // Establecer objetivo de captura al paso para el siguiente movimiento
+                this.enPassantTarget = null;
+                if (pieceType === 'P' && Math.abs(fromRow - toRow) === 2) {
+                    const enPassantRow = color === 'white' ? toRow + 1 : toRow - 1;
+                    this.enPassantTarget = { row: enPassantRow, col: toCol };
+                }
+                
+                // Realizar el movimiento en el tablero
+                this.board[toRow][toCol] = this.board[fromRow][fromCol];
+                this.board[fromRow][fromCol] = null;
+                
+                // Actualizar el DOM
+                const fromSquare = document.querySelector(`.square[data-row="${fromRow}"][data-col="${fromCol}"]`);
+                const toSquare = document.querySelector(`.square[data-row="${toRow}"][data-col="${toCol}"]`);
+
+                // Clonar el elemento de la pieza para asegurar que todos los atributos y clases se mantienen
+                const pieceElement = fromSquare.querySelector('.piece');
+                if (pieceElement) {
+                    const clonedPiece = pieceElement.cloneNode(true);
+                    toSquare.innerHTML = '';
+                    toSquare.appendChild(clonedPiece);
+                    fromSquare.innerHTML = '';
+                }
+                
+                // Limpiar resaltado del último movimiento
+                if (this.lastMove) {
+                    const lastFromSquare = document.querySelector(`.square[data-row="${this.lastMove.from.row}"][data-col="${this.lastMove.from.col}"]`);
+                    const lastToSquare = document.querySelector(`.square[data-row="${this.lastMove.to.row}"][data-col="${this.lastMove.to.col}"]`);
+                    
+                    if (lastFromSquare) lastFromSquare.classList.remove('last-move');
+                    if (lastToSquare) lastToSquare.classList.remove('last-move');
+                }
+                
+                // Resaltar el movimiento actual
+                fromSquare.classList.add('last-move');
+                toSquare.classList.add('last-move');
+                
+                // Guardar el último movimiento
+                this.lastMove = {
+                    from: { row: fromRow, col: fromCol },
+                    to: { row: toRow, col: toCol },
+                    piece: piece,
+                    captured: capturedPiece
+                };
+                
+                // Actualizar historial de movimientos
+                this.addMoveToHistory(fromRow, fromCol, toRow, toCol, piece, capturedPiece, moveDetails);
+                
+                // Añadir pieza capturada a la lista
+                if (capturedPiece) {
+                    const capturedColor = capturedPiece.charAt(0) === 'w' ? 'white' : 'black';
+                    this.capturedPieces[capturedColor].push(capturedPiece);
+                    this.updateCapturedPieces();
+                }
+                
+                // Comprobar promoción de peón
+                if (pieceType === 'P' && (toRow === 0 || toRow === 7)) {
+                    this.pendingPromotion = { row: toRow, col: toCol, color: color };
+                    this.showPromotionDialog(color);
+                    return true;
+                }
+                
+                // Actualizar contador de medios movimientos para la regla de los 50 movimientos
+                if (pieceType === 'P' || capturedPiece) {
+                    this.halfMoveClock = 0;
+                } else {
+                    this.halfMoveClock++;
+                }
+                
+                // Actualizar contador de movimientos completos
+                if (color === 'black') {
+                    this.fullMoveNumber++;
+                }
+                
+                // Cambiar de jugador
+                this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
+                this.updateTurnIndicator();
+                
+                // Comprobar jaque, jaque mate o tablas
+                this.checkGameStatus();
+                
+                return true;
+            }
+            
+            // Mostrar diálogo de promoción de peón
+            showPromotionDialog(color) {
+                const promotionOptions = ['Q', 'R', 'N', 'B'];
+                this.promotionOptionsElement.innerHTML = '';
+                
+                promotionOptions.forEach(option => {
+                    const pieceElement = document.createElement('div');
+                    pieceElement.className = `promotion-option ${color === 'white' ? 'white' : 'black'}`;
+                    pieceElement.textContent = this.getUnicodeChar(`${color.charAt(0)}${option}`);
+                    pieceElement.dataset.piece = option;
+                    this.promotionOptionsElement.appendChild(pieceElement);
+                });
+                
+                this.promotionModalElement.style.display = 'flex';
+            }
+            
+            // Completar promoción de peón
+            completePromotion(pieceType) {
+                if (!this.pendingPromotion) return;
+                
+                const { row, col, color } = this.pendingPromotion;
+                const newPiece = `${color.charAt(0)}${pieceType}`;
+                
+                // Actualizar el tablero
+                this.board[row][col] = newPiece;
+                
+                // Actualizar el DOM
+                const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+                const pieceElement = document.createElement('div');
+                pieceElement.className = `piece ${color}`;
+                pieceElement.textContent = this.getUnicodeChar(newPiece);
+                pieceElement.dataset.piece = newPiece;
+                
+                square.innerHTML = '';
+                square.appendChild(pieceElement);
+                
+                // Actualizar el historial de movimientos con la promoción
+                if (this.moveHistory.length > 0) {
+                    const lastMove = this.moveHistory[this.moveHistory.length - 1];
+                    lastMove.notation += `=${pieceType}`;
+                    this.updateMoveHistory();
+                }
+                
+                // Cerrar el diálogo de promoción
+                this.promotionModalElement.style.display = 'none';
+                this.pendingPromotion = null;
+                
+                // Comprobar jaque, jaque mate o tablas
+                this.checkGameStatus();
+                
+                // Cambiar de jugador
+                this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
+                this.updateTurnIndicator();
+            }
+            
+            // Añadir movimiento al historial
+            addMoveToHistory(fromRow, fromCol, toRow, toCol, piece, capturedPiece, moveDetails) {
+                const pieceType = piece.charAt(1);
+                const color = piece.charAt(0) === 'w' ? 'white' : 'black';
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+                
+                // Construir notación algebraica
+                let notation = '';
+                
+                if (moveDetails.isCastling) {
+                    notation = moveDetails.isCastling === 'kingside' ? 'O-O' : 'O-O-O';
+                } else {
+                    // Añadir tipo de pieza (excepto para peones)
+                    if (pieceType !== 'P') {
+                        notation += pieceType;
+                    }
+                    
+                    // Añadir coordenada de origen si es necesario para desambiguar
+                    const ambiguousPieces = [];
+                    for (let r = 0; r < 8; r++) {
+                        for (let c = 0; c < 8; c++) {
+                            if (r === fromRow && c === fromCol) continue;
+                            
+                            const otherPiece = this.board[r][c];
+                            if (otherPiece && otherPiece === piece) {
+                                const validMoves = this.getValidMovesForPiece(r, c);
+                                if (validMoves.some(move => move.row === toRow && move.col === toCol)) {
+                                    ambiguousPieces.push({ row: r, col: c });
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (ambiguousPieces.length > 0) {
+                        let needFile = false;
+                        let needRank = false;
+                        
+                        for (const ambPiece of ambiguousPieces) {
+                            if (ambPiece.col === fromCol) {
+                                needRank = true;
+                            }
+                            if (ambPiece.row === fromRow) {
+                                needFile = true;
+                            }
+                        }
+                        
+                        if (needFile || (!needRank && pieceType !== 'P')) {
+                            notation += files[fromCol];
+                        }
+                        if (needRank) {
+                            notation += ranks[fromRow];
+                        }
+                    } else if (pieceType === 'P' && capturedPiece) {
+                        // Para capturas de peón, añadir la columna de origen
+                        notation += files[fromCol];
+                    }
+                    
+                    // Añadir 'x' para capturas
+                    if (capturedPiece || moveDetails.isEnPassant) {
+                        notation += 'x';
+                    }
+                    
+                    // Añadir destino
+                    notation += files[toCol] + ranks[toRow];
+                    
+                    // Añadir 'e.p.' para captura al paso
+                    if (moveDetails.isEnPassant) {
+                        notation += ' e.p.';
+                    }
+                }
+                
+                // Añadir el movimiento al historial
+                const moveEntry = {
+                    number: this.fullMoveNumber,
+                    color: color,
+                    from: { row: fromRow, col: fromCol },
+                    to: { row: toRow, col: toCol },
+                    piece: piece,
+                    captured: capturedPiece,
+                    notation: notation,
+                    isCheck: false,
+                    isCheckmate: false
+                };
+                
+                this.moveHistory.push(moveEntry);
+                this.updateMoveHistory();
+            }
+            
+            // Actualizar historial de movimientos en el DOM
+            updateMoveHistory() {
+                this.moveHistoryElement.innerHTML = '';
+                
+                for (let i = 0; i < this.moveHistory.length; i += 2) {
+                    const moveNumber = Math.floor(i / 2) + 1;
+                    const whiteMove = this.moveHistory[i];
+                    const blackMove = i + 1 < this.moveHistory.length ? this.moveHistory[i + 1] : null;
+                    
+                    const row = document.createElement('tr');
+                    
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = moveNumber;
+                    row.appendChild(numberCell);
+                    
+                    const whiteCell = document.createElement('td');
+                    whiteCell.textContent = whiteMove.notation;
+                    row.appendChild(whiteCell);
+                    
+                    const blackCell = document.createElement('td');
+                    blackCell.textContent = blackMove ? blackMove.notation : '';
+                    row.appendChild(blackCell);
+                    
+                    this.moveHistoryElement.appendChild(row);
+                }
+                
+                // Desplazar al final del historial
+                const moveHistoryContainer = document.querySelector('.move-history');
+                moveHistoryContainer.scrollTop = moveHistoryContainer.scrollHeight;
+            }
+            
+            // Actualizar piezas capturadas en el DOM
+            updateCapturedPieces() {
+                this.capturedWhiteElement.innerHTML = '';
+                this.capturedBlackElement.innerHTML = '';
+                
+                this.capturedPieces.white.forEach(piece => {
+                    const pieceElement = document.createElement('div');
+                    pieceElement.className = 'captured-piece white';
+                    pieceElement.textContent = this.getUnicodeChar(piece);
+                    this.capturedWhiteElement.appendChild(pieceElement);
+                });
+                
+                this.capturedPieces.black.forEach(piece => {
+                    const pieceElement = document.createElement('div');
+                    pieceElement.className = 'captured-piece black';
+                    pieceElement.textContent = this.getUnicodeChar(piece);
+                    this.capturedBlackElement.appendChild(pieceElement);
+                });
+            }
+            
+            // Actualizar indicador de turno
+            updateTurnIndicator() {
+                if (this.currentPlayer === 'white') {
+                    this.whitePlayerElement.classList.add('active-player');
+                    this.blackPlayerElement.classList.remove('active-player');
+                } else {
+                    this.whitePlayerElement.classList.remove('active-player');
+                    this.blackPlayerElement.classList.add('active-player');
+                }
+            }
+            
+            // Comprobar estado del juego (jaque, jaque mate, tablas)
+            checkGameStatus() {
+                // Limpiar resaltado de jaque
+                const squares = document.querySelectorAll('.square');
+                squares.forEach(sq => sq.classList.remove('check'));
+                
+                // Comprobar si el rey actual está en jaque
+                const kingPos = this.kingPositions[this.currentPlayer];
+                const isInCheck = this.isSquareAttacked(kingPos.row, kingPos.col, this.currentPlayer);
+                
+                // Resaltar el rey en jaque
+                if (isInCheck) {
+                    const kingSquare = document.querySelector(`.square[data-row="${kingPos.row}"][data-col="${kingPos.col}"]`);
+                    kingSquare.classList.add('check');
+                }
+                
+                // Comprobar si el jugador actual tiene movimientos válidos
+                let hasValidMoves = false;
+                
+                // Recorrer todas las piezas del jugador actual
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = this.board[row][col];
+                        if (piece && this.isPieceOfCurrentPlayer(piece)) {
+                            const validMoves = this.getValidMovesForPiece(row, col);
+                            if (validMoves.length > 0) {
+                                hasValidMoves = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (hasValidMoves) break;
+                }
+                
+                // Actualizar el último movimiento en el historial con información de jaque/mate
+                if (this.moveHistory.length > 0) {
+                    const lastMove = this.moveHistory[this.moveHistory.length - 1];
+                    if (isInCheck) {
+                        lastMove.isCheck = true;
+                        if (!hasValidMoves) {
+                            lastMove.isCheckmate = true;
+                            lastMove.notation += '#';
+                        } else {
+                            lastMove.notation += '+';
+                        }
+                    }
+                    this.updateMoveHistory();
+                }
+                
+                // Actualizar estado del juego
+                if (isInCheck && !hasValidMoves) {
+                    // Jaque mate
+                    this.gameOver = true;
+                    this.gameStatusElement.textContent = `¡Jaque mate! ${this.currentPlayer === 'white' ? 'Negras' : 'Blancas'} ganan`;
+                    this.gameStatusElement.className = 'game-status checkmate';
+                } else if (isInCheck) {
+                    // Jaque
+                    this.gameStatusElement.textContent = `${this.currentPlayer === 'white' ? 'Blancas' : 'Negras'} en jaque`;
+                    this.gameStatusElement.className = 'game-status check';
+                } else if (!hasValidMoves) {
+                    // Tablas por ahogado
+                    this.gameOver = true;
+                    this.gameStatusElement.textContent = 'Tablas por ahogado';
+                    this.gameStatusElement.className = 'game-status stalemate';
+                } else if (this.halfMoveClock >= 50) {
+                    // Tablas por la regla de los 50 movimientos
+                    this.gameOver = true;
+                    this.gameStatusElement.textContent = 'Tablas por la regla de los 50 movimientos';
+                    this.gameStatusElement.className = 'game-status';
+                } else if (this.isInsufficientMaterial()) {
+                    // Tablas por material insuficiente
+                    this.gameOver = true;
+                    this.gameStatusElement.textContent = 'Tablas por material insuficiente';
+                    this.gameStatusElement.className = 'game-status';
+                } else {
+                    // Partida en curso
+                    this.gameStatusElement.textContent = 'Partida en curso';
+                    this.gameStatusElement.className = 'game-status';
+                }
+            }
+            
+            // Comprobar si hay material insuficiente para dar mate
+            isInsufficientMaterial() {
+                let pieces = {
+                    white: { count: 0, bishops: { light: false, dark: false }, knights: 0 },
+                    black: { count: 0, bishops: { light: false, dark: false }, knights: 0 }
+                };
+                
+                // Contar piezas
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = this.board[row][col];
+                        if (!piece) continue;
+                        
+                        const color = piece.charAt(0) === 'w' ? 'white' : 'black';
+                        const type = piece.charAt(1);
+                        
+                        if (type !== 'K') {
+                            pieces[color].count++;
+                            
+                            if (type === 'B') {
+                                // Determinar si el alfil está en casilla clara u oscura
+                                const isLightSquare = (row + col) % 2 === 0;
+                                if (isLightSquare) {
+                                    pieces[color].bishops.light = true;
+                                } else {
+                                    pieces[color].bishops.dark = true;
+                                }
+                            } else if (type === 'N') {
+                                pieces[color].knights++;
+                            } else if (type === 'P' || type === 'Q' || type === 'R') {
+                                // Si hay peones, damas o torres, hay material suficiente
+                                return false;
+                            }
+                        }
+                    }
+                }
+                
+                // Rey contra rey
+                if (pieces.white.count === 0 && pieces.black.count === 0) {
+                    return true;
+                }
+                
+                // Rey contra rey y alfil
+                if ((pieces.white.count === 1 && (pieces.white.bishops.light || pieces.white.bishops.dark) && pieces.black.count === 0) ||
+                    (pieces.black.count === 1 && (pieces.black.bishops.light || pieces.black.bishops.dark) && pieces.white.count === 0)) {
+                    return true;
+                }
+                
+                // Rey contra rey y caballo
+                if ((pieces.white.count === 1 && pieces.white.knights === 1 && pieces.black.count === 0) ||
+                    (pieces.black.count === 1 && pieces.black.knights === 1 && pieces.white.count === 0)) {
+                    return true;
+                }
+                
+                // Rey y alfil contra rey y alfil del mismo color
+                if (pieces.white.count === 1 && pieces.black.count === 1 &&
+                    pieces.white.bishops.light && pieces.black.bishops.light && 
+                    !pieces.white.bishops.dark && !pieces.black.bishops.dark) {
+                    return true;
+                }
+                
+                if (pieces.white.count === 1 && pieces.black.count === 1 &&
+                    pieces.white.bishops.dark && pieces.black.bishops.dark && 
+                    !pieces.white.bishops.light && !pieces.black.bishops.light) {
+                    return true;
+                }
+                
+                return false;
+            }
+        }
+
+        // Inicializar el juego cuando se carga la página
+        window.addEventListener('load', () => {
+            createSpaceBackground();
+            new ChessGame();
+        });
+
+    // Sistema de música de fondo
+    class MusicSystem {
+        constructor() {
+            this.audioElement = document.getElementById('backgroundMusic');
+            this.toggleButton = document.getElementById('toggleMusic');
+            this.volumeSlider = document.getElementById('volumeSlider');
+            this.trackSelector = document.getElementById('trackSelector');
+            
+            this.tracks = {
+                'cosmic-journey': 'https://assets.codepen.io/217233/kv-aulicus.mp3',
+                'stellar-battle': 'https://assets.codepen.io/217233/kv-petrichor.mp3',
+                'nebula-dreams': 'https://assets.codepen.io/217233/kv-borealis.mp3'
+            };
+            
+            this.isPlaying = false;
+            this.currentTrack = 'cosmic-journey';
+            this.volume = 0.7;
+            
+            this.loadSettings();
+            this.setupEventListeners();
+            this.updateUI();
+        }
+        
+        loadSettings() {
+            // Cargar configuración guardada si existe
+            if (localStorage.getItem('astralChessMusic')) {
+                const settings = JSON.parse(localStorage.getItem('astralChessMusic'));
+                this.volume = settings.volume || 0.7;
+                this.currentTrack = settings.track || 'cosmic-journey';
+                this.isPlaying = settings.autoplay || false;
+            }
+            
+            // Aplicar configuración
+            this.audioElement.volume = this.volume;
+            this.volumeSlider.value = this.volume * 100;
+            this.trackSelector.value = this.currentTrack;
+            this.audioElement.src = this.tracks[this.currentTrack];
+            
+            if (this.isPlaying) {
+                // Reproducir automáticamente solo después de una interacción del usuario
+                document.addEventListener('click', () => {
+                    if (!this.hasInteracted && this.isPlaying) {
+                        this.audioElement.play();
+                        this.hasInteracted = true;
+                    }
+                }, { once: true });
+            }
+        }
+        
+        saveSettings() {
+            const settings = {
+                volume: this.volume,
+                track: this.currentTrack,
+                autoplay: this.isPlaying
+            };
+            
+            localStorage.setItem('astralChessMusic', JSON.stringify(settings));
+        }
+        
+        setupEventListeners() {
+            // Botón de reproducción/pausa
+            this.toggleButton.addEventListener('click', () => {
+                this.togglePlayback();
+            });
+            
+            // Control de volumen
+            this.volumeSlider.addEventListener('input', () => {
+                this.setVolume(this.volumeSlider.value / 100);
+            });
+            
+            // Selector de pista
+            this.trackSelector.addEventListener('change', () => {
+                this.changeTrack(this.trackSelector.value);
+            });
+            
+            // Actualizar la barra de volumen cuando se cambia
+            this.volumeSlider.addEventListener('input', () => {
+                const value = this.volumeSlider.value;
+                this.volumeSlider.style.background = `linear-gradient(to right, var(--secondary) 0%, var(--secondary) ${value}%, rgba(255, 255, 255, 0.2) ${value}%, rgba(255, 255, 255, 0.2) 100%)`;
+            });
+        }
+        
+        togglePlayback() {
+            if (this.isPlaying) {
+                this.audioElement.pause();
+            } else {
+                this.audioElement.play().catch(error => {
+                    console.log('Reproducción automática bloqueada por el navegador:', error);
+                });
+            }
+            
+            this.isPlaying = !this.isPlaying;
+            this.updateUI();
+            this.saveSettings();
+        }
+        
+        setVolume(value) {
+            this.volume = value;
+            this.audioElement.volume = this.volume;
+            this.saveSettings();
+        }
+        
+        changeTrack(trackId) {
+            const wasPlaying = !this.audioElement.paused;
+            this.currentTrack = trackId;
+            this.audioElement.src = this.tracks[trackId];
+            
+            if (wasPlaying) {
+                this.audioElement.play().catch(error => {
+                    console.log('Reproducción automática bloqueada por el navegador:', error);
+                });
+            }
+            
+            this.saveSettings();
+        }
+        
+        updateUI() {
+            this.toggleButton.innerHTML = this.isPlaying 
+                ? '<i class="fas fa-pause"></i>' 
+                : '<i class="fas fa-play"></i>';
+        }
+    }
+
+    // Inicializar el sistema de música cuando se carga la página
+    window.addEventListener('load', () => {
+        createSpaceBackground();
+        new ChessGame();
+        new MusicSystem();
+    });
+    </script>
+</body>
+</html>
+

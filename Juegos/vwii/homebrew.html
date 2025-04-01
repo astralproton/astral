@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Homebrew Channel</title>
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/script.js"></script>
+    <script src="js/jquery.js"></script>
+
+    <meta property="og:site_name" content="Onliine" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Onliine Web" />
+	<meta property="og:description" content="Wii System simulator based on the latest version released by Nintendo" />
+	<meta id="meta-image" property="og:image" itemprop="image" content="" />
+	<link rel="apple-touch-icon" href="" />
+	<meta name="author" content="JerosGamer89" />
+    <meta name="description" content="Wii System simulator based on the latest version released by Nintendo">
+	<meta name="keywords" content="riimake,onliine,wii,homebrew,wii simulator,wii menu,wii web" />
+    <meta name="theme-color" content="#222222" />
+    <meta name="apple-mobile-web-app-status-bar" content="#222222" />
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            font-smooth: always;
+            transition: 200ms;
+            cursor: url('assets/cursor.png'), auto;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #005a82 0%, #003a5a 50%, #001a2a 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Bubbles animation */
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: rise 10s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 8s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 5s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 11s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 8s;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 10s;
+            animation-delay: 1s;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-100px);
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* App list */
+        .app-list {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .app-item {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+        }
+
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            background-color: #0078d7;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .app-details {
+            flex: 1;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .app-description {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 20px;
+        }
+
+        .channel-logo {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .channel-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .wifi-icon, .sd-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.8;
+        }
+
+        /* App details modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: rgba(0, 20, 40, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-app-icon {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            background-color: #0078d7;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .modal-app-info {
+            flex: 1;
+        }
+
+        .modal-app-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .modal-app-version {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .modal-app-description {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(to bottom, #444, #222);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .modal-button:hover {
+            background: linear-gradient(to bottom, #555, #333);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9;
+        }
+
+        /* Cursor */
+        .cursor {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        /* Home menu */
+        .home-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            flex-direction: column;
+        }
+
+        .bar-top {
+            background-color: black;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            height: 60px;
+        }
+
+        .bar-top span {
+            font-size: 24px;
+        }
+
+        .bar-top img {
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .in-between {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .buttonlike {
+            background: linear-gradient(to bottom, #444, #222);
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .buttonlike:hover {
+            transform: scale(1.05);
+        }
+
+        .bar-bottom {
+            background-color: black;
+            border-top: 2px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            height: 80px;
+        }
+
+        /* Loading animation */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pointer animation */
+        .pointer {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: point 1.5s infinite ease-in-out;
+        }
+
+        @keyframes point {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bubbles background -->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <div class="app-list">
+            <div class="app-item" data-app="d2x-cios">
+                <div class="app-icon">d2x</div>
+                <div class="app-details">
+                    <div class="app-title">d2x cIOS Installer</div>
+                    <div class="app-description">Custom IOS installer</div>
+                </div>
+            </div>
+            
+            <div class="app-item" data-app="priiloader">
+                <div class="app-icon">PL</div>
+                <div class="app-details">
+                    <div class="app-title">Load Priiloader</div>
+                    <div class="app-description">Priiloader Menu Loader</div>
+                </div>
+            </div>
+            
+            <div class="app-item" data-app="priiloader-installer">
+                <div class="app-icon">PI</div>
+                <div class="app-details">
+                    <div class="app-title">Priiloader Installer</div>
+                    <div class="app-description">Preloader Mod</div>
+                </div>
+            </div>
+            
+            <div class="app-item" data-app="wii-game-loader">
+                <div class="app-icon">WGL</div>
+                <div class="app-details">
+                    <div class="app-title">LIBWiiGameLoad</div>
+                    <div class="app-description">Launch Wii Games as Disc Channel</div>
+                </div>
+            </div>
+            
+            <div class="app-item" data-app="usb-loader">
+                <div class="app-icon">USB</div>
+                <div class="app-details">
+                    <div class="app-title">USB Loader GX</div>
+                    <div class="app-description">Load games from USB storage</div>
+                </div>
+            </div>
+            
+            <div class="app-item" data-app="wad-manager">
+                <div class="app-icon">WAD</div>
+                <div class="app-details">
+                    <div class="app-title">WAD Manager</div>
+                    <div class="app-description">Install and manage WAD files</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pointer"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-left">
+            <div class="channel-name">the homebrew channel</div>
+        </div>
+        <div class="footer-right">
+            <div class="sd-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M18 2h-8L4 8v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H6V8.83L10.83 4H18v16z"/>
+                    <path d="M9 7h2v4H9zm3 0h2v4h-2zm3 0h2v4h-2z"/>
+                </svg>
+            </div>
+            <div class="wifi-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- App details modal -->
+    <div class="modal-overlay"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-app-icon" id="modal-icon">WGL</div>
+            <div class="modal-app-info">
+                <div class="modal-app-title" id="modal-title">LIBWiiGameLoad</div>
+                <div class="modal-app-version" id="modal-version">Version: 0.1</div>
+            </div>
+        </div>
+        <div class="modal-app-description" id="modal-description">
+            Launching your Wii Game as Disc Channel!
+        </div>
+        <div class="modal-buttons">
+            <div class="modal-button" id="delete-btn">Delete</div>
+            <div class="modal-button" id="load-btn">Load</div>
+            <div class="modal-button" id="back-btn">Back</div>
+        </div>
+    </div>
+
+    <!-- Loading animation -->
+    <div class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Home menu -->
+    <div class="home-menu">
+        <div class="bar-top">
+            <span>HOME Menu</span>
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>" id="close-home-btn">
+        </div>
+        <div class="in-between">
+            <a class="buttonlike" id="return-to-wii">Return to Wii Menu</a>
+        </div>
+        <div class="bar-bottom">
+            <div>Homebrew Channel v1.1.2</div>
+        </div>
+    </div>
+
+    <div class="splash">
+        <div>
+            <img src="assets/return.gif" class="channels" />
+            <span class="tip"><strong>PRO TIP:</strong>&nbsp;Right-click to open the Wii pause menu</span>
+        </div>
+    </div>
+
+    <div class="main-menu">
+        <div class="grid">
+            <div class="prev">
+                <img src="assets/prev-default.png" class="def" />
+                <img src="assets/prev-hover.png" class="hover" />
+            </div>
+            <div class="ch-c">
+                <div class="ch occupied" data-id="disc">
+                    <img src="channelart/disc/disc.png" class="spinnin" />
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag" id="discTag">Disc Channel</span>
+                </div>
+                <div class="ch occupied" data-id="mii">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">Mii Channel</span>
+                </div>
+                <div class="ch occupied" data-id="photo">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">Photo Channel</span>
+                </div>
+                <div class="ch occupied" data-id="shop" data-href="/shop">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">Wii Shop Channel</span>
+                </div>
+                <div class="ch occupied" data-id="news">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">News Channel</span>
+                </div>
+                <div class="ch occupied" data-id="onliine" data-href="//github.com/Ascript89/onliine">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">Onliine Channel</span>
+                </div>
+                <div class="ch occupied" data-id="homebrew" data-href="//github.com/Ascript89/onliine">
+                    <iframe src=""></iframe>
+                    <div class="onhover" onmouseover="hover()" onclick="zip()"></div>
+                    <span class="tag">The Homebrew Channel</span>
+                </div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+            </div>
+            <div class="ch-c">
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+                <div class="ch blank"></div>
+            </div>
+            <div class="next">
+                <img src="assets/next-hover.png" class="hover" />
+                <img src="assets/next-default.png" class="def" />
+            </div>
+        </div>
+    
+        <div class="bottom-bar">
+            <div class="lateral left">
+                <img src="assets/left-button.png" class="left-btn" />
+                <img src="assets/wii-button.png" class="wii-btn buttonlike" onclick="startAudio()" />
+                <span class="tag">Wii Settings</span>
+            </div>
+            <div class="info">
+                <span class="jg">Onliine</span>
+                <span id="hour"></span>
+                <span id="date"></span>
+            </div>
+            <div class="lateral right">
+                <img src="assets/right-button.png" class="right-btn" />
+                <img src="assets/mail-button.png" class="diary-btn buttonlike" onclick="startAudio()" />
+                <span class="tag">Wii Message Board</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="msgboard">
+        <div class="bg"></div>
+        <div class="card buttonlike" onclick="letterIn()">
+            <img src="assets/petermiiffin-head.png" class="mii" /><br>
+            <span>Hello Lois</span>
+        </div>
+        <div class="opened">
+            <div class="memo">
+                <span class="title">Memo</span>
+                <img src="assets/petermiiffin-head.png" class="mii" title="Peter Miiffin lol" />
+                <div class="lines">
+                    <span>This is a nice sample letter,</span>
+                    <span>with multiple lines.</span>
+                </div>
+            </div>
+            <a class="alt-btn back">Back</a>
+        </div>
+        <div class="bottom">
+            <span id="date2"></span>
+            <div class="lateral">
+                <img src="assets/right-button.png" class="right-btn" />
+                <img src="assets/backtomenu.png" class="back-btn backtowiimenu buttonlike" />
+                <span class="tag">Wii Menu</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="ch-selection">
+        <div class="thecontent">
+            <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+            <img id="videoSpec" src="/placeholder.svg" />
+            <div class="buttons">
+                <a class="buttonlike" onclick="menuReturn()">Wii Menu</a>
+                <a class="buttonlike letsago" onclick="start()">Start</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="returndialog">
+        <div class="msgbox">
+            <div class="text">
+                Return to the Wii Menu?<br>
+                (Anything not saved will be lost.)
+            </div>
+            <div class="actions">
+                <a onclick="rm2();">Yes</a>
+                <a class="closedialog">No</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings">
+        <div class="settings-content">
+            <div class="topbar">
+                <img src="assets/wii-logo.svg" />
+            </div>
+            <div class="cells">
+                <a class="info buttonlike" href="/credits" target="_blank"></a>
+                <a class="stngs buttonlike" href="/settings"></a>
+            </div>
+            <div class="bottombar">
+                <a class="alt-btn close">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <div class="ui-sfx">
+        <audio id="startup" src="audio/startup.mp3"></audio>
+        <audio id="bg-music" src="audio/bg-music.mp3" loop></audio>
+        <audio id="hover" src="audio/button-hover.mp3"></audio>
+        <audio id="select" src="audio/button-select.mp3"></audio>
+        <audio id="zip" src="audio/zip.mp3"></audio>
+        <audio id="back" src="audio/back.mp3"></audio>
+        <audio id="start" src="audio/start.mp3"></audio>
+        <audio id="chSpec" src=""></audio>
+        <audio id="homeIn" src="audio/home-in.mp3"></audio>
+        <audio id="homeOut" src="audio/home-out.mp3"></audio>
+        <audio id="rm1" src="audio/returntomenu-1.mp3"></audio>
+        <audio id="rm2" src="audio/returntomenu-2.mp3"></audio>
+        <audio id="nextprev" src="audio/nextprev.mp3"></audio>
+        <audio id="letterIn" src="audio/letter-in.mp3"></audio>
+    </div>
+
+    <script>
+        // App data
+        const appData = {
+            "d2x-cios": {
+                title: "d2x cIOS Installer",
+                version: "v3.1",
+                description: "Install custom IOS for enhanced functionality and homebrew compatibility.",
+                icon: "d2x"
+            },
+            "priiloader": {
+                title: "Load Priiloader",
+                version: "v0.9",
+                description: "Boot directly into the Priiloader menu for system modifications.",
+                icon: "PL"
+            },
+            "priiloader-installer": {
+                title: "Priiloader Installer",
+                version: "v0.8.2",
+                description: "Install Priiloader to enable boot-time modifications and brick protection.",
+                icon: "PI"
+            },
+            "wii-game-loader": {
+                title: "LIBWiiGameLoad",
+                version: "v0.1",
+                description: "Launching your Wii Game as Disc Channel! Load backup games directly from SD card.",
+                icon: "WGL"
+            },
+            "usb-loader": {
+                title: "USB Loader GX",
+                version: "v3.0",
+                description: "Load and play Wii games from a USB storage device with a customizable interface.",
+                icon: "USB"
+            },
+            "wad-manager": {
+                title: "WAD Manager",
+                version: "v1.8",
+                description: "Install, uninstall and manage WAD packages for channels and system components.",
+                icon: "WAD"
+            }
+        };
+
+        // CHANNEL ART LOAD
+        $(document).ready(function() {
+            $('.ch.occupied').each(function() {
+                var artsrc = 'channelart/' + $(this).data('id') + '/channel.html';
+                $(this).find('iframe').attr('src', artsrc);
+            });
+        });
+
+        // CLICKS ON CHANNEL
+        $(".main-menu").on("click", ".occupied .onhover", function() {
+            var centerX = $(this).offset().left + $(this).width() / 2;
+            var centerY = $(this).offset().top + $(this).height() / 2;
+            $(".main-menu").css({"transform-origin" : centerX + "px " + centerY + "px 0" });
+            $(".ch-selection").css({"transform-origin" : centerX + "px " + centerY + "px 0" });
+            $(".main-menu").addClass('ch-trans-on');
+        });
+        
+        $(document).on("click", ".occupied", function() {
+            console.log($(this).data('id'));
+
+            var audiosrc = 'assets/channels/' + $(this).data('id') + '/audio.mp3';
+            $("#chSpec").attr('src', audiosrc);
+
+            var videosrc = 'assets/channels/' + $(this).data('id') + '/video.gif';
+            $("#videoSpec").attr('src', videosrc);
+
+            $("#chSpec")[0].currentTime = 0;
+            var currentaudio = document.getElementById("chSpec");
+            currentaudio.play();
+
+            $(".letsago").attr('data-start', $(this).data('href'));
+            if ($(this).attr("data-href")) {
+                $(".letsago").attr('data-start', $(this).data('href'));
+            }
+            else {
+                $(".letsago").addClass("disabled-btn");
+            }
+        });
+
+        // CHANNEL START
+        function start() {
+            var audio = document.getElementById("start");
+            audio.volume = 0.4; audio.play();
+            if ($(".letsago").attr("data-start")) {
+                setTimeout(() => {document.body.classList.add("fadeOut");}, 1000);
+                setTimeout(() => {window.location.href = $(".letsago").data("start");}, 2000);
+            }
+            else {
+                alert("ERROR: No endpoint has been defined for this channel.");
+            }
+
+            var chaudio = $('#chSpec');
+            var duration = 1000;
+            var steps = 10;
+
+            function decreaseVolume() {
+                var initialVolume = chaudio[0].volume;
+                var step = initialVolume / steps;
+                var delay = duration / steps;
+
+                for (var i = 0; i < steps; i++) {
+                    setTimeout(function() {
+                    chaudio[0].volume -= step;
+                    }, i * delay);
+                }
+            } decreaseVolume();
+        }
+
+        // RETURNS TO THE MENU
+        function menuReturn() {
+            var currentaudio = document.getElementById("chSpec");
+            currentaudio.pause();
+            $("#videoSpec").attr('src', '');
+
+            $(".letsago").removeClass("disabled-btn");
+
+            $(".main-menu").removeClass('ch-trans-on');
+            $(".main-menu").addClass('chsout-anim');
+            setTimeout(() => {$(".main-menu").removeClass('chsout-anim');}, 1000);
+            select(); back(); bgmus();
+        }
+
+        //PAGE PREV/NEXT
+        $('.prev').on('click', function() {
+            nextprev();
+            $('.grid').animate({ scrollLeft: '-=' + $('.grid').width() }, 0);
+            $(".prev").css("display", "none");
+            $(".next").css("display", "flex");
+        });
+
+        $('.next').on('click', function() {
+            nextprev();
+            $('.grid').animate({ scrollLeft: '+=' + $('.grid').width() }, 0);
+            $(".next").css("display", "none");
+            $(".prev").css("display", "flex");
+            
+        });
+
+        // HOME/PAUSE MENU
+        if (document.addEventListener) {
+            document.addEventListener('contextmenu', function(e) {
+                bgmusPause(); homeIn();
+                $(".home-menu").css("display", "grid");
+                e.preventDefault();
+            }, false);
+        }
+        else {
+            document.attachEvent('oncontextmenu', function() {
+                alert("EXCEPTION HANDLED: Failed to open Home/Pause menu.\nPlease report any bugs to the Everybody Votes channel.");
+                window.event.returnValue = false;
+            });
+        }
+
+        $(".close-pause-menu").click(event => {
+            $(".home-menu").addClass("fadeOut");
+            setTimeout(() => {
+                $(".home-menu").css("display", "none");
+                $(".home-menu").removeClass("fadeOut");
+            }, 250);
+            bgmus(); homeOut();
+        });
+
+        $(".backtomenu").click(event => {
+            $(".returndialog").css("display", "flex");
+            rm1();
+        });
+
+        $(".closedialog").click(event => {
+            $(".returndialog").css("display", "none");
+        });
+
+        // INSERT DISC FUNCTIONS (SNEAKY)
+        function homebrew() {
+            $("#discTag").text("Homebrew Channel");
+            $(".spinnin").addClass("disc-insert-anim");
+            var discCh= $('.ch.occupied[data-id="disc"]');
+            discCh.find('iframe').attr('src', 'channelart/homebrew/channel.html');
+            discCh.attr('data-id', 'homebrew');
+            return("Homebrew Channel unlocked (in the works)");
+        }
+
+        function bottomgear() {
+            $("#discTag").text("BOTTOM GEAR™");
+            $(".spinnin").addClass("disc-insert-anim");
+            var discCh = $('.ch.occupied[data-id="disc"]');
+            discCh.find('iframe').attr('src', 'channelart/bottomgear/channel.html');
+            discCh.attr('data-id', 'bottomgear');
+            return("WELCOME TO BO'OM GEAR MATES (in the works)");
+        }
+
+        function eject() {
+            $("#discTag").text("Disc Channel");
+            $(".spinnin").removeClass("disc-insert-anim");
+            var discCh = $('.ch.occupied[data-id="homebrew"]');
+            discCh.find('iframe').attr('src', 'channelart/disc/channel.html');
+            discCh.attr('data-id', 'disc');
+
+            var discCh = $('.ch.occupied[data-id="bottomgear"]');
+            discCh.find('iframe').attr('src', 'channelart/disc/channel.html');
+            discCh.attr('data-id', 'disc');
+
+            return("Disc ejected");
+        }
+
+        // SETTINGS
+        $(document).ready(() => {
+            $(".wii-btn").click(() => {
+                $(".settings").css("display", "block");
+                setTimeout(() => {$(".settings-content").fadeIn();}, 1000);
+                $(".grid").fadeOut();
+            });
+
+            $(".close").click(() => {
+                $(".grid").fadeIn();
+                $(".settings-content").fadeOut();
+                setTimeout(() => {$(".settings").fadeOut();}, 3500);
+            });
+        });
+
+        // MESSAGE BOARD
+        $(".card.buttonlike").click(event => {
+            $(".opened").css("display", "flex");
+            $(".bg").css("display", "block");
+        });
+
+        $(".alt-btn.back").click(event => {
+            $(".opened").css("display", "none");
+            $(".bg").css("display", "none");
+        });
+
+        $(".backtowiimenu").click(event => {
+            $(".msgboard").fadeOut();
+        });
+
+        $(".diary-btn").click(event => {
+            $(".msgboard").css("display", "flex");
+        });
+
+        // UI SFX functions (reused from provided code)
+        function hover() {
+            var audio = document.getElementById("hover");
+            if (audio) audio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        function select() {
+            var audio = document.getElementById("select");
+            if (audio) audio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        function homeIn() {
+            var audio = document.getElementById("homeIn");
+            if (audio) audio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        function homeOut() {
+            var audio = document.getElementById("homeOut");
+            if (audio) audio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        // HOME/PAUSE MENU (reused from provided code)
+        document.addEventListener('contextmenu', function(e) {
+            homeIn();
+            document.querySelector(".home-menu").style.display = "flex";
+            e.preventDefault();
+        }, false);
+
+        document.getElementById('close-home-btn').addEventListener('click', function() {
+            document.querySelector(".home-menu").style.display = "none";
+            homeOut();
+        });
+
+        document.getElementById('return-to-wii').addEventListener('click', function() {
+            alert("Returning to Wii Menu...");
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1500);
+        });
+
+        // App item click handlers
+        document.querySelectorAll('.app-item').forEach(item => {
+            item.addEventListener('mouseover', hover);
+            
+            item.addEventListener('click', function() {
+                select();
+                const appId = this.getAttribute('data-app');
+                const app = appData[appId];
+                
+                // Update modal content
+                document.getElementById('modal-icon').textContent = app.icon;
+                document.getElementById('modal-title').textContent = app.title;
+                document.getElementById('modal-version').textContent = `Version: ${app.version}`;
+                document.getElementById('modal-description').textContent = app.description;
+                
+                // Show modal
+                document.querySelector('.modal-overlay').style.display = 'block';
+                document.querySelector('.modal').style.display = 'block';
+            });
+        });
+
+        // Modal button handlers
+        document.getElementById('load-btn').addEventListener('click', function() {
+            select();
+            document.querySelector('.modal').style.display = 'none';
+            document.querySelector('.loading').style.display = 'block';
+            
+            setTimeout(() => {
+                document.querySelector('.loading').style.display = 'none';
+                alert("Application loaded successfully!");
+                document.querySelector('.modal-overlay').style.display = 'none';
+            }, 2000);
+        });
+
+        document.getElementById('delete-btn').addEventListener('click', function() {
+            select();
+            if (confirm("Are you sure you want to delete this application?")) {
+                document.querySelector('.modal').style.display = 'none';
+                document.querySelector('.modal-overlay').style.display = 'none';
+                alert("Application deleted.");
+            }
+        });
+
+        document.getElementById('back-btn').addEventListener('click', function() {
+            select();
+            document.querySelector('.modal').style.display = 'none';
+            document.querySelector('.modal-overlay').style.display = 'none';
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover sound to all interactive elements
+            document.querySelectorAll('.app-item, .buttonlike, .modal-button').forEach(el => {
+                el.addEventListener('mouseover', hover);
+            });
+        });
+    </script>
+</body>
+</html>
