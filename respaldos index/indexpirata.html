@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstralProton - Plataforma de Juegos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+      --primary-color: #0a0a2a;
+      --secondary-color: #1a1a4a;
+      --accent-color: #4169e1;
+      --text-color: #ffffff;
+      --highlight-color: #ff3366;
+      --card-bg: rgba(26, 26, 74, 0.7);
+      --card-hover: rgba(65, 105, 225, 0.3);
+      --sidebar-bg: rgba(10, 10, 42, 0.95);
+      --header-bg: rgba(10, 10, 42, 0.95);
+      --transition-speed: 0.3s;
+      --card-size: 1; /* Factor de escala para las tarjetas */
+  }
+
+  /* Tema claro */
+  [data-theme="light"] {
+      --primary-color: #f0f2f5;
+      --secondary-color: #e4e6eb;
+      --accent-color: #4169e1;
+      --text-color: #1a1a2e;
+      --highlight-color: #ff3366;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-hover: rgba(65, 105, 225, 0.1);
+      --sidebar-bg: rgba(255, 255, 255, 0.95);
+      --header-bg: rgba(255, 255, 255, 0.95);
+  }
+
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+      background: rgba(10, 10, 42, 0.6);
+      border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, var(--accent-color), var(--highlight-color));
+      border-radius: 10px;
+      border: 2px solid rgba(10, 10, 42, 0.6);
+      box-shadow: 0 0 5px rgba(65, 105, 225, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(to bottom, var(--highlight-color), var(--accent-color));
+      box-shadow: 0 0 10px rgba(65, 105, 225, 0.8);
+  }
+
+  ::-webkit-scrollbar-button {
+      display: none;
+  }
+
+  /* Fondo espacial */
+  .space-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      z-index: -2;
+      overflow: hidden;
+      transition: background 0.5s ease;
+  }
+
+  .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+  }
+
+  .star {
+      position: absolute;
+      background-color: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--duration, 4s) infinite ease-in-out;
+      opacity: var(--opacity, 0.7);
+  }
+
+  @keyframes twinkle {
+      0%, 100% { opacity: var(--opacity, 0.7); }
+      50% { opacity: 0.2; }
+  }
+
+  .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.15;
+      background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+      animation: pulse 8s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.1); opacity: 0.2; }
+  }
+
+  /* Pantalla de título */
+  .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 1s ease, background 0.5s ease;
+  }
+
+  .splash-logo {
+      width: 250px;
+      height: auto;
+      margin-bottom: 2rem;
+      animation: logoFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+  }
+
+  .splash-button {
+      padding: 1rem 3rem;
+      background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+  }
+
+  .splash-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .splash-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+  }
+
+  .splash-button:hover::after {
+      left: 100%;
+  }
+
+  /* Header */
+  header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: var(--header-bg);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.5s ease;
+  }
+
+  .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-color);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.5s ease;
+  }
+
+  .search-container {
+      position: relative;
+      width: 300px;
+  }
+
+  .search-container input {
+      width: 100%;
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
+      border-radius: 25px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      font-size: 0.9rem;
+      transition: all var(--transition-speed);
+  }
+
+  .search-container input:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(65, 105, 225, 0.5);
+  }
+
+  .search-container i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.7);
+  }
+
+  .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+  }
+
+  .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all var(--transition-speed);
+  }
+
+  .user-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(65, 105, 225, 0.7);
+  }
+
+  /* Layout principal */
+  .main-container {
+      display: flex;
+      height: calc(100vh - 70px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+      width: 80px;
+      background-color: var(--sidebar-bg);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 0;
+      transition: width var(--transition-speed), background-color 0.5s ease;
+      overflow: hidden;
+      z-index: 90;
+  }
+
+  .sidebar:hover {
+      width: 200px;
+  }
+
+  .sidebar-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 1rem;
+      color: var(--text-color);
+      text-decoration: none;
+      transition: all var(--transition-speed), color 0.5s ease;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+  }
+
+  .sidebar-item i {
+      font-size: 1.5rem;
+      min-width: 40px;
+      text-align: center;
+  }
+
+  .sidebar-item span {
+      margin-left: 1rem;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity var(--transition-speed);
+  }
+
+  .sidebar:hover .sidebar-item span {
+      opacity: 1;
+  }
+
+  .sidebar-item:hover, .sidebar-item.active {
+      background-color: var(--accent-color);
+      color: white;
+  }
+
+  .sidebar-item.active {
+      border-left: 4px solid var(--highlight-color);
+  }
+
+  /* Contenido principal */
+  .content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      position: relative;
+  }
+
+  .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: color 0.5s ease;
+  }
+
+  /* Filtros */
+  .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+  }
+
+  .filter-options {
+      display: flex;
+      gap: 1rem;
+  }
+
+  .filter-dropdown {
+      position: relative;
+      min-width: 180px;
+  }
+
+  .filter-dropdown-btn {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 5px;
+      color: var(--text-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all var(--transition-speed), color 0.5s ease;
+  }
+
+  .filter-dropdown-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .filter-dropdown-content {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: var(--secondary-color);
+      border-radius: 5px;
+      margin-top: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-speed), background-color 0.5s ease;
+  }
+
+  .filter-dropdown.active .filter-dropdown-content {
+      max-height: 300px;
+  }
+
+  .filter-option {
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      transition: background var(--transition-speed), color 0.5s ease;
+  }
+
+  .filter-option:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .filter-option.active {
+      background-color: var(--accent-color);
+  }
+
+  .view-options {
+      display: flex;
+      gap: 0.5rem;
+  }
+
+  .view-option {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+  }
+
+  .view-option:hover, .view-option.active {
+      background-color: var(--accent-color);
+  }
+
+  /* Categorías */
+  .categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-color) transparent;
+  }
+
+  .categories::-webkit-scrollbar {
+      height: 6px;
+  }
+
+  .categories::-webkit-scrollbar-track {
+      background: transparent;
+  }
+
+  .categories::-webkit-scrollbar-thumb {
+      background-color: var(--accent-color);
+      border-radius: 10px;
+  }
+
+  .category {
+      padding: 0.7rem 1.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all var(--transition-speed), background-color 0.5s ease, color 0.5s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+  }
+
+  .category:hover, .category.active {
+      background-color: var(--accent-color);
+  }
+
+  /* Grid de juegos */
+  .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(calc(300px * var(--card-size)), 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+  }
+
+  .game-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: var(--card-bg);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                  box-shadow 0.5s ease, 
+                  background-color 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      height: calc(200px * var(--card-size));
+      animation: cardAppear 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+  }
+
+  @keyframes cardAppear {
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  .game-card:hover {
+      transform: translateY(-15px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
+      background-color: var(--card-hover);
+      z-index: 1;
+  }
+
+  .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+      z-index: 2;
+  }
+
+  .game-card:hover::before {
+      left: 100%;
+  }
+
+  .game-thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .game-card:hover .game-thumbnail {
+      transform: scale(1.2);
+  }
+
+  .game-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .game-card:hover .game-info {
+      padding-bottom: 2rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), transparent);
+  }
+
+  .game-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      transform: translateY(0);
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .game-card:hover .game-title {
+      transform: translateY(-5px);
+  }
+
+  .game-artist {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transform: translateY(0);
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+  }
+
+  .game-card:hover .game-artist {
+      opacity: 1;
+      transform: translateY(-5px);
+  }
+
+  .game-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background-color: var(--highlight-color);
+      color: white;
+      z-index: 2;
+      transform: translateY(0);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      animation: badgePulse 2s infinite;
+  }
+
+  @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+  }
+
+  .game-card:hover .game-badge {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 51, 102, 0.5);
+  }
+
+  .game-badge.update {
+      background-color: var(--accent-color);
+      left: auto;
+      right: 1rem;
+      animation: badgeGlow 2s infinite;
+  }
+
+  @keyframes badgeGlow {
+      0%, 100% { box-shadow: 0 0 5px rgba(65, 105, 225, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(65, 105, 225, 0.8), 0 0 20px rgba(65, 105, 225, 0.5); }
+  }
+
+  .play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--highlight-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+  }
+
+  .game-card:hover .play-button {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      animation: playButtonPulse 2s infinite;
+  }
+
+  @keyframes playButtonPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
+      50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); }
+  }
+
+  /* Animaciones */
+  @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+  }
+
+  .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+  }
+
+  .slide-up {
+      animation: slideUp 0.5s ease forwards;
+  }
+
+  /* Alerta */
+  .alert {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background-color: var(--secondary-color);
+      border-radius: 10px;
+      padding: 2rem;
+      max-width: 90%;
+      width: 500px;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: none;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.5s ease;
+      border: 2px solid var(--accent-color);
+      overflow: hidden;
+  }
+
+  .alert.show {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+  }
+
+  .alert::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent-color), var(--highlight-color), var(--accent-color));
+      background-size: 200% 100%;
+      animation: alertBorderFlow 3s linear infinite;
+  }
+
+  @keyframes alertBorderFlow {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+  }
+
+  .alert-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--highlight-color);
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+      animation: alertTitleGlow 2s infinite;
+  }
+
+  @keyframes alertTitleGlow {
+      0%, 100% { text-shadow: 0 0 5px rgba(255, 51, 102, 0.3); }
+      50% { text-shadow: 0 0 15px rgba(255, 51, 102, 0.6); }
+  }
+
+  .alert-message {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      animation: fadeIn 0.5s 0.2s both;
+  }
+
+  .alert-button {
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s 0.4s both;
+  }
+
+  .alert-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .alert-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+  }
+
+  .alert-button:hover::after {
+      left: 100%;
+  }
+
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      backdrop-filter: blur(5px);
+  }
+
+  .overlay.show {
+      display: block;
+      opacity: 1;
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+      .games-grid {
+          grid-template-columns: repeat(auto-fill, minmax(calc(250px * var(--card-size)), 1fr));
+      }
+  }
+
+  @media (max-width: 992px) {
+      .search-container {
+          width: 200px;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .sidebar {
+          width: 60px;
+      }
+      
+      .sidebar:hover {
+          width: 180px;
+      }
+      
+      .games-grid {
+          grid-template-columns: repeat(auto-fill, minmax(calc(200px * var(--card-size)), 1fr));
+      }
+  }
+
+  @media (max-width: 576px) {
+      header {
+          padding: 1rem;
+      }
+      
+      .logo {
+          font-size: 1.5rem;
+      }
+      
+      .search-container {
+          width: 150px;
+      }
+      
+      .content {
+          padding: 1rem;
+      }
+      
+      .games-grid {
+          grid-template-columns: 1fr;
+      }
+
+      .splash-logo {
+          width: 200px;
+      }
+  }
+
+  /* Secciones de contenido */
+  .content-section {
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+  }
+
+  .content-section.active {
+      display: block;
+  }
+
+  /* Mensaje de bienvenida */
+  .welcome-message {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 2rem 0;
+      background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3);
+      animation: welcomeGlow 3s infinite;
+  }
+
+  @keyframes welcomeGlow {
+      0%, 100% { text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3); }
+      50% { text-shadow: 0 5px 25px rgba(65, 105, 225, 0.7); }
+  }
+
+  .welcome-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.8s ease forwards;
+      transition: background-color 0.5s ease;
+  }
+
+  .welcome-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent-color), var(--highlight-color), var(--accent-color));
+      background-size: 200% 100%;
+      animation: alertBorderFlow 3s linear infinite;
+  }
+
+  .welcome-text {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      transition: color 0.5s ease;
+  }
+
+  /* Configuraciones */
+  .settings-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--card-bg);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.5s ease;
+  }
+
+  .settings-section {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .settings-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+  }
+
+  .settings-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.5s ease;
+  }
+
+  .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 0.5rem 0;
+  }
+
+  .settings-label {
+      font-weight: 500;
+      transition: color 0.5s ease;
+  }
+
+  .settings-description {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 0.2rem;
+      transition: color 0.5s ease;
+  }
+
+  /* Controles de configuración */
+  .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+  }
+
+  .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+
+  .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: .4s;
+      border-radius: 34px;
+  }
+
+  .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+  }
+
+  input:checked + .toggle-slider {
+      background-color: var(--accent-color);
+  }
+
+  input:focus + .toggle-slider {
+      box-shadow: 0 0 1px var(--accent-color);
+  }
+
+  input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+  }
+
+  .range-slider {
+      -webkit-appearance: none;
+      width: 200px;
+      height: 8px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+  }
+
+  .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+      transition: background 0.3s ease;
+  }
+
+  .range-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+      transition: background 0.3s ease;
+  }
+
+  .range-slider::-webkit-slider-thumb:hover {
+      background: var(--highlight-color);
+  }
+
+  .range-slider::-moz-range-thumb:hover {
+      background: var(--highlight-color);
+  }
+
+  .select-dropdown {
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      min-width: 150px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.5s ease;
+  }
+
+  .select-dropdown:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .select-dropdown option {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+  }
+
+  .button-group {
+      display: flex;
+      gap: 0.5rem;
+  }
+
+  .settings-button {
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.5s ease;
+  }
+
+  .settings-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .settings-button.active {
+      background-color: var(--accent-color);
+      color: white;
+  }
+
+  .save-button {
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-top: 1rem;
+  }
+
+  .save-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .volume-display {
+      font-size: 0.9rem;
+      margin-left: 1rem;
+      min-width: 40px;
+      text-align: center;
+  }
+
+  /* Notificación de guardado */
+  .save-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 1rem;
+      border-radius: 5px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 1000;
+  }
+
+  .save-notification.show {
+      transform: translateY(0);
+      opacity: 1;
+  }
+</style>
+</head>
+<body>
+<!-- Pantalla de título -->
+<div class="splash-screen" id="splashScreen">
+  <div class="stars" id="splashStars"></div>
+  <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="splash-logo">
+  <button class="splash-button" id="startButton">Iniciar</button>
+</div>
+
+<!-- Fondo espacial -->
+<div class="space-background">
+  <div class="stars" id="stars"></div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+      <i class="fas fa-meteor"></i> AstralProton
+  </div>
+  <div class="search-container">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar juegos..." id="searchInput">
+  </div>
+  <div class="user-profile">
+      <div class="user-avatar">
+          <i class="fas fa-user"></i>
+      </div>
+  </div>
+</header>
+
+<!-- Contenedor principal -->
+<div class="main-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+      <a class="sidebar-item active" data-section="home">
+          <i class="fas fa-home"></i>
+          <span>Inicio</span>
+      </a>
+      <a class="sidebar-item" data-section="games">
+          <i class="fas fa-gamepad"></i>
+          <span>Juegos</span>
+      </a>
+      <a class="sidebar-item" data-section="settings">
+          <i class="fas fa-cog"></i>
+          <span>Configuración</span>
+      </a>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content">
+      <!-- Sección de inicio -->
+      <div id="homeSection" class="content-section active">
+          <h1 class="welcome-message">¡Bienvenido a AstralProton!</h1>
+          <div class="welcome-container">
+              <p class="welcome-text">Este es un mensaje de bienvenida que puedes modificar más tarde. Aquí puedes agregar cualquier información importante que desees mostrar a los usuarios cuando ingresen a tu sitio.</p>
+          </div>
+      </div>
+      
+      <!-- Sección de juegos -->
+      <div id="gamesSection" class="content-section">
+          <h1 class="section-title">
+              <i class="fas fa-gamepad"></i> Juegos
+          </h1>
+
+          <!-- Categorías -->
+          <div class="categories">
+              <div class="category active" data-category="all">
+                  <i class="fas fa-th-large"></i> Todos
+              </div>
+              <div class="category" data-category="favorites">
+                  <i class="fas fa-star"></i> Favoritos
+              </div>
+              <div class="category" data-category="action">
+                  <i class="fas fa-running"></i> Acción
+              </div>
+              <div class="category" data-category="arcade">
+                  <i class="fas fa-gamepad"></i> Arcade
+              </div>
+              <div class="category" data-category="retro">
+                  <i class="fas fa-ghost"></i> Retro
+              </div>
+              <div class="category" data-category="puzzle">
+                  <i class="fas fa-puzzle-piece"></i> Puzzle
+              </div>
+              <div class="category" data-category="strategy">
+                  <i class="fas fa-chess"></i> Estrategia
+              </div>
+          </div>
+
+          <!-- Filtros -->
+          <div class="filters">
+              <div class="filter-options">
+                  <div class="filter-dropdown" id="sortDropdown">
+                      <button class="filter-dropdown-btn">
+                          <span>Versiones (reciente a antigua)</span>
+                          <i class="fas fa-chevron-down"></i>
+                      </button>
+                      <div class="filter-dropdown-content">
+                          <div class="filter-option active">Versiones (reciente a antigua)</div>
+                          <div class="filter-option">Versiones (antigua a reciente)</div>
+                          <div class="filter-option">Alfabético (A-Z)</div>
+                          <div class="filter-option">Alfabético (Z-A)</div>
+                      </div>
+                  </div>
+                  <div class="filter-dropdown" id="filterDropdown">
+                      <button class="filter-dropdown-btn">
+                          <span>Tus juegos primero</span>
+                          <i class="fas fa-chevron-down"></i>
+                      </button>
+                      <div class="filter-dropdown-content">
+                          <div class="filter-option active">Tus juegos primero</div>
+                          <div class="filter-option">Juegos populares</div>
+                          <div class="filter-option">Juegos nuevos</div>
+                      </div>
+                  </div>
+              </div>
+              <div class="view-options">
+                  <div class="view-option active">
+                      <i class="fas fa-th-large"></i>
+                  </div>
+                  <div class="view-option">
+                      <i class="fas fa-list"></i>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Grid de juegos -->
+          <h2 class="section-title">AstralProton</h2>
+          <div class="games-grid" id="gamesGrid">
+              <!-- Los juegos se cargarán dinámicamente aquí -->
+          </div>
+      </div>
+
+      <!-- Sección de configuraciones -->
+      <div id="settingsSection" class="content-section">
+          <h1 class="section-title">
+              <i class="fas fa-cog"></i> Configuración
+          </h1>
+
+          <div class="settings-container">
+              <!-- Configuración de apariencia -->
+              <div class="settings-section">
+                  <h2 class="settings-title">
+                      <i class="fas fa-palette"></i> Apariencia
+                  </h2>
+                  
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Tema oscuro</div>
+                          <div class="settings-description">Cambia entre tema oscuro y claro</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="darkModeToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Tamaño de tarjetas</div>
+                          <div class="settings-description">Ajusta el tamaño de las tarjetas de juegos</div>
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                          <input type="range" min="0.7" max="1.3" step="0.1" value="1" class="range-slider" id="cardSizeSlider">
+                          <span class="volume-display" id="cardSizeDisplay">100%</span>
+                      </div>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Animaciones</div>
+                          <div class="settings-description">Activa o desactiva las animaciones</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="animationsToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Estrellas de fondo</div>
+                          <div class="settings-description">Muestra u oculta las estrellas del fondo</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="starsToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+              </div>
+
+              <!-- Configuración de audio -->
+              <div class="settings-section">
+                  <h2 class="settings-title">
+                      <i class="fas fa-volume-up"></i> Audio
+                  </h2>
+                  
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Efectos de sonido</div>
+                          <div class="settings-description">Activa o desactiva los efectos de sonido</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="soundEffectsToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Volumen de efectos</div>
+                          <div class="settings-description">Ajusta el volumen de los efectos de sonido</div>
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                          <input type="range" min="0" max="1" step="0.1" value="0.5" class="range-slider" id="soundVolumeSlider">
+                          <span class="volume-display" id="soundVolumeDisplay">50%</span>
+                      </div>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Música de fondo</div>
+                          <div class="settings-description">Activa o desactiva la música de fondo</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="backgroundMusicToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Volumen de música</div>
+                          <div class="settings-description">Ajusta el volumen de la música de fondo</div>
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                          <input type="range" min="0" max="1" step="0.1" value="0.3" class="range-slider" id="musicVolumeSlider">
+                          <span class="volume-display" id="musicVolumeDisplay">30%</span>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Configuración de rendimiento -->
+              <div class="settings-section">
+                  <h2 class="settings-title">
+                      <i class="fas fa-tachometer-alt"></i> Rendimiento
+                  </h2>
+                  
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Calidad gráfica</div>
+                          <div class="settings-description">Ajusta la calidad visual</div>
+                      </div>
+                      <select class="select-dropdown" id="graphicsQualitySelect">
+                          <option value="high">Alta</option>
+                          <option value="medium" selected>Media</option>
+                          <option value="low">Baja</option>
+                      </select>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Precarga de juegos</div>
+                          <div class="settings-description">Precarga los juegos para un inicio más rápido</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="preloadToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Modo de ahorro de datos</div>
+                          <div class="settings-description">Reduce el uso de datos</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="dataSavingToggle">
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+              </div>
+
+              <!-- Configuración de idioma y región -->
+              <div class="settings-section">
+                  <h2 class="settings-title">
+                      <i class="fas fa-globe"></i> Idioma y región
+                  </h2>
+                  
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Idioma</div>
+                          <div class="settings-description">Selecciona el idioma de la interfaz</div>
+                      </div>
+                      <select class="select-dropdown" id="languageSelect">
+                          <option value="es" selected>Español</option>
+                          <option value="en">English</option>
+                          <option value="fr">Français</option>
+                          <option value="de">Deutsch</option>
+                          <option value="pt">Português</option>
+                      </select>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Región</div>
+                          <div class="settings-description">Selecciona tu región para contenido personalizado</div>
+                      </div>
+                      <select class="select-dropdown" id="regionSelect">
+                          <option value="latam" selected>Latinoamérica</option>
+                          <option value="na">Norteamérica</option>
+                          <option value="eu">Europa</option>
+                          <option value="asia">Asia</option>
+                          <option value="oceania">Oceanía</option>
+                      </select>
+                  </div>
+              </div>
+
+              <!-- Configuración de privacidad -->
+              <div class="settings-section">
+                  <h2 class="settings-title">
+                      <i class="fas fa-shield-alt"></i> Privacidad
+                  </h2>
+                  
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Cookies</div>
+                          <div class="settings-description">Gestiona las cookies y el almacenamiento local</div>
+                      </div>
+                      <div class="button-group">
+                          <button class="settings-button active" id="acceptCookiesBtn">Aceptar todas</button>
+                          <button class="settings-button" id="essentialCookiesBtn">Solo esenciales</button>
+                      </div>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Historial de juego</div>
+                          <div class="settings-description">Guarda tu historial de juegos</div>
+                      </div>
+                      <label class="toggle-switch">
+                          <input type="checkbox" id="gameHistoryToggle" checked>
+                          <span class="toggle-slider"></span>
+                      </label>
+                  </div>
+
+                  <div class="settings-row">
+                      <div>
+                          <div class="settings-label">Borrar datos</div>
+                          <div class="settings-description">Elimina todos los datos guardados</div>
+                      </div>
+                      <button class="settings-button" id="clearDataBtn">Borrar datos</button>
+                  </div>
+              </div>
+
+              <!-- Botón de guardar -->
+              <button class="save-button" id="saveSettingsBtn">Guardar configuración</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Alerta -->
+<div class="overlay" id="overlay"></div>
+<div class="alert" id="alert">
+  <div class="alert-title" id="alertTitle">Información</div>
+  <div class="alert-message" id="alertMessage">Mensaje de alerta</div>
+  <button class="alert-button" id="alertButton">Aceptar</button>
+</div>
+
+<!-- Notificación de guardado -->
+<div class="save-notification" id="saveNotification">
+  <i class="fas fa-check-circle"></i> Configuración guardada correctamente
+</div>
+
+<!-- Audio element para la música y efectos de sonido -->
+<audio id="audioPlayer"></audio>
+<audio id="hoverSound"></audio>
+<audio id="backgroundMusic" loop></audio>
+
+<script>
+  // Datos de juegos
+  const games = [
+    {
+      id: 1,
+      title: "Cosmic Racer",
+      artist: "Stellar Studios",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["action", "arcade"],
+      badge: "Nuevo",
+      update: true,
+      audio: "sonido.mp3"
+    },
+    {
+      id: 2,
+      title: "Nebula Quest",
+      artist: "Galactic Games",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["adventure", "puzzle"],
+      badge: "Popular",
+      update: false,
+      audio: "sonido.mp3"
+    },
+    {
+      id: 3,
+      title: "Astro Defender",
+      artist: "Orbital Entertainment",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["action", "strategy"],
+      badge: "Clásico",
+      update: true,
+      audio: "sonido.mp3"
+    },
+    {
+      id: 4,
+      title: "Pixel Planets",
+      artist: "Retro Realm",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["retro", "puzzle"],
+      badge: "Indie",
+      update: false,
+      audio: "sonido.mp3"
+    },
+    {
+      id: 5,
+      title: "Space Invaders X",
+      artist: "Classic Creations",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["retro", "arcade"],
+      badge: "Remake",
+      update: true,
+      audio: "sonido.mp3"
+    },
+    {
+      id: 6,
+      title: "Gravity Puzzle",
+      artist: "Quantum Games",
+      thumbnail: "/placeholder.svg?height=400&width=600",
+      categories: ["puzzle", "strategy"],
+      badge: "Educativo",
+      update: false,
+      audio: "sonido.mp3"
+    }
+  ];
+
+  // Configuración global
+  let userSettings = {
+      appearance: {
+          darkMode: true,
+          cardSize: 1,
+          animations: true,
+          showStars: true
+      },
+      audio: {
+          soundEffects: true,
+          soundVolume: 0.5,
+          backgroundMusic: true,
+          musicVolume: 0.3
+      },
+      performance: {
+          graphicsQuality: 'medium',
+          preloadGames: true,
+          dataSavingMode: false
+      },
+      language: {
+          language: 'es',
+          region: 'latam'
+      },
+      privacy: {
+          cookies: 'all',
+          gameHistory: true
+      }
+  };
+
+  // Cargar configuración guardada
+  function loadSettings() {
+      const savedSettings = localStorage.getItem('astralProtonSettings');
+      if (savedSettings) {
+          try {
+              userSettings = JSON.parse(savedSettings);
+              applySettings();
+          } catch (e) {
+              console.error('Error al cargar configuración:', e);
+          }
+      }
+  }
+
+  // Guardar configuración
+  function saveSettings() {
+      localStorage.setItem('astralProtonSettings', JSON.stringify(userSettings));
+      showSaveNotification();
+  }
+
+  // Aplicar configuración
+  function applySettings() {
+      // Tema
+      document.body.setAttribute('data-theme', userSettings.appearance.darkMode ? 'dark' : 'light');
+      document.getElementById('darkModeToggle').checked = userSettings.appearance.darkMode;
+      
+      // Tamaño de tarjetas
+      document.documentElement.style.setProperty('--card-size', userSettings.appearance.cardSize);
+      document.getElementById('cardSizeSlider').value = userSettings.appearance.cardSize;
+      document.getElementById('cardSizeDisplay').textContent = Math.round(userSettings.appearance.cardSize * 100) + '%';
+      
+      // Animaciones
+      document.getElementById('animationsToggle').checked = userSettings.appearance.animations;
+      if (!userSettings.appearance.animations) {
+          document.body.classList.add('no-animations');
+      } else {
+          document.body.classList.remove('no-animations');
+      }
+      
+      // Estrellas
+      document.getElementById('starsToggle').checked = userSettings.appearance.showStars;
+      const starsElements = document.querySelectorAll('.stars');
+      starsElements.forEach(el => {
+          el.style.display = userSettings.appearance.showStars ? 'block' : 'none';
+      });
+      
+      // Efectos de sonido
+      document.getElementById('soundEffectsToggle').checked = userSettings.audio.soundEffects;
+      document.getElementById('soundVolumeSlider').value = userSettings.audio.soundVolume;
+      document.getElementById('soundVolumeDisplay').textContent = Math.round(userSettings.audio.soundVolume * 100) + '%';
+      
+      // Música de fondo
+      document.getElementById('backgroundMusicToggle').checked = userSettings.audio.backgroundMusic;
+      document.getElementById('musicVolumeSlider').value = userSettings.audio.musicVolume;
+      document.getElementById('musicVolumeDisplay').textContent = Math.round(userSettings.audio.musicVolume * 100) + '%';
+      
+      // Actualizar volumen de música si está reproduciéndose
+      const backgroundMusic = document.getElementById('backgroundMusic');
+      backgroundMusic.volume = userSettings.audio.musicVolume;
+      
+      if (userSettings.audio.backgroundMusic) {
+          if (backgroundMusic.paused && backgroundMusic.src) {
+              backgroundMusic.play().catch(err => {
+                  console.error('Error al reproducir música de fondo:', err);
+              });
+          }
+      } else {
+          backgroundMusic.pause();
+      }
+      
+      // Calidad gráfica
+      document.getElementById('graphicsQualitySelect').value = userSettings.performance.graphicsQuality;
+      
+      // Precarga de juegos
+      document.getElementById('preloadToggle').checked = userSettings.performance.preloadGames;
+      
+      // Modo de ahorro de datos
+      document.getElementById('dataSavingToggle').checked = userSettings.performance.dataSavingMode;
+      
+      // Idioma
+      document.getElementById('languageSelect').value = userSettings.language.language;
+      
+      // Región
+      document.getElementById('regionSelect').value = userSettings.language.region;
+      
+      // Cookies
+      if (userSettings.privacy.cookies === 'all') {
+          document.getElementById('acceptCookiesBtn').classList.add('active');
+          document.getElementById('essentialCookiesBtn').classList.remove('active');
+      } else {
+          document.getElementById('acceptCookiesBtn').classList.remove('active');
+          document.getElementById('essentialCookiesBtn').classList.add('active');
+      }
+      
+      // Historial de juego
+      document.getElementById('gameHistoryToggle').checked = userSettings.privacy.gameHistory;
+  }
+
+  // Mostrar notificación de guardado
+  function showSaveNotification() {
+      const notification = document.getElementById('saveNotification');
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+          notification.classList.remove('show');
+      }, 3000);
+  }
+
+  // Inicializar pantalla de título
+  function initSplashScreen() {
+      const splashScreen = document.getElementById('splashScreen');
+      const startButton = document.getElementById('startButton');
+      const backgroundMusic = document.getElementById('backgroundMusic');
+      
+      // Configurar música de fondo para la pantalla de título
+      backgroundMusic.src = 'sonido.mp3';
+      backgroundMusic.volume = userSettings.audio.musicVolume;
+      
+      if (userSettings.audio.backgroundMusic) {
+          backgroundMusic.play().catch(err => {
+              console.error('Error al reproducir música de fondo:', err);
+          });
+      }
+      
+      // Evento para el botón de inicio
+      startButton.addEventListener('click', function() {
+          console.log("Botón de inicio clickeado"); // Para depuración
+          
+          // Desvanecer la pantalla de título
+          splashScreen.style.opacity = '0';
+          
+          // Desvanecer la música gradualmente
+          if (!backgroundMusic.paused) {
+              const fadeAudio = setInterval(() => {
+                  if (backgroundMusic.volume > 0.05) {
+                      backgroundMusic.volume -= 0.05;
+                  } else {
+                      backgroundMusic.pause();
+                      clearInterval(fadeAudio);
+                  }
+              }, 100);
+          }
+          
+          // Ocultar la pantalla de título después de la transición
+          setTimeout(() => {
+              splashScreen.style.display = 'none';
+          }, 1000);
+      });
+      
+      // Crear estrellas para la pantalla de título
+      createSpaceBackground('splashStars');
+  }
+
+  // Crear fondo espacial
+  function createSpaceBackground(containerId) {
+      const container = document.getElementById(containerId);
+      const containerWidth = window.innerWidth;
+      const containerHeight = window.innerHeight;
+      
+      // Limpiar estrellas existentes
+      container.innerHTML = '';
+      
+      // Crear estrellas
+      const starCount = Math.floor((containerWidth * containerHeight) / 1000);
+      
+      for (let i = 0; i < starCount; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          
+          // Tamaño aleatorio
+          const size = Math.random() * 3 + 1;
+          star.style.width = `${size}px`;
+          star.style.height = `${size}px`;
+          
+          // Posición aleatoria
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.top = `${Math.random() * 100}%`;
+          
+          // Opacidad y duración aleatorias
+          star.style.setProperty('--opacity', Math.random() * 0.5 + 0.3);
+          star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+          
+          container.appendChild(star);
+      }
+      
+      // Crear nebulosas
+      const nebulaCount = 3;
+      const nebulaColors = ['#4169e1', '#ff3366', '#9370db'];
+      
+      for (let i = 0; i < nebulaCount; i++) {
+          const nebula = document.createElement('div');
+          nebula.className = 'nebula';
+          
+          // Tamaño aleatorio
+          const size = Math.random() * 300 + 200;
+          nebula.style.width = `${size}px`;
+          nebula.style.height = `${size}px`;
+          
+          // Posición aleatoria
+          nebula.style.left = `${Math.random() * 100}%`;
+          nebula.style.top = `${Math.random() * 100}%`;
+          
+          // Color aleatorio
+          nebula.style.setProperty('--color', nebulaColors[i % nebulaColors.length]);
+          
+          container.appendChild(nebula);
+      }
+  }
+
+  // Cargar juegos en el grid
+  function loadGames(games) {
+      const gamesGrid = document.getElementById('gamesGrid');
+      gamesGrid.innerHTML = '';
+      
+      games.forEach((game, index) => {
+          // Crear tarjeta de juego
+          const gameCard = document.createElement('div');
+          gameCard.className = 'game-card';
+          gameCard.setAttribute('data-id', game.id);
+          gameCard.setAttribute('data-categories', game.categories.join(','));
+          
+          // Añadir delay para animación escalonada
+          gameCard.style.animationDelay = `${index * 0.1}s`;
+          
+          // Contenido de la tarjeta
+          gameCard.innerHTML = `
+              <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
+              <div class="game-info">
+                  <div class="game-title">${game.title}</div>
+                  <div class="game-artist">${game.artist}</div>
+              </div>
+              ${game.badge ? `<div class="game-badge">${game.badge}</div>` : ''}
+              ${game.update ? `<div class="game-badge update">Actualizado</div>` : ''}
+              <div class="play-button">
+                  <i class="fas fa-play"></i>
+              </div>
+          `;
+          
+          // Evento de hover para reproducir sonido
+          gameCard.addEventListener('mouseenter', function() {
+              playHoverSound();
+          });
+          
+          // Añadir al grid
+          gamesGrid.appendChild(gameCard);
+      });
+  }
+
+  // Reproducir sonido de hover
+  let lastHoverTime = 0;
+  function playHoverSound() {
+      const now = Date.now();
+      // Evitar reproducir el sonido demasiado frecuentemente
+      if (now - lastHoverTime < 100) return;
+      lastHoverTime = now;
+      
+      if (userSettings.audio.soundEffects) {
+          const hoverSound = document.getElementById('hoverSound');
+          hoverSound.src = 'sonido.mp3';
+          hoverSound.volume = userSettings.audio.soundVolume;
+          hoverSound.currentTime = 0;
+          hoverSound.play().catch(err => {
+              console.error('Error al reproducir sonido de hover:', err);
+          });
+      }
+  }
+
+  // Filtrar juegos por categoría
+  function filterGamesByCategory(category) {
+      const gameCards = document.querySelectorAll('.game-card');
+      
+      if (category === 'all') {
+          gameCards.forEach(card => {
+              card.style.display = 'block';
+          });
+      } else {
+          gameCards.forEach(card => {
+              const categories = card.getAttribute('data-categories').split(',');
+              if (categories.includes(category)) {
+                  card.style.display = 'block';
+              } else {
+                  card.style.display = 'none';
+              }
+          });
+      }
+  }
+
+  // Buscar juegos
+  function searchGames(query) {
+      const gameCards = document.querySelectorAll('.game-card');
+      const searchTerm = query.toLowerCase();
+      
+      gameCards.forEach(card => {
+          const title = card.querySelector('.game-title').textContent.toLowerCase();
+          const artist = card.querySelector('.game-artist').textContent.toLowerCase();
+          
+          if (title.includes(searchTerm) || artist.includes(searchTerm)) {
+              card.style.display = 'block';
+          } else {
+              card.style.display = 'none';
+          }
+      });
+  }
+
+  // Mostrar alerta
+  function showAlert(title, message) {
+      const alert = document.getElementById('alert');
+      const overlay = document.getElementById('overlay');
+      const alertTitle = document.getElementById('alertTitle');
+      const alertMessage = document.getElementById('alertMessage');
+      const alertButton = document.getElementById('alertButton');
+      
+      alertTitle.textContent = title;
+      alertMessage.textContent = message;
+      
+      alert.classList.add('show');
+      overlay.classList.add('show');
+      
+      alertButton.addEventListener('click', function() {
+          alert.classList.remove('show');
+          overlay.classList.remove('show');
+      });
+  }
+
+  // Inicializar la aplicación cuando el DOM esté cargado
+  document.addEventListener('DOMContentLoaded', function() {
+      // Cargar configuración
+      loadSettings();
+      
+      // Inicializar pantalla de título
+      initSplashScreen();
+      
+      // Crear fondo espacial
+      createSpaceBackground('stars');
+      
+      // Cargar juegos
+      loadGames(games);
+      
+      // Eventos para categorías
+      const categories = document.querySelectorAll('.category');
+      categories.forEach(category => {
+          category.addEventListener('click', function() {
+              categories.forEach(c => c.classList.remove('active'));
+              this.classList.add('active');
+              
+              const categoryValue = this.getAttribute('data-category');
+              filterGamesByCategory(categoryValue);
+          });
+      });
+      
+      // Evento para búsqueda
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function() {
+          searchGames(this.value);
+      });
+      
+      // Eventos para dropdowns
+      const dropdowns = document.querySelectorAll('.filter-dropdown');
+      dropdowns.forEach(dropdown => {
+          const btn = dropdown.querySelector('.filter-dropdown-btn');
+          btn.addEventListener('click', function() {
+              dropdown.classList.toggle('active');
+          });
+          
+          const options = dropdown.querySelectorAll('.filter-option');
+          options.forEach(option => {
+              option.addEventListener('click', function() {
+                  const btnText = btn.querySelector('span');
+                  btnText.textContent = this.textContent;
+                  
+                  options.forEach(o => o.classList.remove('active'));
+                  this.classList.add('active');
+                  
+                  dropdown.classList.remove('active');
+              });
+          });
+      });
+      
+      // Eventos para opciones de vista
+      const viewOptions = document.querySelectorAll('.view-option');
+      viewOptions.forEach(option => {
+          option.addEventListener('click', function() {
+              viewOptions.forEach(o => o.classList.remove('active'));
+              this.classList.add('active');
+          });
+      });
+      
+      // Eventos para navegación de sidebar
+      const sidebarItems = document.querySelectorAll('.sidebar-item');
+      sidebarItems.forEach(item => {
+          item.addEventListener('click', function() {
+              sidebarItems.forEach(i => i.classList.remove('active'));
+              this.classList.add('active');
+              
+              const section = this.getAttribute('data-section');
+              const sections = document.querySelectorAll('.content-section');
+              
+              sections.forEach(s => s.classList.remove('active'));
+              document.getElementById(`${section}Section`).classList.add('active');
+          });
+      });
+      
+      // Eventos para configuraciones
+      
+      // Tema oscuro
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      darkModeToggle.addEventListener('change', function() {
+          userSettings.appearance.darkMode = this.checked;
+          document.body.setAttribute('data-theme', this.checked ? 'dark' : 'light');
+      });
+      
+      // Tamaño de tarjetas
+      const cardSizeSlider = document.getElementById('cardSizeSlider');
+      const cardSizeDisplay = document.getElementById('cardSizeDisplay');
+      cardSizeSlider.addEventListener('input', function() {
+          const value = parseFloat(this.value);
+          userSettings.appearance.cardSize = value;
+          document.documentElement.style.setProperty('--card-size', value);
+          cardSizeDisplay.textContent = Math.round(value * 100) + '%';
+      });
+      
+      // Animaciones
+      const animationsToggle = document.getElementById('animationsToggle');
+      animationsToggle.addEventListener('change', function() {
+          userSettings.appearance.animations = this.checked;
+          if (!this.checked) {
+              document.body.classList.add('no-animations');
+          } else {
+              document.body.classList.remove('no-animations');
+          }
+      });
+      
+      // Estrellas
+      const starsToggle = document.getElementById('starsToggle');
+      starsToggle.addEventListener('change', function() {
+          userSettings.appearance.showStars = this.checked;
+          const starsElements = document.querySelectorAll('.stars');
+          starsElements.forEach(el => {
+              el.style.display = this.checked ? 'block' : 'none';
+          });
+      });
+      
+      // Efectos de sonido
+      const soundEffectsToggle = document.getElementById('soundEffectsToggle');
+      soundEffectsToggle.addEventListener('change', function() {
+          userSettings.audio.soundEffects = this.checked;
+      });
+      
+      // Volumen de efectos
+      const soundVolumeSlider = document.getElementById('soundVolumeSlider');
+      const soundVolumeDisplay = document.getElementById('soundVolumeDisplay');
+      soundVolumeSlider.addEventListener('input', function() {
+          const value = parseFloat(this.value);
+          userSettings.audio.soundVolume = value;
+          soundVolumeDisplay.textContent = Math.round(value * 100) + '%';
+      });
+      
+      // Música de fondo
+      const backgroundMusicToggle = document.getElementById('backgroundMusicToggle');
+      backgroundMusicToggle.addEventListener('change', function() {
+          userSettings.audio.backgroundMusic = this.checked;
+          const backgroundMusic = document.getElementById('backgroundMusic');
+          
+          if (this.checked) {
+              backgroundMusic.play().catch(err => {
+                  console.error('Error al reproducir música de fondo:', err);
+              });
+          } else {
+              backgroundMusic.pause();
+          }
+      });
+      
+      // Volumen de música
+      const musicVolumeSlider = document.getElementById('musicVolumeSlider');
+      const musicVolumeDisplay = document.getElementById('musicVolumeDisplay');
+      musicVolumeSlider.addEventListener('input', function() {
+          const value = parseFloat(this.value);
+          userSettings.audio.musicVolume = value;
+          musicVolumeDisplay.textContent = Math.round(value * 100) + '%';
+          
+          const backgroundMusic = document.getElementById('backgroundMusic');
+          backgroundMusic.volume = value;
+      });
+      
+      // Calidad gráfica
+      const graphicsQualitySelect = document.getElementById('graphicsQualitySelect');
+      graphicsQualitySelect.addEventListener('change', function() {
+          userSettings.performance.graphicsQuality = this.value;
+      });
+      
+      // Precarga de juegos
+      const preloadToggle = document.getElementById('preloadToggle');
+      preloadToggle.addEventListener('change', function() {
+          userSettings.performance.preloadGames = this.checked;
+      });
+      
+      // Modo de ahorro de datos
+      const dataSavingToggle = document.getElementById('dataSavingToggle');
+      dataSavingToggle.addEventListener('change', function() {
+          userSettings.performance.dataSavingMode = this.checked;
+      });
+      
+      // Idioma
+      const languageSelect = document.getElementById('languageSelect');
+      languageSelect.addEventListener('change', function() {
+          userSettings.language.language = this.value;
+      });
+      
+      // Región
+      const regionSelect = document.getElementById('regionSelect');
+      regionSelect.addEventListener('change', function() {
+          userSettings.language.region = this.value;
+      });
+      
+      // Cookies
+      const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
+      const essentialCookiesBtn = document.getElementById('essentialCookiesBtn');
+      
+      acceptCookiesBtn.addEventListener('click', function() {
+          userSettings.privacy.cookies = 'all';
+          acceptCookiesBtn.classList.add('active');
+          essentialCookiesBtn.classList.remove('active');
+      });
+      
+      essentialCookiesBtn.addEventListener('click', function() {
+          userSettings.privacy.cookies = 'essential';
+          essentialCookiesBtn.classList.add('active');
+          acceptCookiesBtn.classList.remove('active');
+      });
+      
+      // Historial de juego
+      const gameHistoryToggle = document.getElementById('gameHistoryToggle');
+      gameHistoryToggle.addEventListener('change', function() {
+          userSettings.privacy.gameHistory = this.checked;
+      });
+      
+      // Borrar datos
+      const clearDataBtn = document.getElementById('clearDataBtn');
+      clearDataBtn.addEventListener('click', function() {
+          localStorage.removeItem('astralProtonSettings');
+          showAlert('Datos borrados', 'Todos los datos guardados han sido eliminados. La página se recargará para aplicar los cambios.');
+          
+          setTimeout(() => {
+              window.location.reload();
+          }, 3000);
+      });
+      
+      // Guardar configuración
+      const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+      saveSettingsBtn.addEventListener('click', function() {
+          saveSettings();
+      });
+  });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mario Party 2 - AstralProton</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap');
+
+    :root {
+        --primary: #ff2d55;
+        --primary-dark: #cc2347;
+        --secondary: #2dccff;
+        --secondary-dark: #1a9bcc;
+        --accent: #8a2be2;
+        --accent-dark: #6a1cb2;
+        --dark-bg: #0f0f1a;
+        --darker-bg: #080812;
+        --panel-bg: rgba(15, 15, 26, 0.85);
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3cc;
+        --glow-primary: rgba(255, 45, 85, 0.6);
+        --glow-secondary: rgba(45, 204, 255, 0.5);
+        --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+        --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--accent));
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --transition-fast: 0.2s ease;
+        --transition-normal: 0.3s ease;
+        --transition-slow: 0.5s ease;
+        --shadow-normal: 0 0 15px rgba(255, 45, 85, 0.4);
+        --shadow-large: 0 0 25px rgba(255, 45, 85, 0.6);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Chakra Petch', sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1, h2, h3, h4, h5, h6, .title-font {
+        font-family: 'Russo One', sans-serif;
+        letter-spacing: 1px;
+    }
+
+    /* Enhanced Space Background */
+    .space-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, #1a1a33 0%, #0f0f1a 70%, #080812 100%);
+        z-index: -3;
+    }
+
+    .stars-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        perspective: 500px;
+        z-index: -2;
+        overflow: hidden;
+    }
+
+    .parallax-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        will-change: transform;
+    }
+
+    .layer-1 { z-index: -2; }
+    .layer-2 { z-index: -1; }
+    .layer-3 { z-index: 0; }
+
+    .star {
+        position: absolute;
+        background-color: #ffffff;
+        border-radius: 50%;
+        animation: moveStar linear infinite;
+        will-change: transform;
+    }
+
+    .star.small {
+        width: 1px;
+        height: 1px;
+        opacity: 0.6;
+    }
+
+    .star.medium {
+        width: 2px;
+        height: 2px;
+        opacity: 0.8;
+    }
+
+    .star.large {
+        width: 3px;
+        height: 3px;
+        opacity: 1;
+    }
+
+    .star.twinkle {
+        animation: twinkle 4s ease-in-out infinite, moveStar linear infinite;
+    }
+
+    .nebula {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(30px);
+        opacity: 0.15;
+        z-index: -1;
+        animation: pulsate 8s ease-in-out infinite;
+    }
+
+    @keyframes pulsate {
+        0%, 100% { transform: scale(1); opacity: 0.15; }
+        50% { transform: scale(1.1); opacity: 0.2; }
+    }
+
+    @keyframes moveStar {
+        from {
+            transform: translateZ(0) translateX(0);
+        }
+        to {
+            transform: translateZ(500px) translateX(-100px);
+        }
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+
+    /* Header Styles */
+    .game-portal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        background: rgba(15, 15, 26, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--secondary);
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .portal-logo {
+        font-size: 1.8em;
+        color: var(--primary);
+        text-shadow: 0 0 5px var(--glow-primary);
+        font-weight: 700;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    .portal-logo i {
+        color: var(--secondary);
+    }
+
+    .back-button {
+        padding: 10px 20px;
+        background: var(--gradient-primary);
+        border: none;
+        border-radius: var(--border-radius-lg);
+        color: var(--text-primary);
+        font-size: 1em;
+        cursor: pointer;
+        transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        font-family: 'Russo One', sans-serif;
+        box-shadow: 0 0 10px var(--glow-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .back-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px var(--glow-primary);
+    }
+
+    /* Game Container Styles */
+    .game-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        position: relative;
+    }
+
+    .game-title {
+        font-size: 2.5em;
+        color: var(--primary);
+        text-shadow: 0 0 10px var(--glow-primary);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .game-wrapper {
+        background: var(--panel-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 20px;
+        box-shadow: 0 0 30px rgba(255, 45, 85, 0.2);
+        border: 2px solid var(--secondary);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .game-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 45, 85, 0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #game {
+        width: 640px;
+        height: 480px;
+        max-width: 100%;
+    }
+
+    /* Game Controls Info */
+    .game-controls {
+        background: var(--panel-bg);
+        border-radius: var(--border-radius-md);
+        padding: 20px;
+        max-width: 640px;
+        width: 100%;
+        margin-top: 20px;
+        border: 1px solid var(--secondary);
+    }
+
+    .controls-title {
+        font-size: 1.5em;
+        color: var(--secondary);
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .control-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .key {
+        background: rgba(45, 204, 255, 0.2);
+        border: 1px solid var(--secondary);
+        border-radius: var(--border-radius-sm);
+        padding: 5px 10px;
+        font-family: 'Russo One', sans-serif;
+        color: var(--text-primary);
+        min-width: 40px;
+        text-align: center;
+    }
+
+    /* Footer */
+    .game-footer {
+        text-align: center;
+        padding: 20px;
+        background: rgba(15, 15, 26, 0.7);
+        border-top: 1px solid var(--secondary);
+    }
+
+    .footer-text {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(8, 8, 18, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--secondary);
+        border-left-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 30px;
+        box-shadow: 0 0 20px var(--glow-primary);
+    }
+
+    .loading-text {
+        font-size: 1.8em;
+        color: var(--text-primary);
+        text-shadow: 0 0 10px var(--glow-primary);
+        font-family: 'Russo One', sans-serif;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .game-title {
+            font-size: 2em;
+        }
+
+        .game-wrapper {
+            padding: 15px;
+        }
+
+        #game {
+            height: auto;
+            aspect-ratio: 4/3;
+        }
+
+        .controls-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .game-portal-header {
+            padding: 10px 15px;
+        }
+
+        .portal-logo {
+            font-size: 1.4em;
+        }
+
+        .back-button {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .game-title {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="space-background"></div>
+<div class="stars-container" id="starsContainer"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Cargando Mario Party 2...</div>
+</div>
+
+<!-- Header -->
+<div class="game-portal-header">
+    <a href="index.html" class="portal-logo">
+        <i class="fas fa-gamepad"></i> AstralProton
+    </a>
+    <a href="index.html" class="back-button">
+        <i class="fas fa-chevron-left"></i> Volver
+    </a>
+</div>
+
+<!-- Game Container -->
+<div class="game-container">
+    <h1 class="game-title">Mario Party 2</h1>
+    
+    <div class="game-wrapper">
+        <div id="game"></div>
+    </div>
+    
+    <div class="game-controls">
+        <h3 class="controls-title">Controles del Juego</h3>
+        <div class="controls-grid">
+            <div class="control-item">
+                <span class="key">?</span>
+                <span>No disponible, configuralos en el emulador</span>
+            </div>
+        </div>
+        <br/>
+        <h3 class="controls-title">Puedes personalizarlo a tu gusto.</h3>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="game-footer">
+    <p class="footer-text">AstralProton, Nintendo &copy; 2025 - Todos los derechos reservados</p>
+</div>
+
+<script>
+    // Función para crear el fondo espacial mejorado
+    function createSpaceBackground() {
+        const starsContainer = document.getElementById('starsContainer');
+        if (!starsContainer) return;
+        
+        starsContainer.innerHTML = '';
+        
+        // Crear capas para efecto parallax
+        for (let layer = 1; layer <= 3; layer++) {
+            const layerDiv = document.createElement('div');
+            layerDiv.className = `parallax-layer layer-${layer}`;
+            starsContainer.appendChild(layerDiv);
+            
+            // Número de estrellas por capa
+            const numStars = 100 - (layer * 20); // Menos estrellas en capas más lejanas
+            
+            // Crear estrellas para esta capa
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamaño aleatorio
+                const size = Math.random();
+                if (size < 0.6) {
+                    star.classList.add('small');
+                } else if (size < 0.9) {
+                    star.classList.add('medium');
+                } else {
+                    star.classList.add('large');
+                }
+                
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Velocidad de animación basada en la capa (más lenta para capas más lejanas)
+                const duration = 20 + (layer * 30) + Math.random() * 50;
+                star.style.animationDuration = `${duration}s`;
+                
+                // Solo algunas estrellas parpadean
+                if (Math.random() > 0.7) {
+                    star.classList.add('twinkle');
+                }
+                
+                layerDiv.appendChild(star);
+            }
+            
+            // Crear nebulosas para esta capa
+            if (layer === 1) { // Solo en la primera capa
+                const numNebulas = 3;
+                for (let i = 0; i < numNebulas; i++) {
+                    const nebula = document.createElement('div');
+                    nebula.className = 'nebula';
+                    
+                    // Tamaño aleatorio
+                    const size = 150 + Math.random() * 250;
+                    nebula.style.width = `${size}px`;
+                    nebula.style.height = `${size}px`;
+                    
+                    // Posición aleatoria
+                    nebula.style.left = `${Math.random() * 100}%`;
+                    nebula.style.top = `${Math.random() * 100}%`;
+                    
+                    // Color aleatorio
+                    const colors = ['#ff2d55', '#2dccff', '#8a2be2'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    nebula.style.background = color;
+                    
+                    layerDiv.appendChild(nebula);
+                }
+            }
+        }
+        
+        // Efecto parallax al mover el mouse
+        document.addEventListener('mousemove', function(e) {
+            const layers = document.querySelectorAll('.parallax-layer');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            layers.forEach((layer, index) => {
+                const depth = (index + 1) * 5;
+                const moveX = (mouseX * depth);
+                const moveY = (mouseY * depth);
+                layer.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+            });
+        });
+    }
+
+    // Configuración del emulador
+    EJS_player = "#game";
+    EJS_core = "n64";
+    EJS_gameName = "MarioKart64";
+    EJS_startOnLoaded = true;
+    EJS_pathtodata = "https://rawcdn.githack.com/ethanaobrien/emulatorjs/main/data/";
+    EJS_gameUrl = "Mario Kart 64 (E) (V1.1) [!].z64";
+
+    // Ocultar la pantalla de carga cuando el emulador esté listo
+    window.EJS_onGameStart = function() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }
+    };
+
+    // Inicializar el fondo espacial cuando se cargue la página
+    window.addEventListener('load', function() {
+        createSpaceBackground();
+        
+        // Si el emulador no inicia después de 10 segundos, ocultar la pantalla de carga de todos modos
+        setTimeout(() => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay && loadingOverlay.style.display !== 'none') {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }
+        }, 10000);
+    });
+</script>
+<script src="https://rawcdn.githack.com/ethanaobrien/emulatorjs/main/data/loader.js"></script>
+</body>
+</html>
+
