@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AstralProton</title>
@@ -62,6 +63,16 @@
         cursor: url(mouse.cur),
         auto;
     }
+=======
+    <meta name="google-site-verification" content="6IM3_cbIZpkL39X4XvLiqAYG4Y1F18HW230W0VoHlq8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstralProton V3.1 Act 2025.3.31</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="logo.ico">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap');
+>>>>>>> ac1a2375996f78f57b2ea4f82fed96d960f3ab94
 
     * {
         margin: 0;
@@ -1697,9 +1708,20 @@
     <div class="logo">
         <i class="fas fa-meteor"></i> <span class="logo-text" data-en="AstralProton" data-es="AstralProton">AstralProton</span>
     </div>
+<<<<<<< HEAD
     <div class="search-container">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Buscar juegos..." id="searchInput" data-placeholder-en="Search games..." data-placeholder-es="Buscar juegos...">
+=======
+
+    <!-- Title Screen -->
+    <div class="title-screen hidden" id="titleScreen">
+        <div class="logo-container">
+            <div class="cyberpunk-logo">ASTRALPROTON</div>
+            <div class="logo-version">V3.1 Act 2025.3.31</div>
+        </div>
+        <div class="press-enter">Presiona ENTER (↵) para comenzar</div>
+>>>>>>> ac1a2375996f78f57b2ea4f82fed96d960f3ab94
     </div>
     <div class="user-profile">
         <div class="user-avatar">
@@ -3397,6 +3419,7 @@
         startButton.addEventListener('mouseenter', playHoverSound);
     }
 
+<<<<<<< HEAD
     // Configurar eventos para las opciones de configuración
     function setupSettingsEvents() {
         // Tema
@@ -3404,6 +3427,203 @@
             input.addEventListener('change', function() {
                 currentSettings.theme = this.value;
                 applySettings();
+=======
+        function showMainContainer() {
+            if (menuScreen) menuScreen.classList.remove('visible');
+            if (tipsScreen) tipsScreen.classList.remove('visible');
+            if (authScreen) authScreen.classList.remove('visible');
+            if (mainContainer) mainContainer.classList.add('visible');
+        }
+
+        function showTipsScreen() {
+            if (menuScreen) menuScreen.classList.remove('visible');
+            if (tipsScreen) tipsScreen.classList.add('visible');
+        }
+
+        function showAuthScreen() {
+            if (menuScreen) menuScreen.classList.remove('visible');
+            if (authScreen) authScreen.classList.add('visible');
+        }
+
+        function handleMenuSelection() {
+            const selectedOption = document.querySelector('.menu-option.active');
+            if (!selectedOption) return;
+            
+            const action = selectedOption.getAttribute('data-action');
+            
+            playButtonSound();
+            
+            switch(action) {
+                case 'play':
+                    showMainContainer();
+                    break;
+                case 'register':
+                    showAuthScreen();
+                    break;
+                case 'tips':
+                    showTipsScreen();
+                    break;
+                case 'support':
+                    showAlert('info', 'Para soporte, contacta a AstralTeam a través de nuestro Discord! https://discord.gg/GEPrCZkWhs');
+                    break;
+                case 'exit':
+                    showAlert('question', '¿Estás seguro que deseas salir?', 'about:blank');
+                    break;
+            }
+        }
+
+        function navigateMenu(direction) {
+            const menuOptions = document.querySelectorAll('.menu-option');
+            if (!menuOptions.length) return;
+            
+            const activeIndex = Array.from(menuOptions).findIndex(option => option.classList.contains('active'));
+            
+            menuOptions[activeIndex].classList.remove('active');
+            
+            let newIndex = (activeIndex + direction) % menuOptions.length;
+            if (newIndex < 0) newIndex = menuOptions.length - 1;
+            
+            menuOptions[newIndex].classList.add('active');
+            playButtonSound();
+            
+            // Actualizar posición del indicador de selección
+            const menuIndicator = document.getElementById('menuIndicator');
+            if (menuIndicator) {
+                const activeOption = menuOptions[newIndex];
+                const menuRect = document.getElementById('menuOptions').getBoundingClientRect();
+                const activeRect = activeOption.getBoundingClientRect();
+                menuIndicator.style.top = (activeRect.top - menuRect.top + activeRect.height/2 - 15) + 'px';
+            }
+        }
+
+        function showTitleScreen() {
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (titleScreen) titleScreen.classList.remove('hidden');
+            
+            if (titleMusic) {
+                titleMusic.play().catch(error => {
+                    console.log("Title music error:", error);
+                });
+            }
+            
+            showAlert('info', '¡Bienvenido a AstralProton V3.1 Act 2025.3.31 Te recomendamos quitarle zoom al 75% para una mejor experiencia!');
+        }
+
+        // Función para simular carga
+        function simulateLoading() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Mostrar el botón de continuar
+                    if (loadingText) {
+                        loadingText.textContent = '¡Carga completada!';
+                    }
+                    
+                    if (continueButton) {
+                        continueButton.style.display = 'block';
+                    }
+                }
+                
+                if (loadingProgressBar) {
+                    loadingProgressBar.style.width = `${progress}%`;
+                }
+            }, 200);
+        }
+
+        // Función para buscar juegos optimizada
+        function setupSearch() {
+            const searchInput = document.getElementById('searchGames');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchInput || !searchResults) return;
+            
+            // Usar debounce para mejorar rendimiento
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    
+                    if (searchTerm.length < 2) {
+                        searchResults.classList.remove('visible');
+                        searchResults.innerHTML = '';
+                        return;
+                    }
+                    
+                    // Filtrar juegos que coincidan con el término de búsqueda
+                    const matches = gameData.filter(game => 
+                        game.title.toLowerCase().includes(searchTerm) || 
+                        game.artist.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    if (matches.length > 0) {
+                        searchResults.innerHTML = '';
+                        const fragment = document.createDocumentFragment();
+                        
+                        // Mostrar hasta 5 resultados
+                        matches.slice(0, 5).forEach(game => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'search-result-item';
+                            
+                            // Usar imagen cacheada si está disponible
+                            if (imageCache[game.image]) {
+                                const imgClone = document.createElement('img');
+                                imgClone.src = game.image;
+                                imgClone.alt = game.title;
+                                resultItem.appendChild(imgClone);
+                                
+                                const infoDiv = document.createElement('div');
+                                infoDiv.className = 'search-result-info';
+                                
+                                const titleSpan = document.createElement('span');
+                                titleSpan.className = 'search-result-title';
+                                titleSpan.textContent = game.title;
+                                
+                                const artistSpan = document.createElement('span');
+                                artistSpan.className = 'search-result-artist';
+                                artistSpan.textContent = game.artist.split(':')[0];
+                                
+                                infoDiv.appendChild(titleSpan);
+                                infoDiv.appendChild(artistSpan);
+                                resultItem.appendChild(infoDiv);
+                            } else {
+                                resultItem.innerHTML = `
+                                    <img src="${game.image}" alt="${game.title}" onerror="this.src='imgjuegos/noimg.png'">
+                                    <div class="search-result-info">
+                                        <span class="search-result-title">${game.title}</span>
+                                        <span class="search-result-artist">${game.artist.split(':')[0]}</span>
+                                    </div>
+                                `;
+                            }
+                            
+                            resultItem.addEventListener('click', () => {
+                                const gameIndex = gameData.findIndex(g => g.title === game.title);
+                                if (gameIndex !== -1) {
+                                    currentIndex = gameIndex;
+                                    updateGame();
+                                    playButtonSound();
+                                    searchResults.classList.remove('visible');
+                                    searchInput.value = '';
+                                }
+                            });
+                            
+                            fragment.appendChild(resultItem);
+                        });
+                        
+                        searchResults.appendChild(fragment);
+                        searchResults.classList.add('visible');
+                    } else {
+                        searchResults.innerHTML = '<div class="search-result-item">No se encontraron juegos</div>';
+                        searchResults.classList.add('visible');
+                    }
+                }, 300); // Debounce de 300ms
+>>>>>>> ac1a2375996f78f57b2ea4f82fed96d960f3ab94
             });
         });
 
