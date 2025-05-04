@@ -675,7 +675,7 @@
     }
 
     .game-card:hover {
-        transform: translateY(-15px) scale(1.03);
+        transform: translateY(-15px) scale(1.15); /* Aumentado de 1.03 a 1.15 para hacer el efecto más notorio */
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
         background-color: var(--card-hover);
         z-index: 1;
@@ -855,7 +855,7 @@
     }
 
     .folder-card:hover {
-        transform: translateY(-15px) scale(1.03);
+        transform: translateY(-15px) scale(1.15); /* Aumentado de 1.03 a 1.15 para hacer el efecto más notorio */
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
         background-color: var(--folder-hover);
         z-index: 1;
@@ -911,14 +911,6 @@
 
     body.light-theme .folder-modal {
         background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .folder-modal.show {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    0,0,0.5);
     }
 
     .folder-modal.show {
@@ -1675,6 +1667,71 @@
         visibility: visible;
         opacity: 1;
     }
+    
+    /* Estilo para el botón de juego aleatorio */
+    .random-game-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        margin: 1rem auto 2rem;
+        position: relative;
+        overflow: hidden;
+        max-width: 300px;
+        width: 100%;
+    }
+
+    .random-game-button:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(65, 105, 225, 0.4);
+    }
+
+    body.light-theme .random-game-button:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 20px rgba(65, 105, 225, 0.2);
+    }
+
+    .random-game-button::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
+    }
+
+    .random-game-button:hover::after {
+        left: 100%;
+    }
+
+    .random-game-button i {
+        font-size: 1.2rem;
+    }
+
+    /* Animación de dados girando */
+    @keyframes spinDice {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(90deg); }
+        50% { transform: rotate(180deg); }
+        75% { transform: rotate(270deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .random-game-button:active i {
+        animation: spinDice 0.5s ease;
+    }
 </style>
 </head>
 <body>
@@ -1720,6 +1777,10 @@
             <i class="fas fa-gamepad"></i>
             <span data-en="Games" data-es="Juegos">Juegos</span>
         </a>
+        <a class="sidebar-item" data-section="tutorials">
+            <i class="fas fa-book"></i>
+            <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+        </a>
         <a class="sidebar-item" data-section="settings">
             <i class="fas fa-cog"></i>
             <span data-en="Settings" data-es="Configuración">Configuración</span>
@@ -1734,13 +1795,13 @@
             <div class="welcome-container">
                 <p class="welcome-text" data-en="Welcome back to AstralProton! Do you like this new interface? We encourage you to join our Discord server at this link: https://discord.gg/GEPrCZkWhs" data-es="¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs">¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs</p>
                 <p class="welcome-text" data-en="Now, enjoy!" data-es="Sin mas preambulo, ¡A disfrutar!">Sin mas preambulo, ¡A disfrutar!</p>
-                <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Sin mas preambulo, ¡A disfrutar!</p>
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.">Anuncio Chido</p>                            
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Version: 06.04.2025a">Anuncio Chido</p>
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Significado de las letras del final:">Anuncio Chido</p>
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="a = Actualizacion con nuevo contenido.">Anuncio Chido</p>
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="b = bugfix">Anuncio Chido</p>
-                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="e = Eliminacion de contenido">Anuncio Chido</p>
+                <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.">Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.</p>                            
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Version: 03.05.2025abe">Version: 03.05.2025abe</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Significado de las letras del final:">Significado de las letras del final:</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="a = Actualizacion con nuevo contenido.">a = Actualizacion con nuevo contenido.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="b = bugfix">b = bugfix</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="e = Eliminacion de contenido">e = Eliminacion de contenido</p>
             </div>
         </div>
         
@@ -1749,6 +1810,8 @@
             <h1 class="section-title">
                 <i class="fas fa-gamepad"></i> <span data-en="Games" data-es="Juegos">Juegos</span>
             </h1>
+
+
 
             <!-- Categorías -->
             <div class="categories">
@@ -1812,10 +1875,85 @@
                 </div>
             </div>
 
+            <!-- Botón de juego aleatorio -->
+            <button class="random-game-button" id="randomGameButton">
+                <i class="fas fa-dice"></i>
+                <span data-en="Random Game" data-es="Juego Aleatorio">Juego Aleatorio</span>
+            </button>
             <!-- Grid de juegos -->
             <h2 class="section-title">AstralProton</h2>
             <div class="games-grid" id="gamesGrid">
                 <!-- Los juegos se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+        
+        <!-- Sección de tutoriales -->
+        <div id="tutorialsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-book"></i> <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+            </h1>
+
+            <!-- Categorías -->
+            <div class="categories">
+                <div class="category active" data-category="all">
+                    <i class="fas fa-th-large"></i> <span data-en="All" data-es="Todos">Todos</span>
+                </div>
+                <div class="category" data-category="beginners">
+                    <i class="fas fa-baby"></i> <span data-en="Beginners" data-es="Principiantes">Principiantes</span>
+                </div>
+                <div class="category" data-category="advanced">
+                    <i class="fas fa-graduation-cap"></i> <span data-en="Advanced" data-es="Avanzados">Avanzados</span>
+                </div>
+                <div class="category" data-category="tips">
+                    <i class="fas fa-lightbulb"></i> <span data-en="Tips & Tricks" data-es="Consejos">Consejos</span>
+                </div>
+                <div class="category" data-category="guides">
+                    <i class="fas fa-map"></i> <span data-en="Guides" data-es="Guías">Guías</span>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <div class="filter-options">
+                    <div class="filter-dropdown" id="tutorialSortDropdown">
+                        <button class="filter-dropdown-btn">
+                            <span data-en="Newest first" data-es="Más recientes primero">Más recientes primero</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-content">
+                            <div class="filter-option active" data-en="Newest first" data-es="Más recientes primero">Más recientes primero</div>
+                            <div class="filter-option" data-en="Oldest first" data-es="Más antiguos primero">Más antiguos primero</div>
+                            <div class="filter-option" data-en="Alphabetical (A-Z)" data-es="Alfabético (A-Z)">Alfabético (A-Z)</div>
+                            <div class="filter-option" data-en="Most viewed" data-es="Más vistos">Más vistos</div>
+                        </div>
+                    </div>
+                    <div class="filter-dropdown" id="tutorialFilterDropdown">
+                        <button class="filter-dropdown-btn">
+                            <span data-en="All difficulty levels" data-es="Todos los niveles">Todos los niveles</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-content">
+                            <div class="filter-option active" data-en="All difficulty levels" data-es="Todos los niveles">Todos los niveles</div>
+                            <div class="filter-option" data-en="Easy" data-es="Fácil">Fácil</div>
+                            <div class="filter-option" data-en="Medium" data-es="Medio">Medio</div>
+                            <div class="filter-option" data-en="Hard" data-es="Difícil">Difícil</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-options">
+                    <div class="view-option active">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div class="view-option">
+                        <i class="fas fa-list"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de tutoriales -->
+            <h2 class="section-title">Tutoriales</h2>
+            <div class="games-grid" id="tutorialsGrid">
+                <!-- Los tutoriales se cargarán dinámicamente aquí -->
             </div>
         </div>
 
@@ -1888,6 +2026,30 @@
                             <option value="#f44336" data-en="Red" data-es="Rojo">Rojo</option>
                             <option value="#ff9800" data-en="Orange" data-es="Naranja">Naranja</option>
                             <option value="#4caf50" data-en="Green" data-es="Verde">Verde</option>
+                            <option value="#2196f3" data-en="Light Blue" data-es="Azul claro">Azul claro</option>
+                            <option value="#3f51b5" data-en="Indigo" data-es="Índigo">Índigo</option>
+                            <option value="#795548" data-en="Brown" data-es="Marrón">Marrón</option>
+                            <option value="#607d8b" data-en="Blue Grey" data-es="Gris azulado">Gris azulado</option>
+                            <option value="#ffc107" data-en="Amber" data-es="Ámbar">Ámbar</option>
+                            <option value="#ffeb3b" data-en="Yellow" data-es="Amarillo">Amarillo</option>
+                            <option value="#cddc39" data-en="Lime" data-es="Lima">Lima</option>
+                            <option value="#8bc34a" data-en="Light Green" data-es="Verde claro">Verde claro</option>
+                            <option value="#a5d6a7" data-en="Light Green 2" data-es="Verde claro 2">Verde claro 2</option>
+                            <option value="#c5cae9" data-en="Indigo 2" data-es="Índigo 2">Índigo 2</option>
+                            <option value="#b2ebf2" data-en="Cyan" data-es="Cian">Cian</option>
+                            <option value="#b2dfdb" data-en="Teal" data-es="Verde azulado">Verde azulado</option>
+                            <option value="#ffccbc" data-en="Deep Orange" data-es="Naranja intenso">Naranja intenso</option>
+                            <option value="#f8bbd0" data-en="Pink 2" data-es="Rosa 2">Rosa 2</option>
+                            <option value="#f0f4c3" data-en="Lime 2" data-es="Lima 2">Lima 2</option>
+                            <option value="#d1c4e9" data-en="Purple 2" data-es="Púrpura 2">Púrpura 2</option>
+                            <option value="#e1bee7" data-en="Pink 3" data-es="Rosa 3">Rosa 3</option>
+                            <option value="#cfd8dc" data-en="Blue Grey 2" data-es="Gris azulado 2">Gris azulado 2</option>
+                            <option value="#b2ebf2" data-en="Cyan 2" data-es="Cian 2">Cian 2</option>
+                            <option value="#b2dfdb" data-en="Teal 2" data-es="Verde azulado 2">Verde azulado 2</option>
+                            <option value="#ffccbc" data-en="Deep Orange 2" data-es="Naranja intenso 2">Naranja intenso 2</option>
+                            <option value="#f8bbd0" data-en="Pink 4" data-es="Rosa 4">Rosa 4</option>
+                            <option value="#f0f4c3" data-en="Lime 3" data-es="Lima 3">Lima 3</option>
+                            <option value="#000000" data-en="Black" data-es="Negro">Negro</option>
                         </select>
                     </div>
 
@@ -2159,8 +2321,42 @@
         }
     ];
 
+    // Datos de tutoriales
+    const tutorialData = [
+        {
+            title: "Listos en la proxima drop!",
+            author: "AstralTeam",
+            image: "imgjuegos/logo.jpg",
+            category: "beginners",
+            difficulty: "hard",
+            isNew: true,
+            isUpdate: false,
+            views: 0,
+            alert: {
+                type: "info",
+                message: "Aprende los conceptos básicos para construir en Super Mario Construct!",
+                redirect: "tutos/comoconstruirensmc.mp4"
+            }
+        }
+    ];
+
     // Datos de juegos
     const gameData = [
+    {
+        title: "AstralTube",
+        artist: "AstralTeam, Google - Youtube pero con miniaturas.",
+        image: "imgjuegos/astrallogo.png",
+        song: "titulonuevo.mp3",
+        dancePage: "musica.html",
+        category: "all",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
     {
         title: "Musica",
         artist: "Musica de toda la Aplicacion de Astral",
@@ -2192,13 +2388,193 @@
         }
     },
     {
+        title: "Tunnel Rush",
+        artist: "Poki",
+        image: "imgjuegos/tunnel.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/tunnel-rush/index.html",
+        category: "action",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/tunnel-rush/index.html"
+        }
+    },
+    {
+        title: "DON'T YOU LECTURE ME WITH YOUR THIRTY DOLLAR WEBSITE",
+        artist: "GD COLON",
+        image: "imgjuegos/30dollar.png",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/30dollarwebsite/index.html",
+        category: "action",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea la mejor musica.",
+            redirect: "Juegos/30dollarwebsite/index.html"
+        }
+    },
+    {
+        title: "2048",
+        artist: "Poki",
+        image: "imgjuegos/2014.png",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/2048/index.html",
+        category: "action",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Sé INTELIGENTE y haz 2048!",
+            redirect: "Juegos/2048/index.html"
+        }
+    },
+    {
+        title: "Slope 2",
+        artist: "Y8",
+        image: "imgjuegos/slope2.jpeg",
+        song: "juegosmusica/slope.mp3",
+        dancePage: "Juegos/slope-2/index.html",
+        category: "action",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Es hora de esquivar los obstaculos! Pero ahora con tu pana.",
+            redirect: "Juegos/slope-2/index.html"
+        }
+    },
+    {
+        title: "Highway Racer",
+        artist: "Bonecracker Games",
+        image: "imgjuegos/highway.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/hwy-rcer/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de correr a toda velocidad y evitar los demas carros.",
+            redirect: "Juegos/hwy-rcer/index.html"
+        }
+    },
+    {
+        title: "Stick Duel Battle",
+        artist: "undefined",
+        image: "imgjuegos/stick2.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/stick-duel-battle/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de pelear contra tu compa o contra un bot con pistolas o a puño.",
+            redirect: "Juegos/stick-duel-battle/index.html"
+        }
+    },
+    {
+        title: "The World's Hardest Game",
+        artist: "undefined",
+        image: "imgjuegos/hard.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/ita10/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "El juego mas dificil del mundo, no te enojes si no puedes pasar el primer nivel. Esta demasiado dificil.",
+            redirect: "Juegos/ita10/index.html"
+        }
+    },
+    {
+        title: "Stickman Hook",
+        artist: "?",
+        image: "imgjuegos/stick.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/stickman-hook/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de balancearse como un loco, pero no te caigas.",
+            redirect: "Juegos/stickman-hook/index.html"
+        }
+    },
+    {
+        title: "PolyTrack",
+        artist: "PolyTrack",
+        image: "imgjuegos/poly.jpeg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/polytrack/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de carreras donde debes evitar los obstaculos y llegar a la meta.",
+            redirect: "Juegos/polytrack/index.html"
+        }
+    },
+    {
+        title: "Tertis Chafa",
+        artist: "NotArtistAvailable",
+        image: "imgjuegos/tetris.jpg",
+        song: "titulonuevo.mp3",
+        dancePage: "Juegos/ita11/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea una linea de 4 bloques para eliminarla, pero no dejes que se llene la pantalla.",
+            redirect: "Juegos/ita11/index.html"
+        }
+    },
+    {
+        title: "A Dance of Fire and Ice",
+        artist: "Ni idea crack",
+        image: "imgjuegos/adofai.jpeg",
+        song: "titulonuevo.mp3",    
+        dancePage: "Juegos/a-dance-of-fire-and-ice/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Music-rhythm game, donde debes seguir el ritmo de la musica, es un juego muy bueno.",
+            redirect: "Juegos/a-dance-of-fire-and-ice/index.html"
+        }
+    },
+    {
+        title: "Google Snake",
+        artist: "Google",
+        image: "imgjuegos/snake.jpeg",
+        song: "titulonuevo.mp3",    
+        dancePage: "Juegos/google-snake/index.html",
+        category: "retro",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Comete esta manzana, pero no te comas a ti mismo. Poetico.",
+            redirect: "Juegos/google-snake/index.html"
+        }
+    },
+    {
         title: "Super Mario Combat",
         artist: "Sun-studios",
         image: "imgjuegos/mariocombat.jpeg",
         song: "juegosmusica/mariocombat.mp3",
         dancePage: "Juegos/ita9/index.html",
         category: "retro",
-        isNew: true,
+        isNew: false,
         isUpdate: false,
         alert: {
             type: "loading",
@@ -2207,8 +2583,38 @@
         }
     },
     {
+        title: "BitLife",
+        artist: "Ni idea crack",
+        image: "imgjuegos/bitlife.png",
+        song: "titulonuevo.mp3",
+        dancePage: "",
+        category: "retro",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No seas abogado, te arruinara la vida, creeme.",
+            redirect: "Juegos/bitlife/index.html"
+        }
+    },
+    {
+        title: "Angry Birds",
+        artist: "ROVIO",
+        image: "imgjuegos/angry.jpeg",
+        song: "juegosmusica/angry.mp3",
+        dancePage: "Juegos/angrybirds/index.html",
+        category: "retro",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "Nunca uses el pajaro azul >:l",
+            redirect: "Juegos/angrybirds/index.html"
+        }
+    },
+    {
         title: "Super Mario Versus",
-        artist: "ipodtouch0218 (astralproton ported the game to chromebooks)",
+        artist: "ipodtouch0218",
         image: "imgjuegos/smbv.png",
         song: "juegosmusica/mariocombat.mp3",
         dancePage: "Juegos/mariovsluigi/index.html",
@@ -2283,7 +2689,7 @@
     },
     {
         title: "Run3",
-        artist: "Ahora si sirve lo juro 😭",
+        artist: "Ahora no sirve lo juro 😭",
         image: "imgjuegos/run3.jpeg",
         song: "juegosmusica/run3.mp3",
         dancePage: "Juegos/run3fix2/index.html",
@@ -2292,7 +2698,7 @@
         isUpdate: true,
         alert: {
             type: "loading",
-            message: "A ver si ahora si funciona este juego jajaja",
+            message: "No sirve jaja",
             redirect: "Juegos/run3fix2/index.html"
         }
     },
@@ -2358,6 +2764,21 @@
         }
     },
     {
+        title: "Geometry Dash (Unity WebGL)",
+        artist: "Not Avaible",
+        image: "imgjuegos/gds.jpeg",
+        song: "juegosmusica/gd.mp3",
+        dancePage: "Juegos/geometry-dash-lite/index.html",
+        category: "all",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Pasate time machine en 1 intento",
+            redirect: "Juegos/geometry-dash-lite/index.html"
+        }
+    },
+    {
         title: "Geometry Dash (Scratch)",
         artist: "Robert Nicholas Christian Topala",
         image: "imgjuegos/gds.jpeg",
@@ -2414,8 +2835,8 @@
         isUpdate: false,
         alert: {
             type: "loading",
-            message: "Cargando el juego... ¡Le recomendamos mucho Jugar Super Mario World!",
-            redirect: "Juegos/stack5/index.html"
+            message: "¿Quieres pasar un mal rato?",
+            redirect: "Juegos/sans/index.html"
         }
     },
     {
@@ -2619,7 +3040,7 @@
     },
     {
         title: "Cookie Clicker",
-        artist: "(En caso de no funcionar presione pantalla completa)",
+        artist: "Ni idea crack",
         image: "imgjuegos/cookie.png",
         song: "titulo.mp3",
         dancePage: "Juegos/cookie/index.html",
@@ -3158,6 +3579,39 @@
         return gameCard;
     }
 
+    // Función para crear una tarjeta de tutorial
+    function createTutorialCard(tutorial, index) {
+        const tutorialCard = document.createElement('div');
+        tutorialCard.className = 'game-card';
+        
+        // Añadir retraso de animación basado en el índice
+        tutorialCard.style.animationDelay = `${index * 0.1}s`;
+        
+        // Crear HTML de la tarjeta
+        tutorialCard.innerHTML = `
+            <img src="${tutorial.image}" alt="${tutorial.title}" class="game-thumbnail" onerror="this.src='imgjuegos/noimg.png'">
+            <div class="game-info">
+                <div class="game-title">${tutorial.title}</div>
+                <div class="game-artist">${tutorial.author}</div>
+            </div>
+            <div class="play-button">
+                <i class="fas fa-book-open"></i>
+            </div>
+            ${tutorial.isNew ? '<div class="game-badge">NUEVO</div>' : ''}
+            ${tutorial.isUpdate ? '<div class="game-badge update">ACTUALIZADO</div>' : ''}
+        `;
+        
+        // Evento al hacer clic en la tarjeta
+        tutorialCard.addEventListener('click', () => {
+            showAlert(tutorial.alert.type, tutorial.alert.message, tutorial.alert.redirect, tutorial.title);
+        });
+        
+        // Evento al pasar el cursor sobre la tarjeta
+        tutorialCard.addEventListener('mouseenter', playHoverSound);
+        
+        return tutorialCard;
+    }
+
     // Función para crear una tarjeta de carpeta
     function createFolderCard(game, index) {
         const folderCard = document.createElement('div');
@@ -3227,6 +3681,23 @@
         });
     }
 
+    // Cargar tutoriales en el grid
+    function loadTutorials(category = 'all') {
+        const tutorialsGrid = document.getElementById('tutorialsGrid');
+        tutorialsGrid.innerHTML = '';
+        
+        // Filtrar tutoriales por categoría
+        const filteredTutorials = tutorialData.filter(tutorial => {
+            return category === 'all' || tutorial.category === category;
+        });
+        
+        // Crear tarjetas para los tutoriales filtrados
+        filteredTutorials.forEach((tutorial, index) => {
+            const tutorialCard = createTutorialCard(tutorial, index);
+            tutorialsGrid.appendChild(tutorialCard);
+        });
+    }
+
     // Reproducir sonido al pasar el ratón
     function playHoverSound() {
         if (currentSettings.soundEffects) {
@@ -3259,13 +3730,21 @@
         
         categories.forEach(category => {
             category.addEventListener('click', () => {
-                // Actualizar categoría activa
-                document.querySelector('.category.active').classList.remove('active');
+                // Obtener el contenedor padre para determinar si estamos en juegos o tutoriales
+                const parentSection = category.closest('.content-section');
+                const isGamesSection = parentSection.id === 'gamesSection';
+                
+                // Actualizar categoría activa dentro de la sección actual
+                parentSection.querySelector('.category.active').classList.remove('active');
                 category.classList.add('active');
                 
-                // Cargar juegos de la categoría seleccionada
+                // Cargar contenido según la sección
                 const categoryName = category.getAttribute('data-category');
-                loadGames(categoryName);
+                if (isGamesSection) {
+                    loadGames(categoryName);
+                } else {
+                    loadTutorials(categoryName);
+                }
             });
         });
     }
@@ -3355,9 +3834,11 @@
                 });
                 document.getElementById(`${sectionId}Section`).classList.add('active');
                 
-                // Si es la sección de juegos, cargar los juegos
+                // Cargar contenido según la sección
                 if (sectionId === 'games') {
                     loadGames('all');
+                } else if (sectionId === 'tutorials') {
+                    loadTutorials('all');
                 }
             });
         });
@@ -3551,6 +4032,41 @@
         });
     }
 
+    // Función para seleccionar un juego aleatorio
+    function getRandomGame() {
+        // Filtrar juegos que no estén en carpetas para simplificar
+        const standaloneGames = gameData.filter(game => !game.folder);
+        
+        // Seleccionar un juego aleatorio
+        const randomIndex = Math.floor(Math.random() * standaloneGames.length);
+        return standaloneGames[randomIndex];
+    }
+
+    // Función para mostrar el juego aleatorio
+    function showRandomGame() {
+        // Efecto visual de carga
+        showLoadingCursor();
+        
+        // Pequeño retraso para efecto visual
+        setTimeout(() => {
+            // Seleccionar juego aleatorio
+            const randomGame = getRandomGame();
+            
+            // Mostrar alerta con el juego seleccionado
+            showAlert(
+                'info',
+                currentSettings.language === 'es' 
+                    ? `¡Juego aleatorio seleccionado! ¿Quieres jugar a ${randomGame.title}?` 
+                    : `Random game selected! Do you want to play ${randomGame.title}?`,
+                randomGame.dancePage,
+                currentSettings.language === 'es' ? '¡Juego Aleatorio!' : 'Random Game!'
+            );
+            
+            // Desactivar cursor de carga
+            hideLoadingCursor();
+        }, 800); // Retraso para efecto visual
+    }
+
     // Inicializar todo cuando se carga la página
     window.addEventListener('load', () => {
         // Cargar configuración desde cookies
@@ -3577,6 +4093,13 @@
         // Inicializar sonido de hover
         const hoverSound = document.getElementById('hoverSound');
         hoverSound.src = hoverSoundSrc;
+
+        // Configurar el botón de juego aleatorio
+        const randomGameButton = document.getElementById('randomGameButton');
+        if (randomGameButton) {
+            randomGameButton.addEventListener('click', showRandomGame);
+            randomGameButton.addEventListener('mouseenter', playHoverSound);
+        }
     });
 </script>
 </body>

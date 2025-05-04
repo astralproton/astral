@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstralTube</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0a0a2a;
+            --secondary-color: #1a1a4a;
+            --accent-color: #4169e1;
+            --text-color: #ffffff;
+            --highlight-color: #ff3366;
+            --card-bg: rgba(26, 26, 74, 0.7);
+            --card-hover: rgba(65, 105, 225, 0.3);
+            --sidebar-bg: rgba(10, 10, 42, 0.95);
+            --header-bg: rgba(10, 10, 42, 0.95);
+            --transition-speed: 0.3s;
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --folder-bg: rgba(26, 26, 74, 0.9);
+            --folder-hover: rgba(65, 105, 225, 0.5);
+        }
+        html{
+            cursor: url(mouse.cur),
+            auto;
+        }
+        a:hover{
+            cursor: url(mouse.cur),
+            auto;
+        }
+        button:hover{
+            cursor: url(mouse.cur),
+            auto;
+        }
+        i:hover{
+            cursor: url(mouse.cur),
+            auto;
+        }
+        div:hover{
+            cursor: url(mouse.cur),
+            auto;
+        }
+        /* Tema claro */
+        body.light-theme {
+            --primary-color: #f0f2f5;
+            --secondary-color: #e4e6eb;
+            --accent-color: #4169e1;
+            --text-color: #1c1e21;
+            --highlight-color: #ff3366;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-hover: rgba(65, 105, 225, 0.1);
+            --sidebar-bg: rgba(255, 255, 255, 0.95);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --folder-bg: rgba(240, 240, 240, 0.9);
+            --folder-hover: rgba(65, 105, 225, 0.2);
+            cursor: url(mouse.cur),
+            auto;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            font-size: var(--font-size-base);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Cursor para elementos de texto */
+        input, textarea, [contenteditable="true"] {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234169e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 22h-1a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4h1"/><path d="M7 22h1a4 4 0 0 0 4-4V6a4 4 0 0 0-4-4H7"/></svg>') 12 12, text;
+        }
+
+        /* Cursor personalizado animado (opcional) */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4169e1;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            mix-blend-mode: difference;
+        }
+
+        .custom-cursor.hover {
+            width: 40px;
+            height: 40px;
+            border-color: #ff3366;
+        }
+
+        /* Cursor de carga para cuando se está cargando contenido */
+        .loading {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234169e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>') 12 12, wait;
+        }
+
+        /* Estilos para el tema claro */
+        body.light-theme {
+            cursor: url(mouse.cur),
+            auto;
+        }
+
+        body.light-theme a, body.light-theme button, body.light-theme .sidebar-item, 
+        body.light-theme .game-card, body.light-theme .folder-card, 
+        body.light-theme .category, body.light-theme .filter-dropdown-btn, 
+        body.light-theme .view-option, body.light-theme .settings-button, 
+        body.light-theme .toggle-switch, body.light-theme .radio-option, 
+        body.light-theme .settings-select, body.light-theme .folder-close, 
+        body.light-theme .alert-button, body.light-theme .splash-button, 
+        body.light-theme .user-avatar {
+            cursor: url(mouse.cur),
+            auto;
+        }
+
+        body.font-small {
+            --font-size-base: 14px;
+            --font-size-small: 12px;
+            --font-size-large: 16px;
+        }
+
+        body.font-large {
+            --font-size-base: 18px;
+            --font-size-small: 16px;
+            --font-size-large: 20px;
+        }
+
+        body.reduced-motion * {
+            animation-duration: 0.001s !important;
+            transition-duration: 0.001s !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 10, 42, 0.6);
+            border-radius: 10px;
+        }
+
+        body.light-theme::-webkit-scrollbar-track {
+            background: rgba(220, 220, 220, 0.6);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--accent-color), var(--highlight-color));
+            border-radius: 10px;
+            border: 2px solid rgba(10, 10, 42, 0.6);
+            box-shadow: 0 0 5px rgba(65, 105, 225, 0.5);
+        }
+
+        body.light-theme::-webkit-scrollbar-thumb {
+            border: 2px solid rgba(220, 220, 220, 0.6);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--highlight-color), var(--accent-color));
+            box-shadow: 0 0 10px rgba(65, 105, 225, 0.8);
+        }
+
+        ::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        /* Fondo espacial */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            z-index: -2;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        body.light-theme .space-background {
+            background: linear-gradient(135deg, #e0e5ff 0%, #f0f2f5 100%);
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 4s) infinite ease-in-out;
+            opacity: var(--opacity, 0.7);
+        }
+
+        body.light-theme .star {
+            background-color: #4169e1;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity, 0.7); }
+            50% { opacity: 0.2; }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.15;
+            background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+            animation: pulse 8s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.15; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        /* Pantalla de título */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+
+        .splash-logo {
+            width: 250px;
+            height: auto;
+            margin-bottom: 2rem;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .splash-button {
+            padding: 1rem 3rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .splash-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .splash-button:hover::after {
+            left: 100%;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        body.light-theme header {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.5s ease;
+        }
+
+        .search-container {
+            position: relative;
+            width: 500px;
+            max-width: 100%;
+        }
+
+        .search-container form {
+            display: flex;
+            width: 100%;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border-radius: 25px 0 0 25px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: all var(--transition-speed);
+        }
+
+        .search-container button {
+            padding: 0.7rem 1.5rem;
+            border-radius: 0 25px 25px 0;
+            border: none;
+            background-color: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: var(--highlight-color);
+        }
+
+        body.light-theme .search-container input {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .search-container input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(65, 105, 225, 0.5);
+        }
+
+        body.light-theme .search-container input:focus {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.5s ease;
+            z-index: 1;
+        }
+
+        body.light-theme .search-container i {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        body.light-theme .user-avatar {
+            color: white;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(65, 105, 225, 0.7);
+        }
+
+        /* Layout principal */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            transition: width var(--transition-speed), background-color 0.5s ease;
+            overflow: hidden;
+            z-index: 90;
+        }
+
+        .sidebar:hover {
+            width: 200px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all var(--transition-speed);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .sidebar-item i {
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .sidebar-item span {
+            margin-left: 1rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity var(--transition-speed);
+        }
+
+        .sidebar:hover .sidebar-item span {
+            opacity: 1;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .sidebar-item.active {
+            border-left: 4px solid var(--highlight-color);
+        }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-dropdown {
+            position: relative;
+            min-width: 180px;
+        }
+
+        .filter-dropdown-btn {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        body.light-theme .filter-dropdown-btn {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-dropdown-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .filter-dropdown-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-speed);
+        }
+
+        body.light-theme .filter-dropdown-content {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-dropdown.active .filter-dropdown-content {
+            max-height: 300px;
+        }
+
+        .filter-option {
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            transition: background var(--transition-speed);
+        }
+
+        .filter-option:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .filter-option:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-option.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-option {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        body.light-theme .view-option {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .view-option:hover, .view-option.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Categorías */
+        .categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+        }
+
+        .categories::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .categories::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .category {
+            padding: 0.7rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.light-theme .category {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .category:hover, .category.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Grid de juegos */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        box-shadow 0.5s ease, 
+                        background-color 0.3s ease,
+                        border 0.3s ease; /* Añadido para la transición del borde */
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            height: 200px;
+            animation: cardAppear 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            border: 2px solid transparent; /* Borde transparente por defecto */
+        }
+
+        body.light-theme .game-card {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.15); /* Aumentado de 1.03 a 1.15 para hacer el efecto más notorio */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
+            background-color: var(--card-hover);
+            z-index: 1;
+            border: 2px solid white; /* Borde blanco al pasar el cursor */
+        }
+
+        body.light-theme .game-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15), 0 0 20px rgba(65, 105, 225, 0.2);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+            z-index: 2;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .game-card:hover .game-thumbnail {
+            transform: scale(1.2);
+        }
+
+        .game-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .game-card:hover .game-info {
+            padding-bottom: 2rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), transparent);
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            transform: translateY(0);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            color: white;
+        }
+
+        .game-card:hover .game-title {
+            transform: translateY(-5px);
+        }
+
+        .game-artist {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transform: translateY(0);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+            color: white;
+        }
+
+        .game-card:hover .game-artist {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background-color: var(--highlight-color);
+            color: white;
+            z-index: 2;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .game-card:hover .game-badge {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 51, 102, 0.5);
+        }
+
+        .game-badge.update {
+            background-color: var(--accent-color);
+            left: auto;
+            right: 1rem;
+            animation: badgeGlow 2s infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(65, 105, 225, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(65, 105, 225, 0.8), 0 0 20px rgba(65, 105, 225, 0.5); }
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 60px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--highlight-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+        }
+
+        .video-card:hover .play-button {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            animation: playButtonPulse 2s infinite;
+        }
+
+        @keyframes playButtonPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); }
+        }
+
+        /* Modal de video */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .video-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .video-container {
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+        }
+
+        .video-iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .loader.show {
+            display: flex;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mensaje de error */
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 51, 102, 0.2);
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Mensaje de no resultados */
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        /* Loader para carga infinita */
+        .infinite-loader {
+            display: none;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .infinite-loader.show {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .videos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .search-container {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar:hover {
+                width: 180px;
+            }
+            
+            .videos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .search-container {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .search-container {
+                width: 100%;
+                order: 3;
+                margin-top: 0.5rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Grid de videos */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .video-card {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        box-shadow 0.5s ease, 
+                        background-color 0.3s ease,
+                        border 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            height: 250px;
+            animation: cardAppear 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
+            background-color: var(--card-hover);
+            z-index: 1;
+            border: 2px solid white;
+        }
+
+        body.light-theme .video-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15), 0 0 20px rgba(65, 105, 225, 0.2);
+            border: 2px solid var(--accent-color);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .video-card:hover .video-thumbnail {
+            transform: scale(1.1);
+        }
+
+        .video-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-channel {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo espacial -->
+    <div class="space-background">
+        <div class="stars" id="stars"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-play-circle"></i> AstralTube
+        </div>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <form id="searchForm">
+                <input type="text" id="searchInput" placeholder="Buscar videos...">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </header>
+
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <a class="sidebar-item active" data-section="trending">
+                <i class="fas fa-fire"></i>
+                <span>Tendencias</span>
+            </a>
+            <a class="sidebar-item" data-section="music">
+                <i class="fas fa-music"></i>
+                <span>Música</span>
+            </a>
+            <a class="sidebar-item" data-section="gaming">
+                <i class="fas fa-gamepad"></i>
+                <span>Gaming</span>
+            </a>
+            <a class="sidebar-item" data-section="news">
+                <i class="fas fa-newspaper"></i>
+                <span>Noticias</span>
+            </a>
+            <a class="sidebar-item" data-section="learning">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Aprendizaje</span>
+            </a>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="content">
+            <h1 class="section-title" id="sectionTitle">
+                <i class="fas fa-fire"></i> Tendencias
+            </h1>
+            <p>
+                ¿Que es esto? Esto es YouTube pero con la posibilidad de ver las miniaturas. Eso es todo.
+                <br/>
+                Si no carga posiblemente es tu internet, recargar la pagina solucionara el problema.
+                <br/>
+                ¿Eres un maestro? Favor de leer nuestros consejos: <a href = "teacher.html">¡Aqui!</a>
+            </p>
+            <br/>
+            <!-- Loader -->
+            <div class="loader" id="loader">
+                <div class="loader-spinner"></div>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div class="error-message" id="errorMessage">
+                Ha ocurrido un error al cargar los videos. Por favor, intenta de nuevo más tarde.
+            </div>
+
+            <!-- Grid de videos -->
+            <div class="videos-grid" id="videosGrid"></div>
+
+            <!-- Loader para carga infinita -->
+            <div class="loader" id="infiniteLoader">
+                <div class="loader-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de video -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-container">
+            <div class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <iframe id="videoIframe" class="video-iframe" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de la API de YouTube
+        const API_KEY = 'AIzaSyDJvk4A_K5SVv78Rl7Qaun_qFmU0_Xjo9Q'; // Reemplaza con tu clave de API
+        const MAX_RESULTS = 12; // Reducido para cargar menos videos inicialmente
+
+        // Variables para la paginación
+        let nextPageToken = '';
+        let currentQuery = '';
+        let currentCategory = 'trending';
+        let isLoading = false;
+        let hasMoreVideos = true;
+
+        // Elementos del DOM
+        const starsContainer = document.getElementById('stars');
+        const videosGrid = document.getElementById('videosGrid');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const loader = document.getElementById('loader');
+        const infiniteLoader = document.getElementById('infiniteLoader');
+        const errorMessage = document.getElementById('errorMessage');
+        const videoModal = document.getElementById('videoModal');
+        const videoIframe = document.getElementById('videoIframe');
+        const closeModal = document.getElementById('closeModal');
+        const themeToggle = document.getElementById('themeToggle');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        const sectionTitle = document.getElementById('sectionTitle');
+
+        // Crear estrellas para el fondo espacial
+        function createStars() {
+            const starsCount = 200;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Animación aleatoria
+                star.style.setProperty('--duration', `${3 + Math.random() * 7}s`);
+                star.style.setProperty('--opacity', `${0.5 + Math.random() * 0.5}`);
+                
+                // Retraso aleatorio
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Función para formatear números grandes
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            } else {
+                return num.toString();
+            }
+        }
+
+        // Función para formatear la duración del video
+        function formatDuration(duration) {
+            // Formato ISO 8601: PT#H#M#S
+            const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+            
+            if (!match) return '';
+            
+            const hours = match[1] ? match[1] + ':' : '';
+            const minutes = match[2] ? (hours ? match[2].padStart(2, '0') : match[2]) + ':' : '0:';
+            const seconds = match[3] ? match[3].padStart(2, '0') : '00';
+            
+            return hours + minutes + seconds;
+        }
+
+        // Función para formatear la fecha
+        function formatDate(publishedAt) {
+            const date = new Date(publishedAt);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                return 'hace 1 día';
+            } else if (diffDays < 30) {
+                return `hace ${diffDays} días`;
+            } else if (diffDays < 365) {
+                const months = Math.floor(diffDays / 30);
+                return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+            } else {
+                const years = Math.floor(diffDays / 365);
+                return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
+            }
+        }
+
+        // Función para crear una tarjeta de video
+        function createVideoCard(video, index) {
+            const videoId = video.id.videoId || video.id;
+            const snippet = video.snippet;
+            
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.setAttribute('data-video-id', videoId);
+            
+            // Añadir retraso de animación basado en el índice
+            videoCard.style.animationDelay = `${index * 0.1}s`;
+            
+            // Crear HTML de la tarjeta
+            videoCard.innerHTML = `
+                <img src="${snippet.thumbnails.high.url}" alt="${snippet.title}" class="video-thumbnail">
+                <div class="video-info">
+                    <div>
+                        <div class="video-title">${snippet.title}</div>
+                        <div class="video-channel">${snippet.channelTitle}</div>
+                    </div>
+                    <div class="video-stats">
+                        <span>${formatDate(snippet.publishedAt)}</span>
+                    </div>
+                </div>
+                <div class="play-button">
+                    <i class="fas fa-play"></i>
+                </div>
+            `;
+            
+            // Evento al hacer clic en la tarjeta
+            videoCard.addEventListener('click', () => {
+                openVideoModal(videoId);
+            });
+            
+            return videoCard;
+        }
+
+        // Función para abrir el modal de video
+        function openVideoModal(videoId) {
+            videoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            videoModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Evitar scroll en el fondo
+        }
+
+        // Función para cerrar el modal de video
+        function closeVideoModal() {
+            videoModal.classList.remove('show');
+            videoIframe.src = '';
+            document.body.style.overflow = ''; // Restaurar scroll
+        }
+
+        // Función para buscar videos (primera página)
+        async function searchVideos(query, category = '') {
+            showLoader();
+            clearVideos();
+            hideError();
+            
+            // Reiniciar variables de paginación
+            nextPageToken = '';
+            currentQuery = query;
+            currentCategory = category;
+            hasMoreVideos = true;
+            
+            try {
+                await loadMoreVideos();
+            } catch (error) {
+                console.error('Error al buscar videos:', error);
+                showError();
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // Función para cargar más videos (para scroll infinito)
+        async function loadMoreVideos() {
+            if (isLoading || !hasMoreVideos) return;
+            
+            isLoading = true;
+            showInfiniteLoader();
+            
+            try {
+                let url;
+                if (currentQuery) {
+                    // Búsqueda por término
+                    url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(currentQuery)}&type=video&key=${API_KEY}`;
+                } else if (currentCategory) {
+                    // Búsqueda por categoría
+                    const categoryMap = {
+                        'trending': 'videoCategoryId=1',
+                        'music': 'videoCategoryId=10',
+                        'gaming': 'videoCategoryId=20',
+                        'news': 'videoCategoryId=25',
+                        'learning': 'videoCategoryId=27'
+                    };
+                    
+                    const categoryParam = categoryMap[currentCategory] || '';
+                    url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&${categoryParam}&maxResults=${MAX_RESULTS}&key=${API_KEY}`;
+                } else {
+                    // Videos populares por defecto
+                    url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=${MAX_RESULTS}&key=${API_KEY}`;
+                }
+                
+                // Añadir token de página si existe
+                if (nextPageToken) {
+                    url += `&pageToken=${nextPageToken}`;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                
+                // Guardar el token para la siguiente página
+                nextPageToken = data.nextPageToken || '';
+                
+                // Si no hay token para la siguiente página, no hay más videos
+                if (!nextPageToken) {
+                    hasMoreVideos = false;
+                }
+                
+                if (data.items.length === 0) {
+                    if (videosGrid.children.length === 0) {
+                        showNoResults();
+                    }
+                    hasMoreVideos = false;
+                    return;
+                }
+                
+                // Mostrar los videos
+                const startIndex = videosGrid.children.length;
+                data.items.forEach((video, index) => {
+                    const videoCard = createVideoCard(video, startIndex + index);
+                    videosGrid.appendChild(videoCard);
+                });
+            } catch (error) {
+                console.error('Error al cargar más videos:', error);
+                if (videosGrid.children.length === 0) {
+                    showError();
+                }
+            } finally {
+                isLoading = false;
+                hideInfiniteLoader();
+            }
+        }
+
+        // Función para mostrar mensaje de no resultados
+        function showNoResults() {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No se encontraron videos para tu búsqueda. Intenta con otros términos.';
+            videosGrid.appendChild(noResults);
+        }
+
+        // Funciones para manejar el loader principal
+        function showLoader() {
+            loader.classList.add('show');
+        }
+
+        function hideLoader() {
+            loader.classList.remove('show');
+        }
+
+        // Funciones para manejar el loader de carga infinita
+        function showInfiniteLoader() {
+            infiniteLoader.classList.add('show');
+        }
+
+        function hideInfiniteLoader() {
+            infiniteLoader.classList.remove('show');
+        }
+
+        // Funciones para manejar mensajes de error
+        function showError() {
+            errorMessage.classList.add('show');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        // Función para limpiar el grid de videos
+        function clearVideos() {
+            videosGrid.innerHTML = '';
+        }
+
+        // Función para cambiar el tema
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            
+            // Actualizar icono
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('light-theme')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+            
+            // Guardar preferencia en localStorage
+            const theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+            localStorage.setItem('theme', theme);
+        }
+
+        // Función para cargar el tema guardado
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+            }
+        }
+
+        // Función para cambiar de sección
+        function changeSection(section) {
+            // Actualizar ítem activo en la barra lateral
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === section) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Actualizar título de la sección
+            const sectionIcons = {
+                'trending': 'fas fa-fire',
+                'music': 'fas fa-music',
+                'gaming': 'fas fa-gamepad',
+                'news': 'fas fa-newspaper',
+                'learning': 'fas fa-graduation-cap'
+            };
+            
+            const sectionNames = {
+                'trending': 'Tendencias',
+                'music': 'Música',
+                'gaming': 'Gaming',
+                'news': 'Noticias',
+                'learning': 'Aprendizaje'
+            };
+            
+            sectionTitle.innerHTML = `<i class="${sectionIcons[section]}"></i> ${sectionNames[section]}`;
+            
+            // Cargar videos de la sección
+            searchVideos('', section);
+        }
+
+        // Función para detectar cuando el usuario está cerca del final de la página
+        function handleScroll() {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+            
+            // Si el usuario está cerca del final de la página (200px antes del final)
+            if (scrollTop + clientHeight >= scrollHeight - 200 && !isLoading && hasMoreVideos) {
+                loadMoreVideos();
+            }
+        }
+
+        // Event Listeners
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                searchVideos(query);
+            }
+        });
+
+        closeModal.addEventListener('click', closeVideoModal);
+
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                closeVideoModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && videoModal.classList.contains('show')) {
+                closeVideoModal();
+            }
+        });
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.getAttribute('data-section');
+                changeSection(section);
+            });
+        });
+
+        // Añadir evento de scroll para carga infinita
+        window.addEventListener('scroll', handleScroll);
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            loadSavedTheme();
+            searchVideos('', 'trending'); // Cargar videos de tendencias por defecto
+        });
+    </script>
+</body>
+</html>
