@@ -1,0 +1,4222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstralProton</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Variables globales */
+:root {
+    --primary-color: #0a0a2a;
+    --secondary-color: #1a1a4a;
+    --accent-color: #4169e1;
+    --text-color: #ffffff;
+    --highlight-color: #ff3366;
+    --card-bg: rgba(26, 26, 74, 0.7);
+    --card-hover: rgba(65, 105, 225, 0.3);
+    --sidebar-bg: rgba(10, 10, 42, 0.95);
+    --header-bg: rgba(10, 10, 42, 0.95);
+    --transition-speed: 0.3s;
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-large: 18px;
+    --folder-bg: rgba(26, 26, 74, 0.9);
+    --folder-hover: rgba(65, 105, 225, 0.5);
+}
+
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    font-size: var(--font-size-base);
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Tema claro */
+body.light-theme {
+    --primary-color: #f0f2f5;
+    --secondary-color: #e4e6eb;
+    --accent-color: #4169e1;
+    --text-color: #1c1e21;
+    --highlight-color: #ff3366;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-hover: rgba(65, 105, 225, 0.1);
+    --sidebar-bg: rgba(255, 255, 255, 0.95);
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --folder-bg: rgba(240, 240, 240, 0.9);
+    --folder-hover: rgba(65, 105, 225, 0.2);
+}
+
+/* Estilos para tamaños de fuente */
+body.font-small {
+    --font-size-base: 14px;
+    --font-size-small: 12px;
+    --font-size-large: 16px;
+}
+
+body.font-large {
+    --font-size-base: 18px;
+    --font-size-small: 16px;
+    --font-size-large: 20px;
+}
+
+/* Reducción de movimiento */
+body.reduced-motion * {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+}
+
+/* Fondo espacial */
+.space-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    z-index: -2;
+    overflow: hidden;
+    transition: background 0.5s ease;
+}
+
+body.light-theme .space-background {
+    background: linear-gradient(135deg, #e0e5ff 0%, #f0f2f5 100%);
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--duration, 4s) infinite ease-in-out;
+    opacity: var(--opacity, 0.7);
+}
+
+body.light-theme .star {
+    background-color: #4169e1;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: var(--opacity, 0.7); }
+    50% { opacity: 0.2; }
+}
+
+.nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.15;
+    background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+    animation: pulse 8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+}
+
+/* Pantalla de título */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 1s ease;
+}
+
+.splash-logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: 2rem;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.splash-button {
+    padding: 1rem 3rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.splash-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.5s ease;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+/* Layout principal */
+.main-container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 80px;
+    background-color: var(--sidebar-bg);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+    transition: width var(--transition-speed), background-color 0.5s ease;
+    overflow: hidden;
+    z-index: 90;
+}
+
+.sidebar:hover {
+    width: 200px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.sidebar-item i {
+    font-size: 1.5rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.sidebar-item span {
+    margin-left: 1rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+}
+
+.sidebar:hover .sidebar-item span {
+    opacity: 1;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.sidebar-item.active {
+    border-left: 4px solid var(--highlight-color);
+}
+
+/* Contenido principal */
+.content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    position: relative;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Secciones de contenido */
+.content-section {
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Mensaje de bienvenida */
+.welcome-message {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3);
+    animation: welcomeGlow 3s infinite;
+}
+
+@keyframes welcomeGlow {
+    0%, 100% { text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3); }
+    50% { text-shadow: 0 5px 25px rgba(65, 105, 225, 0.7); }
+}
+
+.welcome-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.welcome-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+/* Categorías */
+.categories {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.category {
+    padding: 0.7rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category:hover, .category.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Grid de juegos */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.game-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--card-bg);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.5s ease, 
+                background-color 0.3s ease,
+                border 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 200px;
+    animation: cardAppear 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    border: 2px solid transparent;
+}
+
+@keyframes cardAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-card:hover {
+    transform: translateY(-15px) scale(1.15);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
+    background-color: var(--card-hover);
+    z-index: 1;
+    border: 2px solid white;
+}
+
+.game-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.game-card:hover .game-thumbnail {
+    transform: scale(1.2);
+}
+
+.game-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.game-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    color: white;
+}
+
+.game-artist {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+    color: white;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--highlight-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+}
+
+.game-card:hover .play-button {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation: playButtonPulse 2s infinite;
+}
+
+@keyframes playButtonPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); }
+}
+
+/* Carpetas de juegos */
+.folder-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--folder-bg);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.5s ease, 
+                background-color 0.3s ease,
+                border 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 200px;
+    animation: cardAppear 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    border: 2px solid transparent;
+}
+
+.folder-icon {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.folder-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.folder-count {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: var(--text-color);
+}
+
+/* Folder Content Modal */
+.folder-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.folder-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.folder-content {
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    background-color: var(--primary-color);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.folder-modal.show .folder-content {
+    transform: scale(1);
+}
+
+.folder-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.folder-header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.folder-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.folder-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+}
+
+.folder-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Alerta */
+.alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 90%;
+    width: 500px;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: none;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 2px solid var(--accent-color);
+    overflow: hidden;
+}
+
+.alert.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.alert-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--highlight-color);
+}
+
+.alert-message {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.alert-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    backdrop-filter: blur(5px);
+}
+
+.overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Configuraciones */
+.settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.settings-group {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.settings-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.settings-option-label {
+    font-weight: 600;
+}
+
+.settings-option-description {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* Select */
+.settings-select {
+    padding: 0.7rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 5px;
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 150px;
+}
+
+/* Range Slider */
+.range-slider {
+    width: 150px;
+    display: flex;
+    align-items: center;
+}
+
+.range-slider input {
+    width: 100%;
+    height: 5px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    outline: none;
+}
+
+.range-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.range-value {
+    margin-left: 10px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Radio Buttons */
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.radio-option input {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.radio-option input:checked + .radio-custom {
+    border-color: var(--accent-color);
+}
+
+.radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.radio-option input:checked + .radio-custom::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Button */
+.settings-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Botón de juego aleatorio */
+.random-game-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    margin: 1rem auto 2rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 300px;
+    width: 100%;
+}
+
+/* NUEVOS ESTILOS PARA EL IFRAME Y CONTROLES */
+.game-iframe-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-iframe {
+    width: 90%;
+    height: 85%;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(65, 105, 225, 0.5);
+}
+
+.game-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.game-control-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.game-control-button i {
+    font-size: 1.2rem;
+}
+
+/* Botón de pantalla completa */
+.fullscreen-button {
+    background: linear-gradient(45deg, #4169e1, #6a5acd);
+}
+
+/* Botón de volver al menú */
+.back-button {
+    background: linear-gradient(45deg, #ff3366, #ff6b6b);
+}
+
+/* Botón de iniciar con directorio */
+.open-directory-button {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+}
+
+/* Estilos para pantalla completa */
+.game-iframe-container.fullscreen .game-iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+
+.game-iframe-container.fullscreen .game-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2001;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .sidebar:hover {
+        width: 180px;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .splash-logo {
+        width: 200px;
+    }
+}
+
+/* Estilos para el perfil */
+.profile-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background-color: var(--card-bg);
+border-radius: 15px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+position: relative;
+overflow: hidden;
+animation: slideUp 0.8s ease forwards;
+transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.profile-header {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin-bottom: 2rem;
+}
+
+.profile-avatar-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 1rem;
+}
+
+.profile-avatar {
+width: 150px;
+height: 150px;
+border-radius: 50%;
+background-color: var(--accent-color);
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 4rem;
+color: var(--text-color);
+overflow: hidden;
+position: relative;
+border: 4px solid var(--highlight-color);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.avatar-upload-button {
+padding: 0.7rem 1.5rem;
+background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-weight: 600;
+transition: all 0.3s ease;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.avatar-upload-button:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.profile-form {
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
+}
+
+.profile-field {
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+}
+
+.profile-field label {
+font-weight: 600;
+color: var(--text-color);
+}
+
+.profile-input {
+padding: 0.8rem 1rem;
+border-radius: 8px;
+border: 2px solid rgba(255, 255, 255, 0.1);
+background-color: rgba(255, 255, 255, 0.05);
+color: var(--text-color);
+font-size: 1rem;
+transition: all 0.3s ease;
+}
+
+.profile-input:focus {
+outline: none;
+border-color: var(--accent-color);
+box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.3);
+}
+
+.profile-actions {
+margin-top: 1rem;
+display: flex;
+justify-content: flex-end;
+}
+
+.user-name {
+font-weight: 600;
+margin-left: 0.5rem;
+display: none;
+}
+
+@media (min-width: 768px) {
+.user-name {
+    display: block;
+}
+}
+
+/* Estilos para la sección de fondo personalizado */
+.profile-section-title {
+font-size: 1.3rem;
+font-weight: 600;
+margin: 2rem 0 1rem;
+color: var(--accent-color);
+}
+
+.background-options {
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.background-preview {
+width: 100%;
+margin-bottom: 1rem;
+}
+
+.background-preview-container {
+width: 100%;
+height: 150px;
+border-radius: 10px;
+border: 2px dashed rgba(255, 255, 255, 0.3);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 0.5rem;
+color: var(--text-color);
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+overflow: hidden;
+position: relative;
+}
+
+.background-preview-container i {
+font-size: 2rem;
+opacity: 0.7;
+}
+
+.background-preview-container span {
+font-size: 0.9rem;
+opacity: 0.7;
+}
+
+.background-preview-container.has-image i,
+.background-preview-container.has-image span {
+display: none;
+}
+
+.background-controls {
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+
+.upload-background-container {
+display: flex;
+gap: 1rem;
+}
+
+.background-button {
+padding: 0.7rem 1rem;
+background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-weight: 600;
+transition: all 0.3s ease;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.background-button:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.background-button.danger {
+background: linear-gradient(45deg, #f44336, #ff5252);
+}
+
+.background-button.primary {
+background: linear-gradient(45deg, #2196f3, #4169e1);
+}
+
+.background-actions {
+display: flex;
+justify-content: space-between;
+margin-top: 1rem;
+}
+
+/* Estilos para el fondo personalizado aplicado */
+.custom-background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -3;
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+opacity: 0.8;
+}
+
+/* Estilos para personalización de colores */
+.color-customization {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.color-preview {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.color-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+.background-options {
+    flex-direction: column;
+}
+
+.background-preview {
+    width: 100%;
+}
+
+.background-controls {
+    width: 100%;
+}
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .sidebar:hover {
+        width: 180px;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .folder-games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .splash-logo {
+        width: 200px;
+    }
+}
+
+/* Estilos para la sección de fondo personalizado */
+.profile-section-title {
+font-size: 1.3rem;
+font-weight: 600;
+margin: 2rem 0 1rem;
+color: var(--accent-color);
+}
+
+.background-options {
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.background-preview {
+width: 100%;
+margin-bottom: 1rem;
+}
+
+.background-preview-container {
+width: 100%;
+height: 150px;
+border-radius: 10px;
+border: 2px dashed rgba(255, 255, 255, 0.3);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 0.5rem;
+color: var(--text-color);
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+overflow: hidden;
+position: relative;
+}
+
+.background-preview-container i {
+font-size: 2rem;
+opacity: 0.7;
+}
+
+.background-preview-container span {
+font-size: 0.9rem;
+opacity: 0.7;
+}
+
+.background-preview-container.has-image i,
+.background-preview-container.has-image span {
+display: none;
+}
+
+.background-controls {
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+
+.upload-background-container {
+display: flex;
+gap: 1rem;
+}
+
+.background-button {
+padding: 0.7rem 1rem;
+background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-weight: 600;
+transition: all 0.3s ease;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.background-button:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.background-button.danger {
+background: linear-gradient(45deg, #f44336, #ff5252);
+}
+
+.background-button.primary {
+background: linear-gradient(45deg, #2196f3, #4169e1);
+}
+
+.background-actions {
+display: flex;
+justify-content: space-between;
+margin-top: 1rem;
+}
+
+/* Estilos para el fondo personalizado aplicado */
+.custom-background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -3;
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+.background-options {
+    flex-direction: column;
+}
+
+.background-preview {
+    width: 100%;
+}
+
+.background-controls {
+    width: 100%;
+}
+}
+
+/* Estilos para el selector de color avanzado */
+.color-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.color-gradient {
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to bottom, #fff 0%, #000 100%);
+    position: relative;
+    border-radius: 8px;
+    cursor: crosshair;
+    margin-bottom: 10px;
+}
+
+.color-selector {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.hue-slider-container {
+    width: 100%;
+    height: 20px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.hue-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    background: linear-gradient(to right, 
+        #ff0000 0%, 
+        #ffff00 17%, 
+        #00ff00 33%, 
+        #00ffff 50%, 
+        #0000ff 67%, 
+        #ff00ff 83%, 
+        #ff0000 100%);
+    outline: none;
+}
+
+.hue-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.color-values {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-value-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.color-value-input {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    text-align: center;
+}
+
+.color-preview {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    background-color: var(--accent-color);
+}
+    </style>
+
+    <style>
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .audio-controls:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .audio-controls i {
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <audio id="backgroundMusic" loop>
+        <source src="titulonuevo.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <audio id="hoverSound">
+        <source src="sfx.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <!-- Botón para controlar el audio -->
+    <div class="audio-controls" id="audioToggle">
+        <i class="fas fa-volume-up"></i>
+    </div>
+<!-- Pantalla de título -->
+<div class="splash-screen" id="splashScreen">
+    <div class="stars" id="splashStars"></div>
+    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="splash-logo">
+    <button class="splash-button" id="startButton">Iniciar</button>
+</div>
+
+<!-- Fondo espacial -->
+<div class="space-background">
+    <div class="stars" id="stars"></div>
+</div>
+
+<!-- Header -->
+<header>
+    <div class="logo">
+        <i class="fas fa-meteor"></i> <span class="logo-text" data-en="AstralProton" data-es="AstralProton">AstralProton</span>
+    </div>
+    <div class="user-profile">
+        <div class="user-avatar" id="headerAvatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <span class="user-name" id="headerUserName">Usuario</span>
+    </div>
+</header>
+
+<!-- Contenedor principal -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a class="sidebar-item active" data-section="home">
+            <i class="fas fa-home"></i>
+            <span data-en="Home" data-es="Inicio">Inicio</span>
+        </a>
+        <a class="sidebar-item" data-section="games">
+            <i class="fas fa-gamepad"></i>
+            <span data-en="Games" data-es="Juegos">Juegos</span>
+        </a>
+        <a class="sidebar-item" data-section="tutorials">
+            <i class="fas fa-book"></i>
+            <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+        </a>
+        <a class="sidebar-item" data-section="about">
+            <i class="fas fa-info-circle"></i>
+            <span data-en="About" data-es="Acerca de">Acerca de</span>
+        </a>
+        <a class="sidebar-item" data-section="settings">
+            <i class="fas fa-cog"></i>
+            <span data-en="Settings" data-es="Configuración">Configuración</span>
+        </a>
+        <a class="sidebar-item" data-section="profile">
+            <i class="fas fa-id-card"></i>
+            <span data-en="Profile" data-es="Perfil">Perfil</span>
+        </a>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Sección de inicio -->
+        <div id="homeSection" class="content-section active">
+            <h1 class="welcome-message" data-en="Welcome to AstralProton!" data-es="¡Bienvenido a AstralProton!">¡Bienvenido a AstralProton!</h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Welcome back to AstralProton! Do you like this new interface? We encourage you to join our Discord server at this link: https://discord.gg/GEPrCZkWhs" data-es="¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs">¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs</p>
+                <p class="welcome-text" data-en="Now, enjoy!" data-es="Sin mas preambulo, ¡A disfrutar!">Sin mas preambulo, ¡A disfrutar!</p>
+                <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.">Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.</p>                            
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Version: 03.05.2025abe">Version: 03.05.2025abe</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Significado de las letras del final:">Significado de las letras del final:</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="a = Actualizacion con nuevo contenido.">a = Actualizacion con nuevo contenido.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="b = bugfix">b = bugfix</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="e = Eliminacion de contenido">e = Eliminacion de contenido</p>
+            </div>
+        </div>
+        
+        <!-- Sección de juegos -->
+        <div id="gamesSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-gamepad"></i> <span data-en="Games" data-es="Juegos">Juegos</span>
+            </h1>
+
+            <!-- Categorías -->
+            <div class="categories">
+                <div class="category active" data-category="all">
+                    <i class="fas fa-th-large"></i> <span data-en="All" data-es="Todos">Todos</span>
+                </div>
+                <div class="category" data-category="favorites">
+                    <i class="fas fa-star"></i> <span data-en="Favorites" data-es="Favoritos">Favoritos</span>
+                </div>
+                <div class="category" data-category="action">
+                    <i class="fas fa-running"></i> <span data-en="Action" data-es="Acción">Acción</span>
+                </div>
+                <div class="category" data-category="arcade">
+                    <i class="fas fa-gamepad"></i> <span data-en="Arcade" data-es="Arcade">Arcade</span>
+                </div>
+                <div class="category" data-category="retro">
+                    <i class="fas fa-ghost"></i> <span data-en="Retro" data-es="Retro">Retro</span>
+                </div>
+                <div class="category" data-category="puzzle">
+                    <i class="fas fa-puzzle-piece"></i> <span data-en="Puzzle" data-es="Puzzle">Puzzle</span>
+                </div>
+                <div class="category" data-category="strategy">
+                    <i class="fas fa-chess"></i> <span data-en="Strategy" data-es="Estrategia">Estrategia</span>
+                </div>
+            </div>
+
+            <!-- Botón de juego aleatorio -->
+
+            <!-- Grid de juegos -->
+            <div class="games-grid" id="gamesGrid">
+                <!-- Los juegos se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- Sección de tutoriales -->
+        <div id="tutorialsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-book"></i> <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Coming soon..." data-es="Próximamente...">Próximamente...</p>
+            </div>
+        </div>
+
+        <!-- Sección de acerca de -->
+        <div id="aboutSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-info-circle"></i> <span data-en="About" data-es="Acerca de">Acerca de</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="AstralProton is a gaming portal designed to provide a seamless and enjoyable gaming experience." data-es="AstralProton es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable.">AstralProton es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable.</p>
+                <p class="welcome-text" data-en="Version: 03.05.2025" data-es="Versión: 03.05.2025">Versión: 03.05.2025</p>
+                <p class="welcome-text" data-en="Created by: AstralProton Team" data-es="Creado por: Equipo AstralProton">Creado por: Equipo AstralProton</p>
+            </div>
+        </div>
+
+        <!-- Sección de configuración -->
+        <div id="settingsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-cog"></i> <span data-en="Settings" data-es="Configuración">Configuración</span>
+            </h1>
+            
+            <div class="settings-container">
+                <!-- Grupo de configuración de apariencia -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Appearance" data-es="Apariencia">Apariencia</h2>
+                    
+                    <!-- Opción de tema -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Theme" data-es="Tema">Tema</div>
+                            <div class="settings-option-description" data-en="Choose between light and dark theme" data-es="Elige entre tema claro y oscuro">Elige entre tema claro y oscuro</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Opción de tamaño de fuente -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Font Size" data-es="Tamaño de Fuente">Tamaño de Fuente</div>
+                            <div class="settings-option-description" data-en="Adjust the font size of the interface" data-es="Ajusta el tamaño de fuente de la interfaz">Ajusta el tamaño de fuente de la interfaz</div>
+                        </div>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="small">
+                                <span class="radio-custom"></span>
+                                <span data-en="Small" data-es="Pequeño">Pequeño</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="medium" checked>
+                                <span class="radio-custom"></span>
+                                <span data-en="Medium" data-es="Mediano">Mediano</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="large">
+                                <span class="radio-custom"></span>
+                                <span data-en="Large" data-es="Grande">Grande</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grupo de configuración de accesibilidad -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Accessibility" data-es="Accesibilidad">Accesibilidad</h2>
+                    
+                    <!-- Opción de reducción de movimiento -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Reduce Motion" data-es="Reducir Movimiento">Reducir Movimiento</div>
+                            <div class="settings-option-description" data-en="Minimize animations throughout the interface" data-es="Minimiza las animaciones en toda la interfaz">Minimiza las animaciones en toda la interfaz</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="reduceMotionToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Opción de idioma -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Language" data-es="Idioma">Idioma</div>
+                            <div class="settings-option-description" data-en="Choose your preferred language" data-es="Elige tu idioma preferido">Elige tu idioma preferido</div>
+                        </div>
+                        <select class="settings-select" id="languageSelect">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Grupo de configuración de rendimiento -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Performance" data-es="Rendimiento">Rendimiento</h2>
+                    
+                    <!-- Opción de calidad gráfica -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Graphics Quality" data-es="Calidad Gráfica">Calidad Gráfica</div>
+                            <div class="settings-option-description" data-en="Adjust the graphics quality for better performance" data-es="Ajusta la calidad gráfica para un mejor rendimiento">Ajusta la calidad gráfica para un mejor rendimiento</div>
+                        </div>
+                        <div class="range-slider">
+                            <input type="range" min="1" max="3" value="2" id="graphicsQualitySlider">
+                            <span class="range-value" id="graphicsQualityValue">2</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Opción de efectos visuales -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Visual Effects" data-es="Efectos Visuales">Efectos Visuales</div>
+                            <div class="settings-option-description" data-en="Enable or disable visual effects" data-es="Activa o desactiva los efectos visuales">Activa o desactiva los efectos visuales</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visualEffectsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Botón de guardar configuración -->
+                <button class="settings-button" id="saveSettingsButton">
+                    <span data-en="Save Settings" data-es="Guardar Configuración">Guardar Configuración</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección de perfil -->
+        <div id="profileSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-id-card"></i> <span data-en="Profile" data-es="Perfil">Perfil</span>
+            </h1>
+            
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar-container">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <button class="avatar-upload-button" id="avatarUploadButton">
+                            <i class="fas fa-camera"></i> <span data-en="Change Avatar" data-es="Cambiar Avatar">Cambiar Avatar</span>
+                        </button>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                
+                <form class="profile-form" id="profileForm">
+                    <div class="profile-field">
+                        <label for="profileName" data-en="Name" data-es="Nombre">Nombre</label>
+                        <input type="text" id="profileName" class="profile-input" placeholder="Tu nombre">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label for="profileSurname" data-en="Surname" data-es="Apellido">Apellido</label>
+                        <input type="text" id="profileSurname" class="profile-input" placeholder="Tu apellido">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label for="profileAge" data-en="Age" data-es="Edad">Edad</label>
+                        <input type="number" id="profileAge" class="profile-input" placeholder="Tu edad" min="1" max="120">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label data-en="Gender" data-es="Género">Género</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="male" id="genderMale">
+                                <span class="radio-custom"></span>
+                                <span data-en="Male" data-es="Masculino">Masculino</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="female" id="genderFemale">
+                                <span class="radio-custom"></span>
+                                <span data-en="Female" data-es="Femenino">Femenino</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button type="submit" class="background-button primary" id="saveProfileButton">
+                            <i class="fas fa-save"></i> <span data-en="Save Profile" data-es="Guardar Perfil">Guardar Perfil</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Sección de fondo personalizado -->
+                <h3 class="profile-section-title">Fondo Personalizado</h3>
+                <div class="background-options">
+                    <div class="background-preview">
+                        <div class="background-preview-container" id="backgroundPreview">
+                            <i class="fas fa-image"></i>
+                            <span data-en="Background Preview" data-es="Vista previa del fondo">Vista previa del fondo</span>
+                        </div>
+                    </div>
+                    <div class="background-controls">
+                        <div class="profile-field">
+                            <label for="backgroundUrl" data-en="Background URL" data-es="URL del fondo">URL del fondo</label>
+                            <input type="text" id="backgroundUrl" class="profile-input" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div class="upload-background-container">
+                            <button class="background-button primary" id="applyUrlButton">
+                                <i class="fas fa-link"></i> <span data-en="Apply URL" data-es="Aplicar URL">Aplicar URL</span>
+                            </button>
+                            <button class="background-button" id="chooseFileButton">
+                                <i class="fas fa-file-image"></i> <span data-en="Choose File" data-es="Elegir Archivo">Elegir Archivo</span>
+                            </button>
+                            <input type="file" id="backgroundFileInput" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="background-actions">
+                            <button class="background-button danger" id="removeBackgroundButton">
+                                <i class="fas fa-trash"></i> <span data-en="Remove Background" data-es="Quitar Fondo">Quitar Fondo</span>
+                            </button>
+                            <button class="background-button primary" id="saveBackgroundButton">
+                                <i class="fas fa-save"></i> <span data-en="Save Changes" data-es="Guardar Cambios">Guardar Cambios</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de personalización de colores -->
+                <h3 class="profile-section-title">Personalización de Colores</h3>
+                <div class="color-customization">
+                    <div class="profile-field">
+                        <label for="headerColor">Color de la Barra Superior:</label>
+                        <input type="color" id="headerColor" class="color-picker" value="#0a0a2a">
+                        <div class="color-preview" id="headerColorPreview"></div>
+                    </div>
+                    <div class="profile-field">
+                        <label for="sidebarColor">Color de la Barra Lateral:</label>
+                        <input type="color" id="sidebarColor" class="color-picker" value="#0a0a2a">
+                        <div class="color-preview" id="sidebarColorPreview"></div>
+                    </div>
+                    <div class="profile-field">
+                        <label for="accentColor">Color de Acento:</label>
+                        <div class="color-picker-container">
+                            <div class="color-gradient" id="colorGradient">
+                                <div class="color-selector" id="colorSelector"></div>
+                            </div>
+                            <div class="hue-slider-container">
+                                <input type="range" min="0" max="360" value="230" class="hue-slider" id="hueSlider">
+                            </div>
+                            <div class="color-values">
+                                <div class="color-value-field">
+                                    <label for="colorR">R</label>
+                                    <input type="number" id="colorR" min="0" max="255" value="65" class="color-value-input">
+                                </div>
+                                <div class="color-value-field">
+                                    <label for="colorG">G</label>
+                                    <input type="number" id="colorG" min="0" max="255" value="105" class="color-value-input">
+                                </div>
+                                <div class="color-value-field">
+                                    <label for="colorB">B</label>
+                                    <input type="number" id="colorB" min="0" max="255" value="225" class="color-value-input">
+                                </div>
+                            </div>
+                            <div class="color-preview" id="accentColorPreview"></div>
+                        </div>
+                    </div>
+                    <div class="color-actions">
+                        <button id="applyColors" class="background-button primary">
+                            <i class="fas fa-paint-brush"></i> Aplicar Colores
+                        </button>
+                        <button id="resetColors" class="background-button danger">
+                            <i class="fas fa-undo"></i> Restablecer Colores
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Añadir un nuevo apartado en la sección de perfil para subir música personalizada, justo después de la sección de personalización de colores: -->
+                <h3 class="profile-section-title">Música Personalizada</h3>
+                <div class="background-options">
+                    <div class="profile-field">
+                        <label for="customMusicFile">Subir música de fondo:</label>
+                        <div class="upload-background-container">
+                            <button class="background-button" id="chooseCustomMusicButton">
+                                <i class="fas fa-music"></i> <span>Elegir Archivo de Audio</span>
+                            </button>
+                            <input type="file" id="customMusicFile" accept="audio/*" style="display: none;">
+                        </div>
+                        <div class="custom-music-info" id="customMusicInfo" style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
+                            No hay música personalizada seleccionada
+                        </div>
+                    </div>
+                    <div class="background-actions" style="margin-top: 15px;">
+                        <button class="background-button danger" id="removeCustomMusicButton">
+                            <i class="fas fa-trash"></i> <span>Eliminar Música</span>
+                        </button>
+                        <button class="background-button primary" id="saveCustomMusicButton">
+                            <i class="fas fa-save"></i> <span>Guardar Música</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerta -->
+<div class="alert" id="alert">
+    <h3 class="alert-title" id="alertTitle">Título de la alerta</h3>
+    <p class="alert-message" id="alertMessage">Mensaje de la alerta</p>
+    <button class="alert-button" id="alertButton">Aceptar</button>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Contenedor de iframe para juegos -->
+<div class="game-iframe-container" id="gameIframeContainer">
+    <iframe id="gameIframe" class="game-iframe" src="about:blank"></iframe>
+    <div class="game-controls">
+        <button class="game-control-button fullscreen-button" id="fullscreenButton">
+            <i class="fas fa-expand"></i> <span data-en="Fullscreen" data-es="Pantalla Completa">Pantalla Completa</span>
+        </button>
+        <button class="game-control-button back-button" id="backToMenuButton">
+            <i class="fas fa-arrow-left"></i> <span data-en="Back to Menu" data-es="Volver al Menú">Volver al Menú</span>
+        </button>
+    </div>
+</div>
+
+<script>
+// Datos de juegos
+// Datos de juegos
+const games = [
+    {
+        id: 1,
+        title: "AstralTube",
+        artist: "AstralTeam, Google - Youtube pero con miniaturas.",
+        thumbnail: "imgjuegos/astrallogo.png",
+        song: "titulonuevo.mp3",
+        url: "tube.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 2,
+        title: "Musica",
+        artist: "Musica de toda la Aplicacion de Astral",
+        thumbnail: "imgjuegos/astrallogo.png",
+        song: "titulonuevo.mp3",
+        url: "musica.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Cual es tu musica favorita de la pagina?",
+            redirect: "musica.html"
+        }
+    },
+    {
+        id: 3,
+        title: "Block Blast",
+        artist: "Hungry Studio",
+        thumbnail: "imgjuegos/blockblast.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/blockblast/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/blockblast/index.html"
+        }
+    },  
+    {
+        id: 4,
+        title: "Death Run 3D",
+        artist: "Y8",
+        thumbnail: "imgjuegos/deathrun3d.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/death-run-3d/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/death-run-3d/index.html"
+        }
+    },  
+    {
+        id: 5,
+        title: "Unfair Mario",
+        artist: "Ni idea mijo",
+        thumbnail: "imgjuegos/unfairmario.jpg",
+        song: "juegosmusica/unfairmario.mp3",
+        url: "Juegos/ita13/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/ita13/index.html"
+        }
+    },  
+    {
+        id: 6,
+        title: "Tunnel Rush",
+        artist: "Deer Cat Games",
+        thumbnail: "imgjuegos/tunnel.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/tunnel-rush/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/tunnel-rush/index.html"
+        }
+    },    
+    {
+        id: 7,
+        title: "DON'T YOU LECTURE ME WITH YOUR THIRTY DOLLAR WEBSITE",
+        artist: "GD COLON",
+        thumbnail: "imgjuegos/30dollar.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/30dollarwebsite/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea la mejor musica.",
+            redirect: "Juegos/30dollarwebsite/index.html"
+        }
+    },
+    {
+        id: 8,
+        title: "2048",
+        artist: "Poki",
+        thumbnail: "imgjuegos/2014.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/2048/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Sé INTELIGENTE y haz 2048!",
+            redirect: "Juegos/2048/index.html"
+        }
+    },
+    {
+        id: 9,
+        title: "Slope 2",
+        artist: "Y8",
+        thumbnail: "imgjuegos/slope2.jpeg",
+        song: "juegosmusica/slope.mp3",
+        url: "Juegos/slope-2/index.html",
+        categories: ["action"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Es hora de esquivar los obstaculos! Pero ahora con tu pana.",
+            redirect: "Juegos/slope-2/index.html"
+        }
+    },
+    {
+        id: 10,
+        title: "Highway Racer",
+        artist: "Bonecracker Games",
+        thumbnail: "imgjuegos/highway.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/hwy-rcer/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de correr a toda velocidad y evitar los demas carros.",
+            redirect: "Juegos/hwy-rcer/index.html"
+        }
+    },
+    {
+        id: 11,
+        title: "Stick Duel Battle",
+        artist: "undefined",
+        thumbnail: "imgjuegos/stick2.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/stick-duel-battle/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de pelear contra tu compa o contra un bot con pistolas o a puño.",
+            redirect: "Juegos/stick-duel-battle/index.html"
+        }
+    },
+    {
+        id: 12,
+        title: "The World's Hardest Game",
+        artist: "undefined",
+        thumbnail: "imgjuegos/hard.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/ita10/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "El juego mas dificil del mundo, no te enojes si no puedes pasar el primer nivel. Esta demasiado dificil.",
+            redirect: "Juegos/ita10/index.html"
+        }
+    },
+    {
+        id: 13,
+        title: "Stickman Hook",
+        artist: "?",
+        thumbnail: "imgjuegos/stick.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/stickman-hook/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de balancearse como un loco, pero no te caigas.",
+            redirect: "Juegos/stickman-hook/index.html"
+        }
+    },
+    {
+        id: 14,
+        title: "PolyTrack",
+        artist: "PolyTrack",
+        thumbnail: "imgjuegos/poly.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/polytrack/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de carreras donde debes evitar los obstaculos y llegar a la meta.",
+            redirect: "Juegos/polytrack/index.html"
+        }
+    },
+    {
+        id: 15,
+        title: "Tertis Chafa",
+        artist: "NotArtistAvailable",
+        thumbnail: "imgjuegos/tetris.jpg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/ita11/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea una linea de 4 bloques para eliminarla, pero no dejes que se llene la pantalla.",
+            redirect: "Juegos/ita11/index.html"
+        }
+    },
+    {
+        id: 16,
+        title: "A Dance of Fire and Ice",
+        artist: "Ni idea crack",
+        thumbnail: "imgjuegos/adofai.jpeg",
+        song: "titulonuevo.mp3",    
+        url: "Juegos/a-dance-of-fire-and-ice/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Music-rhythm game, donde debes seguir el ritmo de la musica, es un juego muy bueno.",
+            redirect: "Juegos/a-dance-of-fire-and-ice/index.html"
+        }
+    },
+    {
+        id: 17,
+        title: "Google Snake",
+        artist: "Google",
+        thumbnail: "imgjuegos/snake.jpeg",
+        song: "titulonuevo.mp3",    
+        url: "Juegos/google-snake/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Comete esta manzana, pero no te comas a ti mismo. Poetico.",
+            redirect: "Juegos/google-snake/index.html"
+        }
+    },
+    {
+        id: 18,
+        title: "Super Mario Combat",
+        artist: "Sun-studios",
+        thumbnail: "imgjuegos/mariocombat.jpeg",
+        song: "juegosmusica/mariocombat.mp3",
+        url: "Juegos/ita9/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de combate bien chidoris, muevete con las flechas y ataca con la letra a",
+            redirect: "Juegos/ita9/index.html"
+        }
+    },
+    {
+        id: 19,
+        title: "BitLife",
+        artist: "Ni idea crack",
+        thumbnail: "imgjuegos/bitlife.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/bitlife/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No seas abogado, te arruinara la vida, creeme.",
+            redirect: "Juegos/bitlife/index.html"
+        }
+    },
+    {
+        id: 20,
+        title: "Angry Birds",
+        artist: "ROVIO",
+        thumbnail: "imgjuegos/angry.jpeg",
+        song: "juegosmusica/angry.mp3",
+        url: "Juegos/angrybirds/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "Nunca uses el pajaro azul >:l",
+            redirect: "Juegos/angrybirds/index.html"
+        }
+    },
+    {
+        id: 21,
+        title: "Super Mario Combat",
+        artist: "ipodtouch0218",
+        thumbnail: "imgjuegos/smbv.png",
+        song: "juegosmusica/mariocombat.mp3",
+        url: "Juegos/mariovsluigi/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego donde debes agarrar las estrellas, quien tenga mas gana, puedes jugar online! :)",
+            redirect: "Juegos/mariovsluigi/index.html"
+        }
+    },
+    {
+        id: 22,
+        title: "Cat Tenis",
+        artist: "AstralOriginals (Astral lo porteo)",
+        thumbnail: "imgjuegos/cattenis.png",
+        song: "juegosmusica/cattenis.mp3",
+        url: "Juegos/cattenis/index.html",
+        categories: ["puzzle"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Ganale en el tenis al gatito.",
+            redirect: "Juegos/cattenis/index.html"
+        }
+    },
+    {
+        id: 23,
+        title: "Slowroads",
+        artist: "slowroads.io",
+        thumbnail: "imgjuegos/slowroad.jpeg",
+        song: "juegosmusica/cattenis.mp3",
+        url: "Juegos/slowroads/index.html",
+        categories: ["puzzle"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Ganale en el tenis al gatito.",
+            redirect: "Juegos/slowroads/index.html"
+        }
+    },
+    {
+        id: 24,
+        title: "8 Ball Pool",
+        artist: "?",
+        thumbnail: "imgjuegos/8ballpool.jpeg",
+        song: "titulo.mp3",
+        url: "Juegos/8ball/index.html",
+        categories: ["puzzle"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "¿Alguien realmente lee esto?",
+            redirect: "Juegos/8ball/index.html"
+        }
+    },
+    {
+        id: 25,
+        title: "1v1.lol",
+        artist: "?",
+        thumbnail: "imgjuegos/1v1.png",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/1v1fixed/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "A ver si ahora si funciona este juego jajaja",
+            redirect: "Juegos/1v1fixed/index.html"
+        }
+    },
+    {
+        id: 26,
+        title: "Run3",
+        artist: "Ahora no sirve lo juro 😭",
+        thumbnail: "imgjuegos/run3.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/run3fix2/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 27,
+        title: "Astral Chess",
+        artist: "AstralOriginals",
+        thumbnail: "imgjuegos/astralchess.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/astralchess/index.html",
+        categories: ["arcade"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¡Recuerda siempre jugar con un amigo!",
+            redirect: "Juegos/astralchess/index.html"
+        }
+    },
+    {
+        id: 28,
+        title: "Wii Simulation",
+        artist: "The Onliine Project",
+        thumbnail: "imgjuegos/Wii.png",
+        song: "juegosmusica/wii.mp3",
+        url: "Juegos/vwii/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Nintendo no me demandes aaaa",
+            redirect: "Juegos/vwii/index.html"
+        }
+    },
+    {
+        id: 29,
+        title: "Minecraft: Astral x Precision Client",
+        artist: "Mojang/Precision Client",
+        thumbnail: "imgjuegos/minecraft.jpg",
+        song: "juegosmusica/mc.mp3",
+        url: "Juegos/minecraft/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Si quieres jugar con tus amigos abre el mundo a LAN!",
+            redirect: "Juegos/minecraft/index.html"
+        }
+    },
+    {
+        id: 30,
+        title: "Mario Party 2",
+        artist: "Nintendo",
+        thumbnail: "imgjuegos/mp2.jpeg",
+        song: "juegosmusica/mp2.mp3",
+        url: "Juegos/MarioParty2/index.html",
+        categories: ["retro"],
+        isNew: true,
+        isUpdate: false,
+        folder: "mario",
+        alert: {
+            type: "loading",
+            message: "Cargando el juego... ¡Recuerda siempre ganarle al chango!",
+            redirect: "Juegos/MarioParty2/index.html"
+        }
+    },
+    {
+        id: 31,
+        title: "Geometry Dash (Unity WebGL)",
+        artist: "Not Avaible",
+        thumbnail: "imgjuegos/gds.jpeg",
+        song: "juegosmusica/gd.mp3",
+        url: "Juegos/geometry-dash-lite/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Pasate time machine en 1 intento",
+            redirect: "Juegos/geometry-dash-lite/index.html"
+        }
+    },
+    {
+        id: 32,
+        title: "Geometry Dash (Scratch)",
+        artist: "Robert Nicholas Christian Topala",
+        thumbnail: "imgjuegos/gds.jpeg",
+        song: "juegosmusica/gd.mp3",
+        url: "Juegos/geometrydash/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Pasate time machine en 1 intento",
+            redirect: "Juegos/geometrydash/index.html"
+        }
+    },
+    {
+        id: 33,
+        title: "Tetris pirata",
+        artist: "NA",
+        thumbnail: "imgjuegos/tetris.jpg",
+        song: "",
+        url: "Juegos/tetris/index.html",
+        categories: ["all"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¡Bienvenido a Astral!",
+            redirect: "mensaje.html"
+        }
+    },
+    {
+        id: 34,
+        title: "Super Mario Construct",
+        artist: "LSS",
+        thumbnail: "imgjuegos/SMC.jpeg",
+        song: "juegosmusica/smc.mp3",
+        url: "Juegos/MARIO.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        folder: "mario",
+        alert: {
+            type: "loading",
+            message: "Cargando el juego... ¡No olvides usar tu creatividad al maximo!",
+            redirect: "Juegos/MARIO.html"
+        }
+    },
+    {
+        id: 35,
+        title: "Sans",
+        artist: "TobyFox?",
+        thumbnail: "imgjuegos/sans.jpg",
+        song: "juegosmusica/sans.mp3",
+        url: "Juegos/sans/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Quieres pasar un mal rato?",
+            redirect: "Juegos/sans/index.html"
+        }
+    },
+    {
+        id: 36,
+        title: "Stack Ball",
+        artist: "NA",
+        thumbnail: "imgjuegos/stackball.jpg",
+        song: "titulo.mp3",
+        url: "Juegos/stack/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "No sé que decir aqui.",
+            redirect: "Juegos/stack/index.html"
+        }
+    },
+    {
+        id: 37,
+        title: "AstralEmulator",
+        artist: "Aplicacion basada en la app codigo abierto emulator.js modificada por AstralTeam",
+        thumbnail: "imgjuegos/noimg.png",
+        song: "titulo.mp3",
+        url: "Juegos/AstralEmulator1.5/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "¡Le recomendamos mucho Jugar Super Mario World!",
+            redirect: "Juegos/AstralEmulator1.5/index.html"
+        }
+    },
+    {
+        id: 38,
+        title: "8 Ball Pool",
+        artist: "?",
+        thumbnail: "imgjuegos/8ballpool.jpeg",
+        song: "titulo.mp3",
+        url: "Juegos/ita8/index.html",
+        categories: ["puzzle"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Alguien realmente lee esto?",
+            redirect: "Juegos/ita8/index.html"
+        }
+    },
+    {
+        id: 39,
+        title: "Fireboy & Watergirl",
+        artist: "?",
+        thumbnail: "imgjuegos/FYW.jpeg",
+        song: "titulo.mp3",
+        url: "Juegos/firewater/index.html",
+        categories: ["puzzle"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Cual personaje prefieres ser?",
+            redirect: "Juegos/firewater/index.html"
+        }
+    },
+    {
+        id: 40,
+        title: "Cut the Rope",
+        artist: "Zeptolabs",
+        thumbnail: "imgjuegos/ctr.jpg",
+        song: "juegosmusica/ctr.mp3",
+        url: "Juegos/ctr/index.html",
+        categories: ["puzzle"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡La araña se llevara tu caramelo pronto!",
+            redirect: "Juegos/ctr/index.html"
+        }
+    },
+    {
+        id: 41,
+        title: "DOOM",
+        artist: "NA",
+        thumbnail: "imgjuegos/doom.jpeg",
+        song: "juegosmusica/doom.mp3",
+        url: "Juegos/doom/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡No ejecutes esto en un cactus!",
+            redirect: "Juegos/doom/index.html"
+        }
+    },
+    {
+        id: 42,
+        title: "Windows XP",
+        artist: "Open Source Docker",
+        thumbnail: "imgjuegos/winxp.jpeg",
+        song: "titulo.mp3",
+        url: "Juegos/winxp/VirtualXP.htm",
+        categories: ["all"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Tan siquiera alguien usa esto?",
+            redirect: "Juegos/winxp/VirtualXP.htm"
+        }
+    },
+    {
+        id: 43,
+        title: "FNF Garcello Mod",
+        artist: "NA",
+        thumbnail: "imgjuegos/fnfg.jpeg",
+        song: "juegosmusica/fnfv.mp3",
+        url: "Juegos/fnfg/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        folder: "fnf",
+        alert: {
+            type: "loading",
+            message: "¡No vayas a matar a Garcello!",
+            redirect: "Juegos/fnfg/index.html"
+        }
+    },
+    {
+        id: 44,
+        title: "FNF",
+        artist: "ninjamuffin",
+        thumbnail: "imgjuegos/fnfviejo.jpeg",
+        song: "juegosmusica/fnfv.mp3",
+        url: "Juegos/fnfviejo/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        folder: "fnf",
+        alert: {
+            type: "loading",
+            message: "¡No pierdas!",
+            redirect: "Juegos/fnfviejo/index.html"
+        }
+    },
+    {
+        id: 45,
+        title: "FNF Vs Shaggy",
+        artist: "NA",
+        thumbnail: "imgjuegos/fnfvsshaggy.jpeg",
+        song: "juegosmusica/fnfv.mp3",
+        url: "Juegos/fnfshaggy/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        folder: "fnf",
+        alert: {
+            type: "loading",
+            message: "¡Valiste Churro!",
+            redirect: "Juegos/fnfshaggy/index.html"
+        }
+    },
+    {
+        id: 46,
+        title: "Super Mario 127",
+        artist: "LSS",
+        thumbnail: "imgjuegos/mario127.jpeg",
+        song: "juegosmusica/mario127.mp3",
+        url: "Juegos/MARIO127.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        folder: "mario",
+        alert: {
+            type: "loading",
+            message: "¡No te caigas al vacio!",
+            redirect: "Juegos/MARIO127.html"
+        }
+    },
+    {
+        id: 47,
+        title: "Slope",
+        artist: "Y8",
+        thumbnail: "imgjuegos/slope.jpg",
+        song: "juegosmusica/slope.mp3",
+        url: "Juegos/slope/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Es hora de esquivar los obstaculos!",
+            redirect: "Juegos/slope/index.html"
+        }
+    },
+    {
+        id: 48,
+        title: "Baldi",
+        artist: "NA",
+        thumbnail: "imgjuegos/baldi.jpg",
+        song: "juegosmusica/baldi.mp3",
+        url: "Juegos/baldi/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Recuerda: ¡1+1 = 2!",
+            redirect: "Juegos/baldi/index.html"
+        }
+    },
+    {
+        id: 49,
+        title: "Cookie Clicker",
+        artist: "Ni idea crack",
+        thumbnail: "imgjuegos/cookie.png",
+        song: "titulo.mp3",
+        url: "Juegos/cookie/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Haz click en la galleta!",
+            redirect: "Juegos/cookie/index.html"
+        }
+    },
+    {
+        id: 50,
+        title: "Five Nights at Freddy's",
+        artist: "Scott",
+        thumbnail: "imgjuegos/fnafbg.jpeg",
+        song: "juegosmusica/fnaf.mp3",
+        url: "Juegos/FNAF1/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "undefined",
+            redirect: "Juegos/FNAF1/index.html"
+        }
+    },
+    {
+        id: 51,
+        title: "Mario Kart 64",
+        artist: "Nintendo",
+        thumbnail: "imgjuegos/mk64b.jpg",
+        song: "juegosmusica/mk64.mp3",
+        url: "Juegos/MarioKart64/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        folder: "mario",
+        alert: {
+            type: "loading",
+            message: "¡Recuerda siempre pegarle al chango!",
+            redirect: "Juegos/MarioKart64/index.html"
+        }
+    },
+    {
+        id: 52,
+        title: "Super Mario 64",
+        artist: "Nintendo",
+        thumbnail: "imgjuegos/mario64.jpg",
+        song: "juegosmusica/mario64.mp3",
+        url: "Juegos/SM64/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        folder: "mario",
+        alert: {
+            type: "loading",
+            message: "¡No olvides tirar al pinguino por el vacio!",
+            redirect: "Juegos/SM64/index.html"
+        }
+    },
+    {
+        id: 53,
+        title: "Sonic Mania",
+        artist: "SEGA",
+        thumbnail: "imgjuegos/mania.jpg",
+        song: "juegosmusica/mania.mp3",
+        url: "Juegos/mania/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Cuando inicie el juego presiona ESC (Escape) en tu teclado para iniciar un mod menu, ahi elije el nivel porque el menu no sirve.",
+            redirect: "Juegos/mania/index.html"
+        }
+    },
+    {
+        id: 54,
+        title: "Super Yoshi Construct",
+        artist: "LSS",
+        thumbnail: "imgjuegos/yfs.jpeg",
+        song: "juegosmusica/smc.mp3",
+        url: "Juegos/YOSHI.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡No olvides usar tu creatividad al maximo!",
+            redirect: "Juegos/YOSHI.html"
+        }
+    },
+    {
+        id: 55,
+        title: "Tomb of The Mask",
+        artist: "NA",
+        thumbnail: "imgjuegos/totm.jpg",
+        song: "titulo.mp3",
+        url: "Juegos/totm/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Veremos quien es el mejor!",
+            redirect: "Juegos/totm/index.html"
+        }
+    },
+    {
+        id: 56,
+        title: "Subway Surfers",
+        artist: "SYBO Games",
+        thumbnail: "imgjuegos/SBS.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/subwaysurferssanfrancisco/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 57,
+        title: "Henry Stickmin: BTB",
+        artist: "Puffballs United & Newgrounds",
+        thumbnail: "imgjuegos/btb.jpeg",
+        song: "juegosmusica/hsita.mp3",
+        url: "Juegos/ita3/index.html",
+        categories: ["strategy"],
+        isNew: false,
+        isUpdate: false,
+        folder: "henry",
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita3/index.html"
+        }
+    },
+    {
+        id: 58,
+        title: "Henry Stickmin: ETP",
+        artist: "Puffballs United & Newgrounds",
+        thumbnail: "imgjuegos/etp.jpeg",
+        song: "juegosmusica/hsita.mp3",
+        url: "Juegos/ita4/index.html",
+        categories: ["strategy"],
+        isNew: false,
+        isUpdate: false,
+        folder: "henry",
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita4/index.html"
+        }
+    },
+    {
+        id: 59,
+        title: "Henry Stickmin: STD",
+        artist: "Puffballs United & Newgrounds",
+        thumbnail: "imgjuegos/std.jpeg",
+        song: "juegosmusica/hsita.mp3",
+        url: "Juegos/ita5/index.html",
+        categories: ["strategy"],
+        isNew: false,
+        isUpdate: false,
+        folder: "henry",
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita5/index.html"
+        }
+    },
+    {
+        id: 60,
+        title: "Henry Stickmin: ITA",
+        artist: "Puffballs United & Newgrounds",
+        thumbnail: "imgjuegos/ita.jpg",
+        song: "juegosmusica/hsita.mp3",
+        url: "Juegos/ita/index.html",
+        categories: ["strategy"],
+        isNew: false,
+        isUpdate: false,
+        folder: "henry",
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita/index.html"
+        }
+    },
+    {
+        id: 61,
+        title: "Henry Stickmin: FTC",
+        artist: "Puffballs United & Newgrounds",
+        thumbnail: "imgjuegos/ftc.jpeg",
+        song: "juegosmusica/hsita.mp3",
+        url: "Juegos/ita6/index.html",
+        categories: ["strategy"],
+        isNew: false,
+        isUpdate: false,
+        folder: "henry",
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita6/index.html"
+        }
+    },
+    {
+        id: 62,
+        title: "The Binding Of Isaac - FL",
+        artist: "Edmund McMillen, Florian Himsl",
+        thumbnail: "imgjuegos/isaacico.jpg",
+        song: "juegosmusica/isaac.mp3",
+        url: "Juegos/ita2/index.html",
+        categories: ["action"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Recomendamos pantalla completa.",
+            redirect: "Juegos/ita2/index.html"
+        }
+    },
+    {
+        id: 63,
+        title: "Crossy Road",
+        artist: "Hipster Whale",
+        thumbnail: "imgjuegos/crossy.jpg",
+        song: "juegosmusica/tloi.mp3",
+        url: "Juegos/crossyroad/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Mira 2 veces antes de cruzar la calle!",
+            redirect: "Juegos/crossyroad/index.html"
+        }
+    },
+    {
+        id: 64,
+        title: "Bad Ice Cream 1",
+        artist: "NA",
+        thumbnail: "Juegos/badicecream/bad-ice-cream.png",
+        song: "titulo.mp3",
+        url: "Juegos/badicecream/index.html",
+        categories: ["puzzle"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Realmente alguien juega esto? Ya ni sé porque lo meti.",
+            redirect: "Juegos/badicecream/index.html"
+        }
+    }
+];
+
+// Carpetas de juegos
+const folders = [
+    {
+        id: 1,
+        title: "Favoritos",
+        count: 5,
+        games: [1, 3, 4, 5, 6]
+    },
+    {
+        id: 2,
+        title: "Recientes",
+        count: 3,
+        games: [2, 4, 6]
+    }
+];
+
+// Función para mostrar alerta
+function showAlert(title, message) {
+    const alertTitle = document.getElementById('alertTitle');
+    const alertMessage = document.getElementById('alertMessage');
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    
+    alertTitle.textContent = title;
+    alertMessage.textContent = message;
+    
+    alert.classList.add('show');
+    overlay.classList.add('show');
+}
+
+// Función para cerrar alerta
+function closeAlert() {
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    
+    alert.classList.remove('show');
+    overlay.classList.remove('show');
+}
+
+// Función para cambiar de sección
+function changeSection(sectionId) {
+    const sections = document.querySelectorAll('.content-section');
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    sidebarItems.forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    document.getElementById(`${sectionId}Section`).classList.add('active');
+    document.querySelector(`.sidebar-item[data-section="${sectionId}"]`).classList.add('active');
+}
+
+// Función para filtrar juegos por categoría
+function filterGamesByCategory(category) {
+    const gamesGrid = document.getElementById('gamesGrid');
+    gamesGrid.innerHTML = '';
+    
+    let filteredGames = games;
+    
+    if (category !== 'all') {
+        if (category === 'favorites') {
+            const favoriteGames = folders.find(folder => folder.title === "Favoritos").games;
+            filteredGames = games.filter(game => favoriteGames.includes(game.id));
+        } else {
+            filteredGames = games.filter(game => game.categories.includes(game.id));
+        }
+    }
+    
+    filteredGames.forEach((game, index) => {
+        const gameCard = document.createElement('div');
+        gameCard.className = 'game-card';
+        gameCard.style.animationDelay = `${index * 0.1}s`;
+        
+        gameCard.innerHTML = `
+            <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
+            <div class="game-info">
+                <h3 class="game-title">${game.title}</h3>
+                <p class="game-artist">${game.artist}</p>
+            </div>
+            <div class="play-button">
+                <i class="fas fa-play"></i>
+            </div>
+        `;
+        
+        gameCard.addEventListener('click', () => {
+            openGame(game);
+        });
+        
+        gamesGrid.appendChild(gameCard);
+    });
+}
+
+// Función para abrir un juego
+function openGame(game) {
+    const gameIframe = document.getElementById('gameIframe');
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    
+    gameIframe.src = game.url;
+    gameIframeContainer.style.display = 'flex';
+}
+
+// Modificar la función closeGame() para asegurar que la música se reanude:
+function closeGame() {
+    const gameIframe = document.getElementById('gameIframe');
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    
+    gameIframe.src = 'about:blank';
+    gameIframeContainer.style.display = 'none';
+    gameIframeContainer.classList.remove('fullscreen');
+    
+    // Reanudar la música si estaba activada antes
+    playBackgroundMusic();
+}
+
+// Función para alternar pantalla completa
+function toggleFullscreen() {
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    gameIframeContainer.classList.toggle('fullscreen');
+}
+
+// Función para crear estrellas
+function createStars(container, count) {
+    const starsContainer = document.getElementById(container);
+    starsContainer.innerHTML = '';
+    
+    for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        const size = Math.random() * 3 + 1;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = Math.random() * 3 + 2;
+        const opacity = Math.random() * 0.5 + 0.3;
+        
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${posX}%`;
+        star.style.top = `${posY}%`;
+        star.style.setProperty('--duration', `${duration}s`);
+        star.style.setProperty('--opacity', opacity);
+        
+        starsContainer.appendChild(star);
+    }
+}
+
+// Función para crear nebulosas
+function createNebulas(count) {
+    const starsContainer = document.getElementById('stars');
+    
+    for (let i = 0; i < count; i++) {
+        const nebula = document.createElement('div');
+        nebula.className = 'nebula';
+        
+        const size = Math.random() * 300 + 100;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        
+        const colors = [
+            '#4169e1', // Azul
+            '#9c27b0', // Púrpura
+            '#ff3366', // Rosa
+            '#00bcd4', // Cian
+            '#4caf50'  // Verde
+        ];
+        
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        nebula.style.width = `${size}px`;
+        nebula.style.height = `${size}px`;
+        nebula.style.left = `${posX}%`;
+        nebula.style.top = `${posY}%`;
+        nebula.style.setProperty('--color', color);
+        
+        starsContainer.appendChild(nebula);
+    }
+}
+
+// Función para inicializar el perfil
+function initProfile() {
+    const profileForm = document.getElementById('profileForm');
+    const profileName = document.getElementById('profileName');
+    const profileSurname = document.getElementById('profileSurname');
+    const profileAge = document.getElementById('profileAge');
+    const genderMale = document.getElementById('genderMale');
+    const genderFemale = document.getElementById('genderFemale');
+    const avatarUploadButton = document.getElementById('avatarUploadButton');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const profileAvatar = document.getElementById('profileAvatar');
+    const headerAvatar = document.getElementById('headerAvatar');
+    const headerUserName = document.getElementById('headerUserName');
+    
+    // Cargar datos del perfil desde localStorage
+    const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+    
+    if (profileData.name) profileName.value = profileData.name;
+    if (profileData.surname) profileSurname.value = profileData.surname;
+    if (profileData.age) profileAge.value = profileData.age;
+    if (profileData.gender === 'male') genderMale.checked = true;
+    if (profileData.gender === 'female') genderFemale.checked = true;
+    
+    // Cargar avatar
+    if (profileData.avatar) {
+        profileAvatar.innerHTML = `<img src="${profileData.avatar}" alt="Avatar">`;
+        headerAvatar.innerHTML = `<img src="${profileData.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+    }
+    
+    // Actualizar nombre en el header
+    if (profileData.name) {
+        headerUserName.textContent = profileData.name;
+    }
+    
+    // Manejar subida de avatar
+    avatarUploadButton.addEventListener('click', () => {
+        avatarFileInput.click();
+    });
+    
+    avatarFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const avatarDataUrl = event.target.result;
+                profileAvatar.innerHTML = `<img src="${avatarDataUrl}" alt="Avatar">`;
+                
+                // Guardar en localStorage
+                profileData.avatar = avatarDataUrl;
+                localStorage.setItem('profileData', JSON.stringify(profileData));
+                
+                // Actualizar avatar en el header
+                headerAvatar.innerHTML = `<img src="${avatarDataUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Guardar datos del perfil
+    profileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = profileName.value;
+        const surname = profileSurname.value;
+        const age = profileAge.value;
+        const gender = genderMale.checked ? 'male' : (genderFemale.checked ? 'female' : '');
+        
+        // Actualizar objeto de datos
+        profileData.name = name;
+        profileData.surname = surname;
+        profileData.age = age;
+        profileData.gender = gender;
+        
+        // Guardar en localStorage
+        localStorage.setItem('profileData', JSON.stringify(profileData));
+        
+        // Actualizar nombre en el header
+        headerUserName.textContent = name;
+        
+        showAlert('Perfil Guardado', 'Tu información de perfil ha sido guardada correctamente.');
+    });
+}
+
+// Función para inicializar la personalización de fondo
+function initBackgroundCustomization() {
+    const backgroundUrl = document.getElementById('backgroundUrl');
+    const applyUrlButton = document.getElementById('applyUrlButton');
+    const chooseFileButton = document.getElementById('chooseFileButton');
+    const backgroundFileInput = document.getElementById('backgroundFileInput');
+    const backgroundPreview = document.getElementById('backgroundPreview');
+    const removeBackgroundButton = document.getElementById('removeBackgroundButton');
+    const saveBackgroundButton = document.getElementById('saveBackgroundButton');
+    
+    let currentBackground = localStorage.getItem('customBackground') || '';
+    
+    // Aplicar fondo guardado
+    if (currentBackground) {
+        applyCustomBackground(currentBackground);
+        backgroundPreview.style.backgroundImage = `url(${currentBackground})`;
+        backgroundPreview.classList.add('has-image');
+    }
+    
+    // Aplicar URL
+    applyUrlButton.addEventListener('click', () => {
+        const url = backgroundUrl.value.trim();
+        if (url) {
+            // Verificar si la URL es válida
+            const img = new Image();
+            img.onload = function() {
+                currentBackground = url;
+                backgroundPreview.style.backgroundImage = `url(${url})`;
+                backgroundPreview.classList.add('has-image');
+            };
+            img.onerror = function() {
+                showAlert('Error', 'La URL de la imagen no es válida o no se puede cargar.');
+            };
+            img.src = url;
+        } else {
+            showAlert('Error', 'Por favor, ingresa una URL válida.');
+        }
+    });
+    
+    // Elegir archivo
+    chooseFileButton.addEventListener('click', () => {
+        backgroundFileInput.click();
+    });
+    
+    backgroundFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const backgroundDataUrl = event.target.result;
+                currentBackground = backgroundDataUrl;
+                backgroundPreview.style.backgroundImage = `url(${backgroundDataUrl})`;
+                backgroundPreview.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Quitar fondo
+    removeBackgroundButton.addEventListener('click', () => {
+        currentBackground = '';
+        backgroundPreview.style.backgroundImage = '';
+        backgroundPreview.classList.remove('has-image');
+        backgroundUrl.value = '';
+        removeCustomBackground();
+    });
+    
+    // Guardar cambios
+    saveBackgroundButton.addEventListener('click', () => {
+        if (currentBackground) {
+            localStorage.setItem('customBackground', currentBackground);
+            applyCustomBackground(currentBackground);
+            showAlert('Fondo Guardado', 'Tu fondo personalizado ha sido guardado correctamente.');
+        } else {
+            localStorage.removeItem('customBackground');
+            removeCustomBackground();
+            showAlert('Fondo Eliminado', 'El fondo personalizado ha sido eliminado.');
+        }
+    });
+}
+
+// Función para aplicar fondo personalizado
+function applyCustomBackground(backgroundUrl) {
+    let customBg = document.getElementById('customBackground');
+    
+    if (!customBg) {
+        customBg = document.createElement('div');
+        customBg.id = 'customBackground';
+        customBg.className = 'custom-background';
+        document.body.appendChild(customBg);
+    }
+    
+    customBg.style.backgroundImage = `url(${backgroundUrl})`;
+    
+    // Ocultar el fondo espacial predeterminado
+    document.querySelector('.space-background').style.display = 'none';
+}
+
+// Función para quitar fondo personalizado
+function removeCustomBackground() {
+    const customBg = document.getElementById('customBackground');
+    if (customBg) {
+        customBg.style.backgroundImage = '';
+    }
+    
+    // Mostrar el fondo espacial predeterminado
+    document.querySelector('.space-background').style.display = 'block';
+}
+
+// Función para inicializar la personalización de colores
+function initColorCustomization() {
+    const headerColorInput = document.getElementById('headerColor');
+    const sidebarColorInput = document.getElementById('sidebarColor');
+    const headerColorPreview = document.getElementById('headerColorPreview');
+    const sidebarColorPreview = document.getElementById('sidebarColorPreview');
+    const accentColorPreview = document.getElementById('accentColorPreview');
+    const applyColorsBtn = document.getElementById('applyColors');
+    const resetColorsBtn = document.getElementById('resetColors');
+    
+    // Elementos del selector de color avanzado
+    const colorGradient = document.getElementById('colorGradient');
+    const colorSelector = document.getElementById('colorSelector');
+    const hueSlider = document.getElementById('hueSlider');
+    const colorR = document.getElementById('colorR');
+    const colorG = document.getElementById('colorG');
+    const colorB = document.getElementById('colorB');
+    
+    let currentHue = 230; // Valor inicial (azul)
+    let currentSaturation = 70;
+    let currentLightness = 57;
+    
+    // Cargar colores guardados
+    const savedHeaderColor = localStorage.getItem('headerColor') || '#0a0a2a';
+    const savedSidebarColor = localStorage.getItem('sidebarColor') || '#0a0a2a';
+    const savedAccentColor = localStorage.getItem('accentColor') || '#4169e1';
+    
+    // Aplicar colores guardados
+    document.documentElement.style.setProperty('--header-bg', savedHeaderColor);
+    document.documentElement.style.setProperty('--sidebar-bg', savedSidebarColor);
+    document.documentElement.style.setProperty('--accent-color', savedAccentColor);
+    
+    // Actualizar inputs y previews
+    headerColorInput.value = savedHeaderColor;
+    sidebarColorInput.value = savedSidebarColor;
+    headerColorPreview.style.backgroundColor = savedHeaderColor;
+    sidebarColorPreview.style.backgroundColor = savedSidebarColor;
+    accentColorPreview.style.backgroundColor = savedAccentColor;
+    
+    // Convertir el color de acento guardado a RGB y actualizar los inputs
+    const rgbMatch = savedAccentColor.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (rgbMatch) {
+        const r = parseInt(rgbMatch[1], 16);
+        const g = parseInt(rgbMatch[2], 16);
+        const b = parseInt(rgbMatch[3], 16);
+        
+        colorR.value = r;
+        colorG.value = g;
+        colorB.value = b;
+        
+        // Convertir RGB a HSL para actualizar el selector y el slider
+        const hsl = rgbToHsl(r, g, b);
+        currentHue = hsl[0];
+        currentSaturation = hsl[1];
+        currentLightness = hsl[2];
+        
+        // Actualizar el slider de tono
+        hueSlider.value = currentHue;
+        
+        // Actualizar el fondo del gradiente
+        updateColorGradient();
+        
+        // Actualizar la posición del selector
+        updateSelectorPosition();
+    }
+    
+    // Actualizar previews al cambiar los inputs
+    headerColorInput.addEventListener('input', () => {
+        headerColorPreview.style.backgroundColor = headerColorInput.value;
+    });
+    
+    sidebarColorInput.addEventListener('input', () => {
+        sidebarColorPreview.style.backgroundColor = sidebarColorInput.value;
+    });
+    
+    // Función para actualizar el gradiente de color
+    function updateColorGradient() {
+        const hueColor = `hsl(${currentHue}, 100%, 50%)`;
+        colorGradient.style.background = `
+            linear-gradient(to bottom, white 0%, transparent 50%, black 100%),
+            linear-gradient(to right, white 0%, ${hueColor} 100%)
+        `;
+    }
+    
+    // Función para actualizar la posición del selector
+    function updateSelectorPosition() {
+        const x = currentSaturation;
+        const y = 100 - currentLightness;
+        colorSelector.style.left = `${x}%`;
+        colorSelector.style.top = `${y}%`;
+    }
+    
+    // Función para actualizar el color basado en HSL
+    function updateColorFromHSL() {
+        const rgb = hslToRgb(currentHue, currentSaturation, currentLightness);
+        colorR.value = rgb[0];
+        colorG.value = rgb[1];
+        colorB.value = rgb[2];
+        
+        const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
+        accentColorPreview.style.backgroundColor = hexColor;
+    }
+    
+    // Función para actualizar el color basado en RGB
+    function updateColorFromRGB() {
+        const r = parseInt(colorR.value) || 0;
+        const g = parseInt(colorG.value) || 0;
+        const b = parseInt(colorB.value) || 0;
+        
+        const hexColor = rgbToHex(r, g, b);
+        accentColorPreview.style.backgroundColor = hexColor;
+        
+        const hsl = rgbToHsl(r, g, b);
+        currentHue = hsl[0];
+        currentSaturation = hsl[1];
+        currentLightness = hsl[2];
+        
+        hueSlider.value = currentHue;
+        updateColorGradient();
+        updateSelectorPosition();
+    }
+    
+    // Event listener para el slider de tono
+    hueSlider.addEventListener('input', () => {
+        currentHue = parseInt(hueSlider.value);
+        updateColorGradient();
+        updateColorFromHSL();
+    });
+    
+    // Event listener para el gradiente de color
+    colorGradient.addEventListener('mousedown', (e) => {
+        const updateFromMouseEvent = (event) => {
+            const rect = colorGradient.getBoundingClientRect();
+            let x = ((event.clientX - rect.left) / rect.width) * 100;
+            let y = ((event.clientY - rect.top) / rect.height) * 100;
+            
+            x = Math.max(0, Math.min(100, x));
+            y = Math.max(0, Math.min(100, y));
+            
+            currentSaturation = x;
+            currentLightness = 100 - y;
+            
+            updateSelectorPosition();
+            updateColorFromHSL();
+        };
+        
+        updateFromMouseEvent(e);
+        
+        const handleMouseMove = (event) => {
+            updateFromMouseEvent(event);
+        };
+        
+        const handleMouseUp = () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    });
+    
+    // Event listeners para los inputs RGB
+    colorR.addEventListener('input', updateColorFromRGB);
+    colorG.addEventListener('input', updateColorFromRGB);
+    colorB.addEventListener('input', updateColorFromRGB);
+    
+    // Aplicar colores
+    applyColorsBtn.addEventListener('click', () => {
+        const headerColor = headerColorInput.value;
+        const sidebarColor = sidebarColorInput.value;
+        const r = parseInt(colorR.value) || 0;
+        const g = parseInt(colorG.value) || 0;
+        const b = parseInt(colorB.value) || 0;
+        const accentColor = rgbToHex(r, g, b);
+        
+        document.documentElement.style.setProperty('--header-bg', headerColor);
+        document.documentElement.style.setProperty('--sidebar-bg', sidebarColor);
+        document.documentElement.style.setProperty('--accent-color', accentColor);
+        
+        localStorage.setItem('headerColor', headerColor);
+        localStorage.setItem('sidebarColor', sidebarColor);
+        localStorage.setItem('accentColor', accentColor);
+        
+        showAlert('Colores aplicados', 'Los colores se han aplicado correctamente y se guardarán para tu próxima visita.');
+    });
+    
+    // Restablecer colores
+    resetColorsBtn.addEventListener('click', () => {
+        const defaultHeaderColor = '#0a0a2a';
+        const defaultSidebarColor = '#0a0a2a';
+        const defaultAccentColor = '#4169e1';
+        
+        headerColorInput.value = defaultHeaderColor;
+        sidebarColorInput.value = defaultSidebarColor;
+        headerColorPreview.style.backgroundColor = defaultHeaderColor;
+        sidebarColorPreview.style.backgroundColor = defaultSidebarColor;
+        
+        document.documentElement.style.setProperty('--header-bg', defaultHeaderColor);
+        document.documentElement.style.setProperty('--sidebar-bg', defaultSidebarColor);
+        document.documentElement.style.setProperty('--accent-color', defaultAccentColor);
+        
+        // Actualizar el selector de color de acento
+        const rgbMatch = defaultAccentColor.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+        if (rgbMatch) {
+            const r = parseInt(rgbMatch[1], 16);
+            const g = parseInt(rgbMatch[2], 16);
+            const b = parseInt(rgbMatch[3], 16);
+            
+            colorR.value = r;
+            colorG.value = g;
+            colorB.value = b;
+            
+            const hsl = rgbToHsl(r, g, b);
+            currentHue = hsl[0];
+            currentSaturation = hsl[1];
+            currentLightness = hsl[2];
+            
+            hueSlider.value = currentHue;
+            updateColorGradient();
+            updateSelectorPosition();
+            accentColorPreview.style.backgroundColor = defaultAccentColor;
+        }
+        
+        localStorage.setItem('headerColor', defaultHeaderColor);
+        localStorage.setItem('sidebarColor', defaultSidebarColor);
+        localStorage.setItem('accentColor', defaultAccentColor);
+        
+        showAlert('Colores restablecidos', 'Los colores se han restablecido a los valores predeterminados.');
+    });
+    
+    // Inicializar el gradiente de color
+    updateColorGradient();
+    updateSelectorPosition();
+}
+
+// Funciones de conversión de colores
+function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function hslToRgb(h, s, l) {
+    h /= 360;
+    s /= 100;
+    l /= 100;
+    let r, g, b;
+
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max === min) {
+        h = s = 0; // achromatic
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        
+        h /= 6;
+    }
+
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+// Funciones para manejar la música personalizada
+function initCustomMusicUpload() {
+    const chooseCustomMusicButton = document.getElementById('chooseCustomMusicButton');
+    const customMusicFile = document.getElementById('customMusicFile');
+    const customMusicInfo = document.getElementById('customMusicInfo');
+    const removeCustomMusicButton = document.getElementById('removeCustomMusicButton');
+    const saveCustomMusicButton = document.getElementById('saveCustomMusicButton');
+    
+    let customMusicData = null;
+    
+    // Cargar información de música personalizada si existe
+    const savedCustomMusic = localStorage.getItem('customMusic');
+    if (savedCustomMusic) {
+        customMusicInfo.textContent = 'Música personalizada guardada';
+        customMusicInfo.style.color = 'var(--accent-color)';
+        
+        // Actualizar la fuente de audio con la música personalizada
+        updateBackgroundMusicSource(savedCustomMusic);
+    }
+    
+    // Elegir archivo de música
+    chooseCustomMusicButton.addEventListener('click', () => {
+        customMusicFile.click();
+    });
+    
+    customMusicFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                customMusicData = event.target.result;
+                customMusicInfo.textContent = `Seleccionado: ${file.name}`;
+                customMusicInfo.style.color = 'var(--accent-color)';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Eliminar música personalizada
+    removeCustomMusicButton.addEventListener('click', () => {
+        customMusicData = null;
+        customMusicInfo.textContent = 'No hay música personalizada seleccionada';
+        customMusicInfo.style.color = '';
+        localStorage.removeItem('customMusic');
+        
+        // Restaurar la música predeterminada
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        backgroundMusic.src = 'https://assets.codepen.io/21542/howling-wind.mp3';
+        
+        if (isMusicPlaying) {
+            backgroundMusic.load();
+            backgroundMusic.play().catch(error => {
+                console.log('Error al reproducir música predeterminada:', error);
+            });
+        }
+        
+        showAlert('Música Eliminada', 'La música personalizada ha sido eliminada.');
+    });
+    
+    // Guardar música personalizada
+    saveCustomMusicButton.addEventListener('click', () => {
+        if (customMusicData) {
+            localStorage.setItem('customMusic', customMusicData);
+            
+            // Actualizar la fuente de audio con la música personalizada
+            updateBackgroundMusicSource(customMusicData);
+            
+            showAlert('Música Guardada', 'Tu música personalizada ha sido guardada correctamente.');
+        } else {
+            showAlert('Error', 'No hay música personalizada para guardar.');
+        }
+    });
+}
+
+// Función para actualizar la fuente de la música de fondo
+function updateBackgroundMusicSource(musicDataUrl) {
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    backgroundMusic.src = musicDataUrl;
+    
+    if (isMusicPlaying) {
+        backgroundMusic.load();
+        backgroundMusic.play().catch(error => {
+            console.log('Error al reproducir música personalizada:', error);
+        });
+    }
+}
+
+// Modificar la función playBackgroundMusic para verificar si hay música personalizada
+function playBackgroundMusic() {
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    backgroundMusic.volume = 0.3; // Volumen moderado
+    
+    // Verificar si hay música personalizada guardada
+    const savedCustomMusic = localStorage.getItem('customMusic');
+    if (savedCustomMusic && backgroundMusic.src !== savedCustomMusic) {
+        backgroundMusic.src = savedCustomMusic;
+        backgroundMusic.load();
+    }
+    
+    backgroundMusic.play().catch(error => {
+        console.log('Reproducción automática bloqueada por el navegador:', error);
+    });
+    
+    isMusicPlaying = true;
+    audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+}
+
+// Inicialización de la aplicación
+function initApp() {
+    // Crear estrellas
+    createStars('stars', 200);
+    createStars('splashStars', 200);
+    
+    // Crear nebulosas
+    createNebulas(5);
+    
+    // Inicializar juegos
+    filterGamesByCategory('all');
+    
+    // Event listeners para categorías
+    const categories = document.querySelectorAll('.category');
+    categories.forEach(category => {
+        category.addEventListener('click', () => {
+            categories.forEach(c => c.classList.remove('active'));
+            category.classList.add('active');
+            filterGamesByCategory(category.dataset.category);
+        });
+    });
+    
+    // Event listeners para sidebar
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            changeSection(item.dataset.section);
+        });
+    });
+    
+    // Event listener para botón de alerta
+    document.getElementById('alertButton').addEventListener('click', closeAlert);
+    
+    // Event listeners para controles de juego
+    document.getElementById('backToMenuButton').addEventListener('click', closeGame);
+    document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
+    
+    // Event listener para botón de inicio
+    document.getElementById('startButton').addEventListener('click', () => {
+        document.getElementById('splashScreen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('splashScreen').style.display = 'none';
+        }, 1000);
+    });
+    
+    // Event listeners para configuraciones
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('change', () => {
+        document.body.classList.toggle('light-theme', themeToggle.checked);
+    });
+    
+    const fontSizeRadios = document.querySelectorAll('input[name="fontSize"]');
+    fontSizeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.body.classList.remove('font-small', 'font-large');
+            if (radio.value !== 'medium') {
+                document.body.classList.add(`font-${radio.value}`);
+            }
+        });
+    });
+    
+    const reduceMotionToggle = document.getElementById('reduceMotionToggle');
+    reduceMotionToggle.addEventListener('change', () => {
+        document.body.classList.toggle('reduced-motion', reduceMotionToggle.checked);
+    });
+    
+    const languageSelect = document.getElementById('languageSelect');
+    languageSelect.addEventListener('change', () => {
+        const lang = languageSelect.value;
+        document.querySelectorAll('[data-en]').forEach(el => {
+            el.textContent = el.dataset[lang];
+        });
+    });
+    
+    const graphicsQualitySlider = document.getElementById('graphicsQualitySlider');
+    const graphicsQualityValue = document.getElementById('graphicsQualityValue');
+    graphicsQualitySlider.addEventListener('input', () => {
+        graphicsQualityValue.textContent = graphicsQualitySlider.value;
+    });
+    
+    const saveSettingsButton = document.getElementById('saveSettingsButton');
+    saveSettingsButton.addEventListener('click', () => {
+        // Guardar configuraciones en localStorage
+        localStorage.setItem('theme', themeToggle.checked ? 'light' : 'dark');
+        localStorage.setItem('fontSize', document.querySelector('input[name="fontSize"]:checked').value);
+        localStorage.setItem('reduceMotion', reduceMotionToggle.checked);
+        localStorage.setItem('language', languageSelect.value);
+        localStorage.setItem('graphicsQuality', graphicsQualitySlider.value);
+        localStorage.setItem('visualEffects', document.getElementById('visualEffectsToggle').checked);
+        
+        showAlert('Configuración Guardada', 'Tu configuración ha sido guardada correctamente y se aplicará en tu próxima visita.');
+    });
+    
+    // Cargar configuraciones guardadas
+    if (localStorage.getItem('theme') === 'light') {
+        themeToggle.checked = true;
+        document.body.classList.add('light-theme');
+    }
+    
+    if (localStorage.getItem('fontSize')) {
+        const savedFontSize = localStorage.getItem('fontSize');
+        document.querySelector(`input[name="fontSize"][value="${savedFontSize}"]`).checked = true;
+        if (savedFontSize !== 'medium') {
+            document.body.classList.add(`font-${savedFontSize}`);
+        }
+    }
+    
+    if (localStorage.getItem('reduceMotion') === 'true') {
+        reduceMotionToggle.checked = true;
+        document.body.classList.add('reduced-motion');
+    }
+    
+    if (localStorage.getItem('language')) {
+        const savedLanguage = localStorage.getItem('language');
+        languageSelect.value = savedLanguage;
+        document.querySelectorAll('[data-en]').forEach(el => {
+            el.textContent = el.dataset[savedLanguage];
+        });
+    }
+    
+    if (localStorage.getItem('graphicsQuality')) {
+        const savedGraphicsQuality = localStorage.getItem('graphicsQuality');
+        graphicsQualitySlider.value = savedGraphicsQuality;
+        graphicsQualityValue.textContent = savedGraphicsQuality;
+    }
+    
+    if (localStorage.getItem('visualEffects') === 'false') {
+        document.getElementById('visualEffectsToggle').checked = false;
+    }
+    
+    // Inicializar perfil
+    initProfile();
+    
+    // Inicializar personalización de fondo
+    initBackgroundCustomization();
+    
+    // Inicializar personalización de colores
+    initColorCustomization();
+    
+    // Inicializar subida de música personalizada
+    initCustomMusicUpload();
+}
+
+        // Variables para los elementos de audio
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const hoverSound = document.getElementById('hoverSound');
+        const audioToggle = document.getElementById('audioToggle');
+        let isMusicPlaying = false;
+        
+        // Función para iniciar la música de fondo
+        function playBackgroundMusic() {
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            backgroundMusic.volume = 0.3; // Volumen moderado
+            
+            // Verificar si hay música personalizada guardada
+            const savedCustomMusic = localStorage.getItem('customMusic');
+            if (savedCustomMusic && backgroundMusic.src !== savedCustomMusic) {
+                backgroundMusic.src = savedCustomMusic;
+                backgroundMusic.load();
+            }
+            
+            backgroundMusic.play().catch(error => {
+                console.log('Reproducción automática bloqueada por el navegador:', error);
+            });
+            
+            isMusicPlaying = true;
+            audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+        
+        // Función para detener la música de fondo
+        function stopBackgroundMusic() {
+            backgroundMusic.pause();
+            isMusicPlaying = false;
+            audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+        
+        // Función para reproducir el sonido de hover
+        function playHoverSound() {
+            // Clonamos el sonido para permitir múltiples reproducciones simultáneas
+            const hoverSoundClone = hoverSound.cloneNode(true);
+            hoverSoundClone.volume = 0.2; // Volumen bajo para no molestar
+            hoverSoundClone.play().catch(error => {
+                console.log('Reproducción de sonido bloqueada:', error);
+            });
+        }
+        
+        // Iniciar música después de la interacción del usuario
+        document.getElementById('startButton').addEventListener('click', () => {
+            playBackgroundMusic();
+            // Mantén el código existente para este evento
+        });
+        
+        // Alternar música con el botón de control
+        audioToggle.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                stopBackgroundMusic();
+            } else {
+                playBackgroundMusic();
+            }
+        });
+        
+        // Detener música cuando se inicia un juego
+        function openGame(game) {
+            const gameIframe = document.getElementById('gameIframe');
+            const gameIframeContainer = document.getElementById('gameIframeContainer');
+            
+            // Detener la música de fondo
+            if (isMusicPlaying) {
+                stopBackgroundMusic();
+            }
+            
+            gameIframe.src = game.url;
+            gameIframeContainer.style.display = 'flex';
+        }
+        
+        // Reanudar música cuando se cierra un juego
+        function closeGame() {
+            const gameIframe = document.getElementById('gameIframe');
+            const gameIframeContainer = document.getElementById('gameIframeContainer');
+            
+            gameIframe.src = 'about:blank';
+            gameIframeContainer.style.display = 'none';
+            gameIframeContainer.classList.remove('fullscreen');
+            
+            // Reanudar la música si estaba activada antes
+            playBackgroundMusic();
+        }
+        
+        // Añadir efecto de sonido a elementos interactivos
+        document.addEventListener('DOMContentLoaded', () => {
+            // Añadir sonido a los elementos interactivos
+            const interactiveElements = document.querySelectorAll('.sidebar-item, .game-card, .category, button, .settings-option, .toggle-switch, .radio-option');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', playHoverSound);
+            });
+            
+            // Observador de mutaciones para añadir sonido a elementos creados dinámicamente
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.nodeType === 1) { // Elemento
+                                if (node.classList && (
+                                    node.classList.contains('game-card') || 
+                                    node.classList.contains('category') || 
+                                    node.tagName === 'BUTTON'
+                                )) {
+                                    node.addEventListener('mouseenter', playHoverSound);
+                                }
+                                
+                                // Buscar elementos hijos que puedan ser interactivos
+                                const childInteractives = node.querySelectorAll('.sidebar-item, .game-card, .category, button, .settings-option, .toggle-switch, .radio-option');
+                                childInteractives.forEach(child => {
+                                    child.addEventListener('mouseenter', playHoverSound);
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Observar cambios en el DOM
+            observer.observe(document.body, { childList: true, subtree: true });
+            
+            // Reemplazar las funciones originales
+            window.openGame = openGame;
+            window.closeGame = closeGame;
+        });
+
+// Iniciar la aplicación cuando el DOM esté cargado
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
