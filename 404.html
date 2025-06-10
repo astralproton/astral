@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Error de Acceso</title>
+    <script>
+        // Función para obtener la IP pública usando un servicio externo
+        async function mostrarError() {
+            let ip = "Desconocida";
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                ip = data.ip;
+            } catch (e) {
+                ip = "No se pudo obtener";
+            }
+            document.getElementById('ip').textContent = ip;
+            document.getElementById('codigo').textContent = "ERR_IP_DENEGADA";
+        }
+        window.onload = mostrarError;
+    </script>
+</head>
+<body>
+    <h1>403 Forbidden</h1>
+    <p>El acceso a esta seccion de la pagina web esta negada a su direccion IP actual / You don't have permission to access.</p>
+    <p><strong>Tu IP:</strong> <span id="ip">Cargando...</span></p>
+    <p><strong>Código de error:</strong> <span id="codigo">Cargando...</span></p>
+</body>
+</html>

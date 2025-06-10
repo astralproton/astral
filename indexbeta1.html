@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstralProton</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Variables globales */
+:root {
+    --custom-cursor: default;
+    --primary-color: #0a0a2a;
+    --secondary-color: #1a1a4a;
+    --accent-color: #4169e1;
+    --text-color: #ffffff;
+    --highlight-color: #ff3366;
+    --card-bg: rgba(26, 26, 74, 0.7);
+    --card-hover: rgba(65, 105, 225, 0.3);
+    --sidebar-bg: rgba(10, 10, 42, 0.95);
+    --header-bg: rgba(10, 10, 42, 0.95);
+    --transition-speed: 0.3s;
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-large: 18px;
+    --folder-bg: rgba(26, 26, 74, 0.9);
+    --folder-hover: rgba(65, 105, 225, 0.5);
+}
+
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    font-size: var(--font-size-base);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    cursor: var(--custom-cursor);
+}
+
+/* Tema claro */
+body.light-theme {
+    --primary-color: #f0f2f5;
+    --secondary-color: #e4e6eb;
+    --accent-color: #4169e1;
+    --text-color: #1c1e21;
+    --highlight-color: #ff3366;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-hover: rgba(65, 105, 225, 0.1);
+    --sidebar-bg: rgba(255, 255, 255, 0.95);
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --folder-bg: rgba(240, 240, 240, 0.9);
+    --folder-hover: rgba(65, 105, 225, 0.2);
+}
+
+/* Estilos para tamaños de fuente */
+body.font-small {
+    --font-size-base: 14px;
+    --font-size-small: 12px;
+    --font-size-large: 16px;
+}
+
+body.font-large {
+    --font-size-base: 18px;
+    --font-size-small: 16px;
+    --font-size-large: 20px;
+}
+
+/* Reducción de movimiento */
+body.reduced-motion * {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+}
+
+/* Fondo espacial */
+.space-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    z-index: -2;
+    overflow: hidden;
+    transition: background 0.5s ease;
+}
+
+body.light-theme .space-background {
+    background: linear-gradient(135deg, #e0e5ff 0%, #f0f2f5 100%);
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--duration, 4s) infinite ease-in-out;
+    opacity: var(--opacity, 0.7);
+}
+
+body.light-theme .star {
+    background-color: #4169e1;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: var(--opacity, 0.7); }
+    50% { opacity: 0.2; }
+}
+
+.nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.15;
+    background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+    animation: pulse 8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+}
+
+/* Pantalla de título */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 1s ease;
+}
+
+.splash-logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: 2rem;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.splash-button {
+    padding: 1rem 3rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.splash-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.5s ease;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+/* Layout principal */
+.main-container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 80px;
+    background-color: var(--sidebar-bg);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+    transition: width var(--transition-speed), background-color 0.5s ease;
+    overflow: hidden;
+    z-index: 90;
+}
+
+.sidebar:hover {
+    width: 200px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.sidebar-item i {
+    font-size: 1.5rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.sidebar-item span {
+    margin-left: 1rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+}
+
+.sidebar:hover .sidebar-item span {
+    opacity: 1;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.sidebar-item.active {
+    border-left: 4px solid var(--highlight-color);
+}
+
+/* Contenido principal */
+.content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    position: relative;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Secciones de contenido */
+.content-section {
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Mensaje de bienvenida */
+.welcome-message {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3);
+    animation: welcomeGlow 3s infinite;
+}
+
+@keyframes welcomeGlow {
+    0%, 100% { text-shadow: 0 5px 15px rgba(65, 105, 225, 0.3); }
+    50% { text-shadow: 0 5px 25px rgba(65, 105, 225, 0.7); }
+}
+
+.welcome-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.welcome-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+/* Categorías */
+.categories {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.category {
+    padding: 0.7rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category:hover, .category.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Grid de juegos */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.game-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--card-bg);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.5s ease, 
+                background-color 0.3s ease,
+                border 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 200px;
+    animation: cardAppear 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    border: 2px solid transparent;
+}
+
+@keyframes cardAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-card:hover {
+    transform: translateY(-15px) scale(1.15);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(65, 105, 225, 0.4);
+    background-color: var(--card-hover);
+    z-index: 1;
+    border: 2px solid white;
+}
+
+.game-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.game-card:hover .game-thumbnail {
+    transform: scale(1.2);
+}
+
+.game-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.game-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    color: white;
+}
+
+.game-artist {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+    color: white;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--highlight-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+}
+
+.game-card:hover .play-button {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation: playButtonPulse 2s infinite;
+}
+
+@keyframes playButtonPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); }
+}
+
+/* Estilos para la tienda */
+.store-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--card-bg);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.5s ease, 
+                background-color 0.3s ease,
+                border 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 250px;
+    animation: cardAppear 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.store-card:hover {
+    transform: translateY(-15px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.6);
+    background-color: var(--card-hover);
+    z-index: 1;
+    border: 2px solid gold;
+}
+
+.store-thumbnail {
+    width: 100%;
+    height: 60%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.store-card:hover .store-thumbnail {
+    transform: scale(1.1);
+}
+
+.store-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.store-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.store-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: gold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.download-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 0.5rem 1rem;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+}
+
+.store-card:hover .download-button {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Alerta */
+.alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 90%;
+    width: 500px;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: none;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 2px solid var(--accent-color);
+    overflow: hidden;
+}
+
+.alert.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.alert-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--highlight-color);
+}
+
+.alert-message {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.alert-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    backdrop-filter: blur(5px);
+}
+
+.overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Configuraciones */
+.settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.settings-group {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.settings-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.settings-option-label {
+    font-weight: 600;
+}
+
+.settings-option-description {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* Select */
+.settings-select {
+    padding: 0.7rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 5px;
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 150px;
+}
+
+/* Range Slider */
+.range-slider {
+    width: 150px;
+    display: flex;
+    align-items: center;
+}
+
+.range-slider input {
+    width: 100%;
+    height: 5px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    outline: none;
+}
+
+.range-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.range-value {
+    margin-left: 10px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Radio Buttons */
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.radio-option input {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.radio-option input:checked + .radio-custom {
+    border-color: var(--accent-color);
+}
+
+.radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.radio-option input:checked + .radio-custom::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Button */
+.settings-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* NUEVOS ESTILOS PARA EL IFRAME Y CONTROLES */
+.game-iframe-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-iframe {
+    width: 90%;
+    height: 85%;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(65, 105, 225, 0.5);
+}
+
+.game-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.game-control-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.game-control-button i {
+    font-size: 1.2rem;
+}
+
+/* Botón de pantalla completa */
+.fullscreen-button {
+    background: linear-gradient(45deg, #4169e1, #6a5acd);
+}
+
+/* Botón de abrir en modo directorio */
+.directory-button {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+}
+
+/* Botón de volver al menú */
+.back-button {
+    background: linear-gradient(45deg, #ff3366, #ff6b6b);
+}
+
+/* Estilos para pantalla completa */
+.game-iframe-container.fullscreen .game-iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+
+.game-iframe-container.fullscreen .game-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2001;
+}
+
+/* Estilos para el perfil */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.profile-avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    color: var(--text-color);
+    overflow: hidden;
+    position: relative;
+    border: 4px solid var(--highlight-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-upload-button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.avatar-upload-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-field label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.profile-input {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.profile-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.3);
+}
+
+.profile-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.user-name {
+    font-weight: 600;
+    margin-left: 0.5rem;
+    display: none;
+}
+
+/* Notificación */
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.5s ease;
+    z-index: 1001;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* Controles de audio */
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--card-bg);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.audio-controls:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.audio-controls i {
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .sidebar:hover {
+        width: 180px;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .user-name {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .splash-logo {
+        width: 200px;
+    }
+}
+
+@media (min-width: 768px) {
+    .user-name {
+        display: block;
+    }
+}
+</style>
+</head>
+<body>
+    <audio id="backgroundMusic" loop>
+        <source src="titulonuevo.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <audio id="storeMusic" loop>
+        <source src="wiiueshop.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <audio id="hoverSound">
+        <source src="sfx.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <!-- Botón para controlar el audio -->
+    <div class="audio-controls" id="audioToggle">
+        <i class="fas fa-volume-up"></i>
+    </div>
+
+<!-- Pantalla de título -->
+<div class="splash-screen" id="splashScreen">
+    <div class="stars" id="splashStars"></div>
+    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="splash-logo">
+    <button class="splash-button" id="startButton">Iniciar</button>
+</div>
+
+<!-- Fondo espacial -->
+<div class="space-background">
+    <div class="stars" id="stars"></div>
+</div>
+
+<!-- Header -->
+<header>
+    <div class="logo">
+        <i class="fas fa-meteor"></i> <span class="logo-text" data-en="AstralProton" data-es="AstralProton">AstralProton</span>
+    </div>
+    <div class="user-profile">
+        <div class="user-avatar" id="headerAvatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <span class="user-name" id="headerUserName">Usuario</span>
+    </div>
+</header>
+
+<!-- Contenedor principal -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a class="sidebar-item active" data-section="home">
+            <i class="fas fa-home"></i>
+            <span data-en="Home" data-es="Inicio">Inicio</span>
+        </a>
+        <a class="sidebar-item" data-section="games">
+            <i class="fas fa-gamepad"></i>
+            <span data-en="Games" data-es="Juegos">Juegos</span>
+        </a>
+        <a class="sidebar-item" data-section="store">
+            <i class="fas fa-shopping-cart"></i>
+            <span data-en="Store" data-es="Tienda">Tienda</span>
+        </a>
+        <a class="sidebar-item" data-section="tutorials">
+            <i class="fas fa-book"></i>
+            <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+        </a>
+        <a class="sidebar-item" data-section="about">
+            <i class="fas fa-info-circle"></i>
+            <span data-en="About" data-es="Acerca de">Acerca de</span>
+        </a>
+        <a class="sidebar-item" data-section="settings">
+            <i class="fas fa-cog"></i>
+            <span data-en="Settings" data-es="Configuración">Configuración</span>
+        </a>
+        <a class="sidebar-item" data-section="profile">
+            <i class="fas fa-id-card"></i>
+            <span data-en="Profile" data-es="Perfil">Perfil</span>
+        </a>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Sección de inicio -->
+        <div id="homeSection" class="content-section active">
+            <h1 class="welcome-message" data-en="Welcome to AstralProton!" data-es="¡Bienvenido a AstralProton!">¡Bienvenido a AstralProton!</h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Welcome back to AstralProton! Do you like this new interface? We encourage you to join our Discord server at this link: https://discord.gg/GEPrCZkWhs" data-es="¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs">¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs</p>
+                <p class="welcome-text" data-en="Now, enjoy!" data-es="Sin mas preambulo, ¡A disfrutar!">Sin mas preambulo, ¡A disfrutar!</p>
+                <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop. Checalo en el apartado acerca de! Tambien visita la nueva tienda para descargar juegos.">Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop. ¡También visita la nueva tienda para descargar juegos!</p>                            
+            </div>
+        </div>
+        
+        <!-- Sección de juegos -->
+        <div id="gamesSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-gamepad"></i> <span data-en="My Games" data-es="Mis Juegos">Mis Juegos</span>
+            </h1>
+
+            <!-- Grid de juegos del usuario -->
+            <div class="games-grid" id="userGamesGrid">
+                <!-- Los juegos del usuario se cargarán dinámicamente aquí -->
+            </div>
+            
+            <div id="noGamesMessage" class="welcome-container" style="display: none;">
+                <p class="welcome-text">No tienes juegos descargados. ¡Visita la tienda para descargar algunos!</p>
+            </div>
+        </div>
+
+        <!-- Sección de tienda -->
+        <div id="storeSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-shopping-cart"></i> <span data-en="Store" data-es="Tienda">Tienda</span>
+            </h1>
+
+            <!-- Categorías de la tienda -->
+            <div class="categories">
+                <div class="category active" data-category="all">
+                    <i class="fas fa-th-large"></i> <span data-en="All" data-es="Todos">Todos</span>
+                </div>
+                <div class="category" data-category="action">
+                    <i class="fas fa-running"></i> <span data-en="Action" data-es="Acción">Acción</span>
+                </div>
+                <div class="category" data-category="arcade">
+                    <i class="fas fa-gamepad"></i> <span data-en="Arcade" data-es="Arcade">Arcade</span>
+                </div>
+                <div class="category" data-category="retro">
+                    <i class="fas fa-ghost"></i> <span data-en="Retro" data-es="Retro">Retro</span>
+                </div>
+                <div class="category" data-category="puzzle">
+                    <i class="fas fa-puzzle-piece"></i> <span data-en="Puzzle" data-es="Puzzle">Puzzle</span>
+                </div>
+                <div class="category" data-category="strategy">
+                    <i class="fas fa-chess"></i> <span data-en="Strategy" data-es="Estrategia">Estrategia</span>
+                </div>
+            </div>
+
+            <!-- Grid de juegos de la tienda -->
+            <div class="games-grid" id="storeGamesGrid">
+                <!-- Los juegos de la tienda se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- Sección de tutoriales -->
+        <div id="tutorialsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-book"></i> <span data-en="Tutorials" data-es="Tutoriales">Tutoriales</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Coming soon..." data-es="Próximamente...">Próximamente...</p>
+            </div>
+        </div>
+
+        <!-- Sección de acerca de -->
+        <div id="aboutSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-info-circle"></i> <span data-en="About" data-es="Acerca de:">Acerca de:</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="AstralProton is a gaming portal designed to provide a seamless and enjoyable gaming experience." data-es="AstralProton es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable. Amistosa con entornos educativos y no educativos.">AstralProton es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable.</p>
+                <p class="welcome-text" data-en="Version: 18.05.2025" data-es="Versión: 18.05.2025">Versión: 18.05.2025ae</p>
+                <p class="welcome-text" data-en="Created by: AstralProton Team" data-es="Creado por: AstralProtonTeam">Creado por: AstralProtonTeam</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Significado de las letras del final:">Significado de las letras del final:</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="a = Actualizacion con nuevo contenido.">a = Actualizacion con nuevo contenido.</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="b = bugfix">b = bugfix</p>
+                <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="e = Eliminacion de contenido">e = Eliminacion de contenido</p>
+            </div>
+        </div>
+
+        <!-- Sección de configuración -->
+        <div id="settingsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-cog"></i> <span data-en="Settings" data-es="Configuración">Configuración</span>
+            </h1>
+            
+            <div class="settings-container">
+                <!-- Grupo de configuración de apariencia -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Appearance" data-es="Apariencia">Apariencia</h2>
+                    
+                    <!-- Opción de tema -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Theme" data-es="Tema">Tema</div>
+                            <div class="settings-option-description" data-en="Choose between light and dark theme" data-es="Elige entre tema claro y oscuro">Elige entre tema claro y oscuro</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Opción de tamaño de fuente -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Font Size" data-es="Tamaño de Fuente">Tamaño de Fuente</div>
+                            <div class="settings-option-description" data-en="Adjust the font size of the interface" data-es="Ajusta el tamaño de fuente de la interfaz">Ajusta el tamaño de fuente de la interfaz</div>
+                        </div>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="small">
+                                <span class="radio-custom"></span>
+                                <span data-en="Small" data-es="Pequeño">Pequeño</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="medium" checked>
+                                <span class="radio-custom"></span>
+                                <span data-en="Medium" data-es="Mediano">Mediano</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="fontSize" value="large">
+                                <span class="radio-custom"></span>
+                                <span data-en="Large" data-es="Grande">Grande</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grupo de configuración de accesibilidad -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Accessibility" data-es="Accesibilidad">Accesibilidad</h2>
+                    
+                    <!-- Opción de reducción de movimiento -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Reduce Motion" data-es="Reducir Movimiento">Reducir Movimiento</div>
+                            <div class="settings-option-description" data-en="Minimize animations throughout the interface" data-es="Minimiza las animaciones en toda la interfaz">Minimiza las animaciones en toda la interfaz</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="reduceMotionToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Opción de idioma -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Language" data-es="Idioma">Idioma</div>
+                            <div class="settings-option-description" data-en="Choose your preferred language" data-es="Elige tu idioma preferido">Elige tu idioma preferido</div>
+                        </div>
+                        <select class="settings-select" id="languageSelect">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Grupo de configuración de rendimiento -->
+                <div class="settings-group">
+                    <h2 class="settings-title" data-en="Performance" data-es="Rendimiento">Rendimiento</h2>
+                    
+                    <!-- Opción de calidad gráfica -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Graphics Quality" data-es="Calidad Gráfica">Calidad Gráfica</div>
+                            <div class="settings-option-description" data-en="Adjust the graphics quality for better performance" data-es="Ajusta la calidad gráfica para un mejor rendimiento">Ajusta la calidad gráfica para un mejor rendimiento</div>
+                        </div>
+                        <div class="range-slider">
+                            <input type="range" min="1" max="3" value="2" id="graphicsQualitySlider">
+                            <span class="range-value" id="graphicsQualityValue">2</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Opción de efectos visuales -->
+                    <div class="settings-option">
+                        <div>
+                            <div class="settings-option-label" data-en="Visual Effects" data-es="Efectos Visuales">Efectos Visuales</div>
+                            <div class="settings-option-description" data-en="Enable or disable visual effects" data-es="Activa o desactiva los efectos visuales">Activa o desactiva los efectos visuales</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="visualEffectsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Botón de guardar configuración -->
+                <button class="settings-button" id="saveSettingsButton">
+                    <span data-en="Save Settings" data-es="Guardar Configuración">Guardar Configuración</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección de perfil -->
+        <div id="profileSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-id-card"></i> <span data-en="Profile" data-es="Perfil">Perfil</span>
+            </h1>
+            
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar-container">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <button class="avatar-upload-button" id="avatarUploadButton">
+                            <i class="fas fa-camera"></i> <span data-en="Change Avatar" data-es="Cambiar Avatar">Cambiar Avatar</span>
+                        </button>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                
+                <form class="profile-form" id="profileForm">
+                    <div class="profile-field">
+                        <label for="profileName" data-en="Name" data-es="Nombre">Nombre</label>
+                        <input type="text" id="profileName" class="profile-input" placeholder="Tu nombre">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label for="profileSurname" data-en="Surname" data-es="Apellido">Apellido</label>
+                        <input type="text" id="profileSurname" class="profile-input" placeholder="Tu apellido">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label for="profileAge" data-en="Age" data-es="Edad">Edad</label>
+                        <input type="number" id="profileAge" class="profile-input" placeholder="Tu edad" min="1" max="120">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label data-en="Gender" data-es="Género">Género</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="male" id="genderMale">
+                                <span class="radio-custom"></span>
+                                <span data-en="Male" data-es="Masculino">Masculino</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="female" id="genderFemale">
+                                <span class="radio-custom"></span>
+                                <span data-en="Female" data-es="Femenino">Femenino</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button type="submit" class="settings-button" id="saveProfileButton">
+                            <i class="fas fa-save"></i> <span data-en="Save Profile" data-es="Guardar Perfil">Guardar Perfil</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerta -->
+<div class="alert" id="alert">
+    <h3 class="alert-title" id="alertTitle">Título de la alerta</h3>
+    <p class="alert-message" id="alertMessage">Mensaje de la alerta</p>
+    <button class="alert-button" id="alertButton">Aceptar</button>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Contenedor de iframe para juegos -->
+<div class="game-iframe-container" id="gameIframeContainer">
+    <iframe id="gameIframe" class="game-iframe" src="about:blank"></iframe>
+    <div class="game-controls">
+        <button class="game-control-button fullscreen-button" id="fullscreenButton">
+            <i class="fas fa-expand"></i> <span data-en="Fullscreen" data-es="Pantalla Completa">Pantalla Completa</span>
+        </button>
+        <button class="game-control-button directory-button" id="openDirectoryButton">
+            <i class="fas fa-code"></i> <span data-en="Open in Directory Mode" data-es="Abrir en modo directorio">Abrir en modo directorio</span>
+        </button>
+        <button class="game-control-button back-button" id="backToMenuButton">
+            <i class="fas fa-arrow-left"></i> <span data-en="Back to Menu" data-es="Volver al Menú">Volver al Menú</span>
+        </button>
+    </div>
+</div>
+
+<!-- Notificación -->
+<div class="notification" id="notification"></div>
+
+<script>
+// Datos de juegos (todos los juegos disponibles en la tienda)
+const allGames = [
+    {
+        id: 1,
+        title: "AstralTube",
+        artist: "AstralTeam, Google - Youtube pero con miniaturas.",
+        thumbnail: "imgjuegos/astrallogo.png",
+        song: "titulonuevo.mp3",
+        url: "tube.html",
+        categories: ["all"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 2,
+        title: "Musica",
+        artist: "Musica de toda la Aplicacion de Astral",
+        thumbnail: "imgjuegos/astrallogo.png",
+        song: "titulonuevo.mp3",
+        url: "musica.html",
+        categories: ["all"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Cual es tu musica favorita de la pagina?",
+            redirect: "musica.html"
+        }
+    },
+    {
+        id: 3,
+        title: "Friday Night Funkin: Undertale",
+        artist: "ninjamuffin69, PhantomArcade, evilsk8r, Kawai Sprite, AstralTeam",
+        thumbnail: "imgjuegos/fnfunder.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/fnfundertale/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/fnfundertale/index.html"
+        }
+    }, 
+    {
+        id: 4,
+        title: "Block Blast",
+        artist: "Hungry Studio",
+        thumbnail: "imgjuegos/blockblast.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/blockblast/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/blockblast/index.html"
+        }
+    },  
+    {
+        id: 5,
+        title: "Death Run 3D",
+        artist: "Y8",
+        thumbnail: "imgjuegos/deathrun3d.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/death-run-3d/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/death-run-3d/index.html"
+        }
+    },  
+    {
+        id: 6,
+        title: "Unfair Mario",
+        artist: "Ni idea mijo",
+        thumbnail: "imgjuegos/unfairmario.jpg",
+        song: "juegosmusica/unfairmario.mp3",
+        url: "Juegos/ita13/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/ita13/index.html"
+        }
+    },  
+    {
+        id: 7,
+        title: "Tunnel Rush",
+        artist: "Deer Cat Games",
+        thumbnail: "imgjuegos/tunnel.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/tunnel-rush/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Superate mi record de 1000 puntos.",
+            redirect: "Juegos/tunnel-rush/index.html"
+        }
+    },    
+    {
+        id: 8,
+        title: "DON'T YOU LECTURE ME WITH YOUR THIRTY DOLLAR WEBSITE",
+        artist: "GD COLON",
+        thumbnail: "imgjuegos/30dollar.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/30dollarwebsite/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea la mejor musica.",
+            redirect: "Juegos/30dollarwebsite/index.html"
+        }
+    },
+    {
+        id: 9,
+        title: "2048",
+        artist: "Poki",
+        thumbnail: "imgjuegos/2014.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/2048/index.html",
+        categories: ["puzzle"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Sé INTELIGENTE y haz 2048!",
+            redirect: "Juegos/2048/index.html"
+        }
+    },
+    {
+        id: 10,
+        title: "Slope 2",
+        artist: "Y8",
+        thumbnail: "imgjuegos/slope2.jpeg",
+        song: "juegosmusica/slope.mp3",
+        url: "Juegos/slope-2/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Es hora de esquivar los obstaculos! Pero ahora con tu pana.",
+            redirect: "Juegos/slope-2/index.html"
+        }
+    },
+    {
+        id: 11,
+        title: "Highway Racer",
+        artist: "Bonecracker Games",
+        thumbnail: "imgjuegos/highway.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/hwy-rcer/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de correr a toda velocidad y evitar los demas carros.",
+            redirect: "Juegos/hwy-rcer/index.html"
+        }
+    },
+    {
+        id: 12,
+        title: "Stick Duel Battle",
+        artist: "undefined",
+        thumbnail: "imgjuegos/stick2.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/stick-duel-battle/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego en donde debes de pelear contra tu compa o contra un bot con pistolas o a puño.",
+            redirect: "Juegos/stick-duel-battle/index.html"
+        }
+    },
+    {
+        id: 13,
+        title: "The World's Hardest Game",
+        artist: "undefined",
+        thumbnail: "imgjuegos/hard.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/ita10/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "El juego mas dificil del mundo, no te enojes si no puedes pasar el primer nivel. Esta demasiado dificil.",
+            redirect: "Juegos/ita10/index.html"
+        }
+    },
+    {
+        id: 14,
+        title: "Stickman Hook",
+        artist: "?",
+        thumbnail: "imgjuegos/stick.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/stickman-hook/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de balancearse como un loco, pero no te caigas.",
+            redirect: "Juegos/stickman-hook/index.html"
+        }
+    },
+    {
+        id: 15,
+        title: "PolyTrack",
+        artist: "PolyTrack",
+        thumbnail: "imgjuegos/poly.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/polytrack/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de carreras donde debes evitar los obstaculos y llegar a la meta.",
+            redirect: "Juegos/polytrack/index.html"
+        }
+    },
+    {
+        id: 16,
+        title: "Tetris Chafa",
+        artist: "NotArtistAvailable",
+        thumbnail: "imgjuegos/tetris.jpg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/ita11/index.html",
+        categories: ["puzzle"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Crea una linea de 4 bloques para eliminarla, pero no dejes que se llene la pantalla.",
+            redirect: "Juegos/ita11/index.html"
+        }
+    },
+    {
+        id: 17,
+        title: "A Dance of Fire and Ice",
+        artist: "Ni idea crack",
+        thumbnail: "imgjuegos/adofai.jpeg",
+        song: "titulonuevo.mp3",    
+        url: "Juegos/a-dance-of-fire-and-ice/index.html",
+        categories: ["arcade"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Music-rhythm game, donde debes seguir el ritmo de la musica, es un juego muy bueno.",
+            redirect: "Juegos/a-dance-of-fire-and-ice/index.html"
+        }
+    },
+    {
+        id: 18,
+        title: "Google Snake",
+        artist: "Google",
+        thumbnail: "imgjuegos/snake.jpeg",
+        song: "titulonuevo.mp3",    
+        url: "Juegos/google-snake/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Comete esta manzana, pero no te comas a ti mismo. Poetico.",
+            redirect: "Juegos/google-snake/index.html"
+        }
+    },
+    {
+        id: 19,
+        title: "Super Mario Combat",
+        artist: "Sun-studios",
+        thumbnail: "imgjuegos/mariocombat.jpeg",
+        song: "juegosmusica/mariocombat.mp3",
+        url: "Juegos/ita9/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego de combate bien chidoris, muevete con las flechas y ataca con la letra a",
+            redirect: "Juegos/ita9/index.html"
+        }
+    },
+    {
+        id: 20,
+        title: "BitLife",
+        artist: "Ni idea crack",
+        thumbnail: "imgjuegos/bitlife.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/bitlife/index.html",
+        categories: ["strategy"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No seas abogado, te arruinara la vida, creeme.",
+            redirect: "Juegos/bitlife/index.html"
+        }
+    },
+    {
+        id: 21,
+        title: "Angry Birds",
+        artist: "ROVIO",
+        thumbnail: "imgjuegos/angry.jpeg",
+        song: "juegosmusica/angry.mp3",
+        url: "Juegos/angrybirds/index.html",
+        categories: ["arcade"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "Nunca uses el pajaro azul >:l",
+            redirect: "Juegos/angrybirds/index.html"
+        }
+    },
+    {
+        id: 22,
+        title: "Super Mario vs Luigi",
+        artist: "ipodtouch0218",
+        thumbnail: "imgjuegos/smbv.png",
+        song: "juegosmusica/mariocombat.mp3",
+        url: "Juegos/mariovsluigi/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Un juego donde debes agarrar las estrellas, quien tenga mas gana, puedes jugar online! :)",
+            redirect: "Juegos/mariovsluigi/index.html"
+        }
+    },
+    {
+        id: 23,
+        title: "Cat Tennis",
+        artist: "AstralOriginals (Astral lo porteo)",
+        thumbnail: "imgjuegos/cattenis.png",
+        song: "juegosmusica/cattenis.mp3",
+        url: "Juegos/cattenis/index.html",
+        categories: ["puzzle"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Ganale en el tenis al gatito.",
+            redirect: "Juegos/cattenis/index.html"
+        }
+    },
+    {
+        id: 24,
+        title: "Slowroads",
+        artist: "slowroads.io",
+        thumbnail: "imgjuegos/slowroad.jpeg",
+        song: "juegosmusica/cattenis.mp3",
+        url: "Juegos/slowroads/index.html",
+        categories: ["strategy"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "Conduce tranquilo por carreteras infinitas.",
+            redirect: "Juegos/slowroads/index.html"
+        }
+    },
+    {
+        id: 25,
+        title: "8 Ball Pool",
+        artist: "?",
+        thumbnail: "imgjuegos/8ballpool.jpeg",
+        song: "titulo.mp3",
+        url: "Juegos/8ball/index.html",
+        categories: ["puzzle"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "¿Alguien realmente lee esto?",
+            redirect: "Juegos/8ball/index.html"
+        }
+    },
+    {
+        id: 26,
+        title: "1v1.lol",
+        artist: "?",
+        thumbnail: "imgjuegos/1v1.png",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/1v1fixed/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "A ver si ahora si funciona este juego jajaja",
+            redirect: "Juegos/1v1fixed/index.html"
+        }
+    },
+    {
+        id: 27,
+        title: "Run3",
+        artist: "Ahora no sirve lo juro 😭",
+        thumbnail: "imgjuegos/run3.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/run3fix2/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 28,
+        title: "Astral Chess",
+        artist: "AstralOriginals",
+        thumbnail: "imgjuegos/astralchess.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/astralchess/index.html",
+        categories: ["strategy"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¡Recuerda siempre jugar con un amigo!",
+            redirect: "Juegos/astralchess/index.html"
+        }
+    },
+    {
+        id: 29,
+        title: "Wii Simulation",
+        artist: "The Online Project",
+        thumbnail: "imgjuegos/Wii.png",
+        song: "juegosmusica/wii.mp3",
+        url: "Juegos/vwii/index.html",
+        categories: ["retro"],
+        price: "Gratis",
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Nintendo no me demandes aaaa",
+            redirect: "Juegos/vwii/index.html"
+        }
+    },
+    {
+        id: 30,
+        title: "Minecraft: Astral x Precision Client",
+        artist: "Mojang/Precision Client",
+        thumbnail: "imgjuegos/minecraft.jpg",
+        song: "juegosmusica/mc.mp3",
+        url: "Juegos/minecraft/index.html",
+        categories: ["action"],
+        price: "Gratis",
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¡Si quieres jugar con tus amigos abre el mundo a LAN!",
+            redirect: "Juegos/minecraft/index.html"
+        }
+    }
+];
+
+// Sistema de gestión de juegos del usuario
+let userGames = [];
+let currentSection = 'home';
+let isMusicPlaying = false;
+let currentMusic = null;
+
+// Elementos de audio
+const backgroundMusic = document.getElementById('backgroundMusic');
+const storeMusic = document.getElementById('storeMusic');
+const hoverSound = document.getElementById('hoverSound');
+const audioToggle = document.getElementById('audioToggle');
+
+// Funciones de cookies
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${JSON.stringify(value)};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+            try {
+                return JSON.parse(c.substring(nameEQ.length, c.length));
+            } catch(e) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+    }
+    return null;
+}
+
+// Cargar datos del usuario desde cookies
+function loadUserData() {
+    const savedGames = getCookie('userGames');
+    if (savedGames) {
+        userGames = savedGames;
+    }
+    
+    const savedSettings = getCookie('userSettings');
+    if (savedSettings) {
+        applySettings(savedSettings);
+    }
+    
+    const savedProfile = getCookie('userProfile');
+    if (savedProfile) {
+        applyProfile(savedProfile);
+    }
+}
+
+// Guardar datos del usuario en cookies
+function saveUserData() {
+    setCookie('userGames', userGames, 365);
+}
+
+// Función para mostrar notificación
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.classList.add('show');
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Función para mostrar alerta
+function showAlert(title, message) {
+    const alertTitle = document.getElementById('alertTitle');
+    const alertMessage = document.getElementById('alertMessage');
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    
+    alertTitle.textContent = title;
+    alertMessage.textContent = message;
+    
+    alert.classList.add('show');
+    overlay.classList.add('show');
+}
+
+// Función para cerrar alerta
+function closeAlert() {
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    
+    alert.classList.remove('show');
+    overlay.classList.remove('show');
+}
+
+// Función para cambiar de sección
+function changeSection(sectionId) {
+    const sections = document.querySelectorAll('.content-section');
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    sidebarItems.forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    document.getElementById(`${sectionId}Section`).classList.add('active');
+    document.querySelector(`.sidebar-item[data-section="${sectionId}"]`).classList.add('active');
+    
+    currentSection = sectionId;
+    
+    // Cambiar música según la sección
+    if (sectionId === 'store') {
+        playStoreMusic();
+    } else {
+        playBackgroundMusic();
+    }
+    
+    // Actualizar contenido según la sección
+    if (sectionId === 'games') {
+        displayUserGames();
+    } else if (sectionId === 'store') {
+        displayStoreGames();
+    }
+}
+
+// Función para reproducir música de fondo
+function playBackgroundMusic() {
+    if (currentMusic !== backgroundMusic) {
+        if (currentMusic) {
+            currentMusic.pause();
+        }
+        currentMusic = backgroundMusic;
+        if (isMusicPlaying) {
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().catch(error => {
+                console.log('Error al reproducir música de fondo:', error);
+            });
+        }
+    }
+}
+
+// Función para reproducir música de la tienda
+function playStoreMusic() {
+    if (currentMusic !== storeMusic) {
+        if (currentMusic) {
+            currentMusic.pause();
+        }
+        currentMusic = storeMusic;
+        if (isMusicPlaying) {
+            storeMusic.volume = 0.3;
+            storeMusic.play().catch(error => {
+                console.log('Error al reproducir música de la tienda:', error);
+            });
+        }
+    }
+}
+
+// Función para alternar música
+function toggleMusic() {
+    if (isMusicPlaying) {
+        if (currentMusic) {
+            currentMusic.pause();
+        }
+        isMusicPlaying = false;
+        audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    } else {
+        isMusicPlaying = true;
+        audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+        if (currentSection === 'store') {
+            playStoreMusic();
+        } else {
+            playBackgroundMusic();
+        }
+    }
+}
+
+// Función para reproducir sonido de hover
+function playHoverSound() {
+    if (isMusicPlaying) {
+        const hoverSoundClone = hoverSound.cloneNode(true);
+        hoverSoundClone.volume = 0.2;
+        hoverSoundClone.play().catch(error => {
+            console.log('Error al reproducir sonido de hover:', error);
+        });
+    }
+}
+
+// Función para mostrar juegos del usuario
+function displayUserGames() {
+    const userGamesGrid = document.getElementById('userGamesGrid');
+    const noGamesMessage = document.getElementById('noGamesMessage');
+    
+    userGamesGrid.innerHTML = '';
+    
+    if (userGames.length === 0) {
+        noGamesMessage.style.display = 'block';
+        return;
+    }
+    
+    noGamesMessage.style.display = 'none';
+    
+    userGames.forEach((gameId, index) => {
+        const game = allGames.find(g => g.id === gameId);
+        if (game) {
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+            gameCard.style.animationDelay = `${index * 0.1}s`;
+            
+            gameCard.innerHTML = `
+                <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">${game.title}</h3>
+                    <p class="game-artist">${game.artist}</p>
+                </div>
+                <div class="play-button">
+                    <i class="fas fa-play"></i>
+                </div>
+            `;
+            
+            gameCard.addEventListener('click', () => {
+                openGame(game);
+            });
+            
+            userGamesGrid.appendChild(gameCard);
+        }
+    });
+}
+
+// Función para mostrar juegos de la tienda
+function displayStoreGames(category = 'all') {
+    const storeGamesGrid = document.getElementById('storeGamesGrid');
+    storeGamesGrid.innerHTML = '';
+    
+    let filteredGames = allGames;
+    
+    if (category !== 'all') {
+        filteredGames = allGames.filter(game => game.categories.includes(category));
+    }
+    
+    // Filtrar juegos que el usuario ya tiene
+    const availableGames = filteredGames.filter(game => !userGames.includes(game.id));
+    
+    availableGames.forEach((game, index) => {
+        const storeCard = document.createElement('div');
+        storeCard.className = 'store-card';
+        storeCard.style.animationDelay = `${index * 0.1}s`;
+        
+        storeCard.innerHTML = `
+            <img src="${game.thumbnail}" alt="${game.title}" class="store-thumbnail">
+            <div class="store-info">
+                <h3 class="store-title">${game.title}</h3>
+                <p class="store-price">${game.price}</p>
+            </div>
+            <button class="download-button">
+                <i class="fas fa-download"></i> Descargar
+            </button>
+        `;
+        
+        const downloadButton = storeCard.querySelector('.download-button');
+        downloadButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            downloadGame(game);
+        });
+        
+        storeCard.addEventListener('click', () => {
+            showGameInfo(game);
+        });
+        
+        storeGamesGrid.appendChild(storeCard);
+    });
+    
+    if (availableGames.length === 0) {
+        storeGamesGrid.innerHTML = `
+            <div class="welcome-container" style="grid-column: 1/-1;">
+                <p class="welcome-text">¡Ya tienes todos los juegos de esta categoría!</p>
+            </div>
+        `;
+    }
+}
+
+// Función para descargar un juego
+function downloadGame(game) {
+    if (!userGames.includes(game.id)) {
+        userGames.push(game.id);
+        saveUserData();
+        showNotification(`¡${game.title} se ha descargado correctamente!`);
+        
+        // Actualizar la vista de la tienda
+        if (currentSection === 'store') {
+            const activeCategory = document.querySelector('.category.active').dataset.category;
+            displayStoreGames(activeCategory);
+        }
+    } else {
+        showNotification('Ya tienes este juego descargado.');
+    }
+}
+
+// Función para mostrar información del juego
+function showGameInfo(game) {
+    showAlert(game.title, `${game.artist}\n\nPrecio: ${game.price}\n\n¿Deseas descargarlo?`);
+    
+    // Cambiar el comportamiento del botón de alerta
+    const alertButton = document.getElementById('alertButton');
+    alertButton.textContent = 'Descargar';
+    alertButton.onclick = () => {
+        downloadGame(game);
+        closeAlert();
+    };
+}
+
+// Función para abrir un juego
+function openGame(game) {
+    const gameIframe = document.getElementById('gameIframe');
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    
+    // Detener la música
+    if (currentMusic) {
+        currentMusic.pause();
+    }
+    
+    gameIframe.src = game.url;
+    gameIframeContainer.style.display = 'flex';
+}
+
+// Función para cerrar un juego
+function closeGame() {
+    const gameIframe = document.getElementById('gameIframe');
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    
+    gameIframe.src = 'about:blank';
+    gameIframeContainer.style.display = 'none';
+    gameIframeContainer.classList.remove('fullscreen');
+    
+    // Reanudar la música
+    if (isMusicPlaying) {
+        if (currentSection === 'store') {
+            playStoreMusic();
+        } else {
+            playBackgroundMusic();
+        }
+    }
+}
+
+// Función para alternar pantalla completa
+function toggleFullscreen() {
+    const gameIframeContainer = document.getElementById('gameIframeContainer');
+    gameIframeContainer.classList.toggle('fullscreen');
+}
+
+// Función para abrir el juego en una nueva pestaña
+function openGameInNewTab() {
+    const gameIframe = document.getElementById('gameIframe');
+    const currentGameUrl = gameIframe.src;
+    
+    if (currentGameUrl && currentGameUrl !== 'about:blank') {
+        window.open(currentGameUrl, '_blank');
+    }
+}
+
+// Función para crear estrellas
+function createStars(container, count) {
+    const starsContainer = document.getElementById(container);
+    if (!starsContainer) return;
+    
+    starsContainer.innerHTML = '';
+    
+    for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        const size = Math.random() * 3 + 1;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = Math.random() * 3 + 2;
+        const opacity = Math.random() * 0.5 + 0.3;
+        
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${posX}%`;
+        star.style.top = `${posY}%`;
+        star.style.setProperty('--duration', `${duration}s`);
+        star.style.setProperty('--opacity', opacity);
+        
+        starsContainer.appendChild(star);
+    }
+}
+
+// Función para crear nebulosas
+function createNebulas(count) {
+    const starsContainer = document.getElementById('stars');
+    if (!starsContainer) return;
+    
+    for (let i = 0; i < count; i++) {
+        const nebula = document.createElement('div');
+        nebula.className = 'nebula';
+        
+        const size = Math.random() * 300 + 100;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        
+        const colors = [
+            '#4169e1', // Azul
+            '#9c27b0', // Púrpura
+            '#ff3366', // Rosa
+            '#00bcd4', // Cian
+            '#4caf50'  // Verde
+        ];
+        
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        nebula.style.width = `${size}px`;
+        nebula.style.height = `${size}px`;
+        nebula.style.left = `${posX}%`;
+        nebula.style.top = `${posY}%`;
+        nebula.style.setProperty('--color', color);
+        
+        starsContainer.appendChild(nebula);
+    }
+}
+
+// Función para aplicar configuraciones
+function applySettings(settings) {
+    if (settings.theme === 'light') {
+        document.getElementById('themeToggle').checked = true;
+        document.body.classList.add('light-theme');
+    }
+    
+    if (settings.fontSize) {
+        document.querySelector(`input[name="fontSize"][value="${settings.fontSize}"]`).checked = true;
+        if (settings.fontSize !== 'medium') {
+            document.body.classList.add(`font-${settings.fontSize}`);
+        }
+    }
+    
+    if (settings.reduceMotion) {
+        document.getElementById('reduceMotionToggle').checked = true;
+        document.body.classList.add('reduced-motion');
+    }
+    
+    if (settings.language) {
+        document.getElementById('languageSelect').value = settings.language;
+        document.querySelectorAll('[data-en]').forEach(el => {
+            el.textContent = el.dataset[settings.language];
+        });
+    }
+    
+    if (settings.graphicsQuality) {
+        document.getElementById('graphicsQualitySlider').value = settings.graphicsQuality;
+        document.getElementById('graphicsQualityValue').textContent = settings.graphicsQuality;
+    }
+    
+    if (settings.visualEffects !== undefined) {
+        document.getElementById('visualEffectsToggle').checked = settings.visualEffects;
+    }
+}
+
+// Función para aplicar perfil
+function applyProfile(profile) {
+    if (profile.name) {
+        document.getElementById('profileName').value = profile.name;
+        document.getElementById('headerUserName').textContent = profile.name;
+    }
+    
+    if (profile.surname) {
+        document.getElementById('profileSurname').value = profile.surname;
+    }
+    
+    if (profile.age) {
+        document.getElementById('profileAge').value = profile.age;
+    }
+    
+    if (profile.gender) {
+        document.getElementById(`gender${profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1)}`).checked = true;
+    }
+    
+    if (profile.avatar) {
+        document.getElementById('profileAvatar').innerHTML = `<img src="${profile.avatar}" alt="Avatar">`;
+        document.getElementById('headerAvatar').innerHTML = `<img src="${profile.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+    }
+}
+
+// Función de inicialización
+function initApp() {
+    // Cargar datos del usuario
+    loadUserData();
+    
+    // Crear estrellas
+    createStars('stars', 200);
+    createStars('splashStars', 200);
+    
+    // Crear nebulosas
+    createNebulas(5);
+    
+    // Mostrar juegos iniciales
+    displayUserGames();
+    displayStoreGames();
+    
+    // Event listeners para sidebar
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            changeSection(item.dataset.section);
+        });
+    });
+    
+    // Event listeners para categorías de la tienda
+    const categories = document.querySelectorAll('.category');
+    categories.forEach(category => {
+        category.addEventListener('click', () => {
+            categories.forEach(c => c.classList.remove('active'));
+            category.classList.add('active');
+            displayStoreGames(category.dataset.category);
+        });
+    });
+    
+    // Event listeners para controles de juego
+    document.getElementById('backToMenuButton').addEventListener('click', closeGame);
+    document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
+    document.getElementById('openDirectoryButton').addEventListener('click', openGameInNewTab);
+    
+    // Event listener para botón de inicio
+    document.getElementById('startButton').addEventListener('click', () => {
+        document.getElementById('splashScreen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('splashScreen').style.display = 'none';
+        }, 1000);
+        
+        // Iniciar música
+        isMusicPlaying = true;
+        playBackgroundMusic();
+    });
+    
+    // Event listener para control de audio
+    audioToggle.addEventListener('click', toggleMusic);
+    
+    // Event listener para botón de alerta
+    document.getElementById('alertButton').addEventListener('click', closeAlert);
+    
+    // Event listeners para configuraciones
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('change', () => {
+        document.body.classList.toggle('light-theme', themeToggle.checked);
+    });
+    
+    const fontSizeRadios = document.querySelectorAll('input[name="fontSize"]');
+    fontSizeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.body.classList.remove('font-small', 'font-large');
+            if (radio.value !== 'medium') {
+                document.body.classList.add(`font-${radio.value}`);
+            }
+        });
+    });
+    
+    const reduceMotionToggle = document.getElementById('reduceMotionToggle');
+    reduceMotionToggle.addEventListener('change', () => {
+        document.body.classList.toggle('reduced-motion', reduceMotionToggle.checked);
+    });
+    
+    const languageSelect = document.getElementById('languageSelect');
+    languageSelect.addEventListener('change', () => {
+        const lang = languageSelect.value;
+        document.querySelectorAll('[data-en]').forEach(el => {
+            el.textContent = el.dataset[lang];
+        });
+    });
+    
+    const graphicsQualitySlider = document.getElementById('graphicsQualitySlider');
+    const graphicsQualityValue = document.getElementById('graphicsQualityValue');
+    graphicsQualitySlider.addEventListener('input', () => {
+        graphicsQualityValue.textContent = graphicsQualitySlider.value;
+    });
+    
+    const saveSettingsButton = document.getElementById('saveSettingsButton');
+    saveSettingsButton.addEventListener('click', () => {
+        const settings = {
+            theme: themeToggle.checked ? 'light' : 'dark',
+            fontSize: document.querySelector('input[name="fontSize"]:checked').value,
+            reduceMotion: reduceMotionToggle.checked,
+            language: languageSelect.value,
+            graphicsQuality: graphicsQualitySlider.value,
+            visualEffects: document.getElementById('visualEffectsToggle').checked
+        };
+        
+        setCookie('userSettings', settings, 365);
+        showAlert('Configuración Guardada', 'Tu configuración ha sido guardada correctamente.');
+    });
+    
+    // Event listeners para perfil
+    const profileForm = document.getElementById('profileForm');
+    profileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const profile = {
+            name: document.getElementById('profileName').value,
+            surname: document.getElementById('profileSurname').value,
+            age: document.getElementById('profileAge').value,
+            gender: document.querySelector('input[name="gender"]:checked')?.value || ''
+        };
+        
+        setCookie('userProfile', profile, 365);
+        
+        // Actualizar nombre en el header
+        if (profile.name) {
+            document.getElementById('headerUserName').textContent = profile.name;
+        }
+        
+        showAlert('Perfil Guardado', 'Tu información de perfil ha sido guardada correctamente.');
+    });
+    
+    const avatarUploadButton = document.getElementById('avatarUploadButton');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    
+    avatarUploadButton.addEventListener('click', () => {
+        avatarFileInput.click();
+    });
+    
+    avatarFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const avatarDataUrl = event.target.result;
+                document.getElementById('profileAvatar').innerHTML = `<img src="${avatarDataUrl}" alt="Avatar">`;
+                document.getElementById('headerAvatar').innerHTML = `<img src="${avatarDataUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+                
+                // Guardar avatar en el perfil
+                const currentProfile = getCookie('userProfile') || {};
+                currentProfile.avatar = avatarDataUrl;
+                setCookie('userProfile', currentProfile, 365);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Añadir efectos de sonido a elementos interactivos
+    const interactiveElements = document.querySelectorAll('.sidebar-item, .game-card, .store-card, .category, button, .settings-option, .toggle-switch, .radio-option');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', playHoverSound);
+    });
+    
+    // Observador de mutaciones para añadir sonido a elementos creados dinámicamente
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            if (mutation.addedNodes.length) {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) { // Elemento
+                        if (node.classList && (
+                            node.classList.contains('game-card') || 
+                            node.classList.contains('store-card') ||
+                            node.classList.contains('category') || 
+                            node.tagName === 'BUTTON'
+                        )) {
+                            node.addEventListener('mouseenter', playHoverSound);
+                        }
+                        
+                        // Buscar elementos hijos que puedan ser interactivos
+                        const childInteractives = node.querySelectorAll('.sidebar-item, .game-card, .store-card, .category, button, .settings-option, .toggle-switch, .radio-option');
+                        childInteractives.forEach(child => {
+                            child.addEventListener('mouseenter', playHoverSound);
+                        });
+                    }
+                });
+            }
+        });
+    });
+    
+    // Observar cambios en el DOM
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Inicializar la aplicación cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>

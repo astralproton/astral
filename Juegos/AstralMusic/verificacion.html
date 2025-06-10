@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación - AstralMusic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #212121;
+            --bg-tertiary: #282828;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-disabled: #717171;
+            --accent-red: #ff0000;
+            --accent-blue: #065fd4;
+            --border-color: #303030;
+            --hover-bg: #3d3d3d;
+            --youtube-red: #ff0000;
+            --warning-orange: #ff9800;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-red);
+        }
+        .main-content {
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 32px 24px 24px 24px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .main-content h2 {
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .main-content p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .input-group {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .input-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus {
+            border-color: var(--accent-blue);
+        }
+        .btn {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #ff3333;
+        }
+        .btn-secondary {
+            background: var(--accent-blue);
+            margin-bottom: 0;
+        }
+        .btn-secondary:hover {
+            background: #1976d2;
+        }
+        .message {
+            margin: 18px 0 0 0;
+            font-size: 15px;
+            color: var(--warning-orange);
+            text-align: center;
+            min-height: 22px;
+        }
+        .success {
+            color: #4caf50;
+        }
+        .server-options {
+            margin-top: 24px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        .server-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent-blue);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .server-btn:hover {
+            background: #1976d2;
+        }
+        @media (max-width: 500px) {
+            .main-content {
+                max-width: 95vw;
+                padding: 20px 8vw 20px 8vw;
+            }
+            .header {
+                max-width: 100vw;
+                padding: 12px 8vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-music"></i>
+            <span>AstralMusic</span>
+        </div>
+    </header>
+    <div class="main-content" id="mainContent">
+        <h2>Servidor Privado</h2>
+        <p>Introduce la clave para acceder al servidor privado.</p>
+        <form id="claveForm" autocomplete="off">
+            <div class="input-group">
+                <label class="input-label" for="claveInput">Clave de acceso</label>
+                <input type="password" id="claveInput" class="input-field" placeholder="Escribe la clave..." required>
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+        </form>
+        <button class="btn btn-secondary" id="publicoBtn">Servidor Público</button>
+        <div class="message" id="message"></div>
+        <div class="server-options" id="serverOptions" style="display:none;">
+            <button class="server-btn" id="server1Btn">Server 1</button>
+            <button class="server-btn" id="server2Btn">Server 2</button>
+        </div>
+    </div>
+    <script>
+        // Puedes editar este array para agregar más claves y dueños
+        const clavesPrivadas = [
+            { clave: "GalavizSinEnergia", dueno: "Omar Galaviz" },
+            { clave: "IsaacSovietico", dueno: "Isaac Alfredo" },
+            { clave: "KassandraDeIsaac", dueno: "Kassandra Rivera" },
+            { clave: "SoyElIkerSandoval", dueno: "Iker Sandoval" },
+            { clave: "FabrizioMena90", dueno: "Fabrizio Mena" }
+            // Agrega más aquí
+        ];
+
+        const form = document.getElementById('claveForm');
+        const claveInput = document.getElementById('claveInput');
+        const message = document.getElementById('message');
+        const serverOptions = document.getElementById('serverOptions');
+        const server1Btn = document.getElementById('server1Btn');
+        const server2Btn = document.getElementById('server2Btn');
+        const publicoBtn = document.getElementById('publicoBtn');
+        let duenoActual = "";
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const clave = claveInput.value.trim();
+            const encontrado = clavesPrivadas.find(obj => obj.clave === clave);
+            if (encontrado) {
+                duenoActual = encontrado.dueno;
+                message.innerHTML = `¡Bienvenido, <span class="success">${duenoActual}</span>! ¿Qué servidor quieres elegir?`;
+                message.classList.remove('warning-orange');
+                message.classList.add('success');
+                serverOptions.style.display = 'flex';
+                claveInput.disabled = true;
+            } else {
+                message.textContent = "Clave incorrecta.";
+                message.classList.remove('success');
+                serverOptions.style.display = 'none';
+                claveInput.disabled = false;
+            }
+        });
+
+        // Interceptar clicks en los botones de servidor y abrir en iframe
+        window.addEventListener('DOMContentLoaded', function() {
+            function abrirEnIframe(url) {
+                // Si ya existe el iframe, solo cambia el src
+                let iframe = document.getElementById('servidorIframe');
+                if (!iframe) {
+                    iframe = document.createElement('iframe');
+                    iframe.id = 'servidorIframe';
+                    iframe.style.position = 'fixed';
+                    iframe.style.top = '0';
+                    iframe.style.left = '0';
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                    iframe.style.border = 'none';
+                    iframe.style.zIndex = '9999';
+                    iframe.style.background = '#111';
+                    document.body.appendChild(iframe);
+                }
+                iframe.src = url;
+                // Oculta el contenido principal
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) mainContent.style.display = 'none';
+            }
+
+            // Esperar a que existan los botones
+            setTimeout(function() {
+                const server1Btn = document.getElementById('server1Btn');
+                const server2Btn = document.getElementById('server2Btn');
+                const publicoBtn = document.getElementById('publicoBtn');
+                if (server1Btn) server1Btn.onclick = function(e) { e.preventDefault(); abrirEnIframe('server1premium.html'); };
+                if (server2Btn) server2Btn.onclick = function(e) { e.preventDefault(); abrirEnIframe('server2premium.html'); };
+                if (publicoBtn) publicoBtn.onclick = function(e) { e.preventDefault(); abrirEnIframe('public.html'); };
+            }, 300);
+        });
+    </script>
+</body>
+</html>
