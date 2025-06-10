@@ -2,9 +2,54 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Error de Acceso</title>
+    <title>403 Forbidden - ¡Has sido Baneado!</title>
+    <style>
+        body {
+            background: #2d0000;
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            padding-top: 8vh;
+            min-height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 5em;
+            color: #ff2222;
+            text-shadow: 0 0 20px #ff0000, 0 0 40px #900;
+            margin-bottom: 0.2em;
+        }
+        .drama {
+            font-size: 2em;
+            color: #ff5555;
+            margin-bottom: 1em;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: bold;
+        }
+        .ban-message {
+            font-size: 1.3em;
+            background: rgba(60,0,0,0.7);
+            display: inline-block;
+            padding: 1.2em 2em;
+            border-radius: 12px;
+            border: 2px solid #ff2222;
+            margin-bottom: 2em;
+            box-shadow: 0 0 30px #900;
+        }
+        .info {
+            margin-top: 2em;
+            font-size: 1.1em;
+            color: #ffbbbb;
+        }
+        strong {
+            color: #fff;
+        }
+        #codigo {
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
     <script>
-        // Función para obtener la IP pública usando un servicio externo
         async function mostrarError() {
             let ip = "Desconocida";
             try {
@@ -15,15 +60,22 @@
                 ip = "No se pudo obtener";
             }
             document.getElementById('ip').textContent = ip;
-            document.getElementById('codigo').textContent = "ERR_IP_DENEGADA";
+            document.getElementById('codigo').textContent = "ERR_BANEADO";
         }
         window.onload = mostrarError;
     </script>
 </head>
 <body>
-    <h1>403 Forbidden</h1>
-    <p>El acceso a esta seccion de la pagina web esta negada a su direccion IP actual / You don't have permission to access.</p>
-    <p><strong>Tu IP:</strong> <span id="ip">Cargando...</span></p>
-    <p><strong>Código de error:</strong> <span id="codigo">Cargando...</span></p>
+    <h1>403</h1>
+    <div class="drama">¡ACCESO PROHIBIDO!</div>
+    <div class="ban-message">
+        <p>Su acceso a esta pagina web ha sido <strong>REVOCADO.</strong></p>
+        <p>Tu acceso ha sido denegado de forma permanente.<br>
+        Si crees que esto es un error, contacta al administrador.</p>
+    </div>
+    <div class="info">
+        <p><strong>Tu IP:</strong> <span id="ip">Cargando...</span></p>
+        <p><strong>Código de error:</strong> <span id="codigo">Cargando...</span></p>
+    </div>
 </body>
 </html>
