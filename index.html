@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ... (todo tu CSS igual, sin cambios) ... */
 :root {
     --primary-color: #0a0a2a;
     --secondary-color: #1a1a4a;
@@ -18,6 +19,7 @@
     --card-bg: rgba(26,26,74,0.7);
     --star-color: #fff;
 }
+/* ... el resto de tu CSS igual ... */
 html, body {
     width: 100vw;
     height: 100vh;
@@ -385,8 +387,12 @@ audioToggle.addEventListener('click', () => {
     }
 });
 
-// MASTER KEY LOGIC
-const MASTER_KEY = "IsaacJicamas"; // Cambia esto por tu clave maestra
+// MASTER KEY LOGIC (ahora acepta 3 claves)
+const MASTER_KEYS = [
+    "IsaacJicamas",      // Cambia estas claves por las que quieras
+    "GalavizSinEnergia",
+    "RicardoTralala"
+];
 const IFRAME_URL = "indexquevolvera.html"; // Cambia esto por la URL a mostrar
 
 const masterKeyForm = document.getElementById('masterKeyForm');
@@ -400,7 +406,7 @@ masterKeyForm.addEventListener('submit', function(e) {
     e.preventDefault();
     masterKeyError.textContent = '';
     const key = masterKeyInput.value.trim();
-    if (key === MASTER_KEY) {
+    if (MASTER_KEYS.includes(key)) {
         masterKeyForm.style.display = 'none';
         masterKeyIframeContainer.style.display = 'block';
         masterKeyIframe.src = IFRAME_URL;
