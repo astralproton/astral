@@ -1,0 +1,78 @@
+<!-- ...existing code... -->
+<input type="file" id="customCursor-fileInput" accept="image/png,image/x-icon,image/svg+xml" style="display:none">
+<button id="customCursor-chooseButton" type="button">Elegir Cursor</button>
+<button id="customCursor-saveButton" type="button">Guardar Cursor</button>
+<button id="customCursor-removeButton" type="button">Quitar Cursor</button>
+<div id="customCursor-info"></div>
+<!-- ...existing code... -->
+<script>
+// --- Personalización de cursor ---
+(function() {
+        const chooseCursorButton = document.getElementById('customCursor-chooseButton');
+        const cursorFileInput = document.getElementById('customCursor-fileInput');
+        const cursorInfo = document.getElementById('customCursor-info');
+        const removeCursorButton = document.getElementById('customCursor-removeButton');
+        const saveCursorButton = document.getElementById('customCursor-saveButton');
+        let cursorData = null;
+
+        function setCustomCursor(url) {
+                document.documentElement.style.setProperty('--custom-cursor', url ? `url(${url}), auto` : 'auto');
+        }
+
+        // Cargar cursor guardado
+        const savedCursor = localStorage.getItem('customCursor');
+        if (savedCursor) {
+                setCustomCursor(savedCursor);
+                cursorInfo.textContent = 'Cursor personalizado guardado';
+                cursorInfo.style.color = 'var(--accent-color)';
+        } else {
+                setCustomCursor('');
+        }
+
+        chooseCursorButton.addEventListener('click', () => cursorFileInput.click());
+        cursorFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                                cursorData = event.target.result;
+                                cursorInfo.textContent = `Seleccionado: ${file.name}`;
+                                cursorInfo.style.color = 'var(--accent-color)';
+                                setCustomCursor(cursorData);
+                        };
+                        reader.readAsDataURL(file);
+                }
+        });
+
+        removeCursorButton.addEventListener('click', () => {
+                cursorData = null;
+                cursorInfo.textContent = 'No hay cursor personalizado seleccionado';
+                cursorInfo.style.color = '';
+                localStorage.removeItem('customCursor');
+                setCustomCursor('');
+        });
+
+        saveCursorButton.addEventListener('click', () => {
+                if (cursorData) {
+                        localStorage.setItem('customCursor', cursorData);
+                        setCustomCursor(cursorData);
+                        cursorInfo.textContent = 'Cursor personalizado guardado';
+                        cursorInfo.style.color = 'var(--accent-color)';
+                }
+        });
+
+        // Aplicar siempre el cursor guardado al cargar
+        window.addEventListener('DOMContentLoaded', function() {
+                const savedCursor = localStorage.getItem('customCursor');
+                setCustomCursor(savedCursor);
+        });
+
+        // Opcional: observar cambios en el DOM para aplicar el cursor a nuevos elementos
+        const observer = new MutationObserver(() => {
+                const savedCursor = localStorage.getItem('customCursor');
+                setCustomCursor(savedCursor);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+<!-- ...existing code... -->

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Bottle Flip 3D Unblocked</title>
+    <meta name="description" content="Flip Master, Flip Master Unblocked">
+    <meta property="og:image" content="flip-master.png" />
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script>
+        window.location="https://ubg44.github.io/BottleFlip3D/";
+    </script>
+    <script src="js/unity-mod.js"></script>
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/unityloader30.js"></script>
+    <style>
+        body {
+            margin: 0px;
+            padding:0px;
+        }
+    </style>
+    <script>
+        var gameInstance = UnityLoader.instantiate(
+            "gameContainer",
+            "Build/bottleflip.json",
+            {
+                onProgress: UnityProgress,
+                Module: {
+                    onRuntimeInitialized: function() {
+                        UnityProgress(gameInstance, "complete")
+                    }
+                }
+            });
+
+        function fixGameView() {
+            const gameView= document.getElementById("gameView");
+            gameView.style.width= Math.floor(gameView.clientHeight* 4/7)+ "px";
+
+        }
+    </script>
+    <script src="js/analytics_ubg_v1_4.js"></script>
+    <script src="js/ubg235_client_v1_1.js"></script>
+
+</head>
+<body style="overflow:hidden; margin:0; padding:0;" onload="fixGameView()">
+    <div id="gameView" class="webgl-content" style="position: absolute; width: 100%; height: 100%; margin: 0px; padding:0px;">
+        <div id="gameContainer" style="width: 100%; height: 100%; margin: 0px; padding:0px;"></div>
+    </div>
+</body>
+</html>

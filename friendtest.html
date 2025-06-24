@@ -1,0 +1,345 @@
+<!-- NUEVA SECCIÓN: Amigos -->
+<style>
+/* Estilos para la sección de Amigos */
+#friendsSection .friends-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease forwards;
+    transition: background-color 0.5s, box-shadow 0.5s;
+}
+.friends-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.friends-actions input[type="text"] {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+.friends-actions button {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.friends-list {
+    margin-bottom: 2rem;
+}
+.friend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.7rem;
+    transition: background 0.2s;
+}
+.friend-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.friend-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    overflow: hidden;
+}
+.friend-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.friend-actions button {
+    background: linear-gradient(45deg, #f44336, #ff5252);
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: 0.5rem;
+}
+.friend-actions button:hover {
+    background: linear-gradient(45deg, #ff5252, #f44336);
+}
+.friend-status {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-left: 0.7rem;
+}
+.friends-requests-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.5rem 0;
+    color: var(--accent-color);
+}
+@media (max-width: 700px) {
+    #friendsSection .friends-container { padding: 1rem; }
+    .friends-actions { flex-direction: column; gap: 0.7rem; }
+}
+</style>
+
+<!-- Sidebar: Añadir botón de Amigos -->
+<script>
+(function(){
+    // Solo añadir si no existe
+    if (!document.querySelector('.sidebar-item[data-section="friends"]')) {
+        const sidebar = document.querySelector('.sidebar');
+        const friendsBtn = document.createElement('a');
+        friendsBtn.className = 'sidebar-item';
+        friendsBtn.dataset.section = 'friends';
+        friendsBtn.innerHTML = `<i class="fas fa-user-friends"></i>
+            <span data-en="Friends" data-es="Amigos">Amigos</span>`;
+        sidebar.appendChild(friendsBtn);
+    }
+})();
+</script>
+
+<!-- Sección de Amigos (añadir después de profileSection) -->
+<div id="friendsSection" class="content-section" style="display:none;">
+    <h1 class="section-title">
+        <i class="fas fa-user-friends"></i> <span data-en="Friends" data-es="Amigos">Amigos</span>
+    </h1>
+    <div class="friends-container">
+        <div class="friends-actions">
+            <input type="text" id="friendUsernameInput" maxlength="32" placeholder="Nombre de usuario de tu amigo">
+            <button id="sendFriendRequestBtn"><i class="fas fa-user-plus"></i> Enviar solicitud</button>
+        </div>
+        <div class="friends-list" id="friendsList">
+            <!-- Lista de amigos aquí -->
+        </div>
+        <div class="friends-requests-title">Solicitudes recibidas</div>
+        <div class="friends-list" id="friendRequestsList">
+            <!-- Solicitudes de amistad aquí -->
+        </div>
+    </div>
+</div>
+
+<script>
+// --- SISTEMA DE AMIGOS LOCAL (solo en este navegador) ---
+// Estructura de datos: { friends: [{username, avatar, status}], requests: [{username, avatar}] }
+function getFriendsData() {
+    return JSON.parse(localStorage.getItem('friendsData') || '{"friends":[],"requests":[]}');
+}
+function setFriendsData(data) {
+    localStorage.setItem('friendsData', JSON.stringify(data));
+}
+function getCurrentUsername() {
+    const profile = JSON.parse(localStorage.getItem('profileData') || '{}');
+    return profile.name ? profile.name.trim() : '';
+}
+function getCurrentAvatar() {
+    const profile = JSON.parse(localStorage.getItem('profileData') || '{}');
+    return profile.avatar || '';
+}
+function renderFriendsList() {
+    const data = getFriendsData();
+    const friendsList = document.getElementById('friendsList');
+    friendsList.innerHTML = '';
+    if (!data.friends.length) {
+        friendsList.innerHTML = `<div style="opacity:.7;text-align:center;">No tienes amigos agregados aún.</div>`;
+        return;
+    }
+    data.friends.forEach(friend => {
+        const div = document.createElement('div');
+        div.className = 'friend-item';
+        div.innerHTML = `
+            <div class="friend-info">
+                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}" style="width:100%;height:100%;object-fit:cover;">` : `<i class="fas fa-user"></i>`}</div>
+                <div>
+                    <span class="friend-name">${friend.username}</span>
+                    <span class="friend-status">${friend.status === 'accepted' ? 'Amigo' : 'Pendiente'}</span>
+                </div>
+            </div>
+            <div class="friend-actions">
+                <button data-username="${friend.username}" class="remove-friend-btn"><i class="fas fa-user-minus"></i> Quitar</button>
+            </div>
+        `;
+        friendsList.appendChild(div);
+    });
+    // Quitar amigo
+    friendsList.querySelectorAll('.remove-friend-btn').forEach(btn => {
+        btn.onclick = function() {
+            if (confirm('¿Seguro que quieres quitar a este amigo?')) {
+                removeFriend(btn.dataset.username);
+            }
+        };
+    });
+}
+function renderFriendRequests() {
+    const data = getFriendsData();
+    const requestsList = document.getElementById('friendRequestsList');
+    requestsList.innerHTML = '';
+    if (!data.requests.length) {
+        requestsList.innerHTML = `<div style="opacity:.7;text-align:center;">No tienes solicitudes pendientes.</div>`;
+        return;
+    }
+    data.requests.forEach(req => {
+        const div = document.createElement('div');
+        div.className = 'friend-item';
+        div.innerHTML = `
+            <div class="friend-info">
+                <div class="friend-avatar">${req.avatar ? `<img src="${req.avatar}" style="width:100%;height:100%;object-fit:cover;">` : `<i class="fas fa-user"></i>`}</div>
+                <div>
+                    <span class="friend-name">${req.username}</span>
+                </div>
+            </div>
+            <div class="friend-actions">
+                <button data-username="${req.username}" class="accept-friend-btn"><i class="fas fa-check"></i> Aceptar</button>
+                <button data-username="${req.username}" class="reject-friend-btn"><i class="fas fa-times"></i> Rechazar</button>
+            </div>
+        `;
+        requestsList.appendChild(div);
+    });
+    // Aceptar/rechazar
+    requestsList.querySelectorAll('.accept-friend-btn').forEach(btn => {
+        btn.onclick = function() {
+            acceptFriendRequest(btn.dataset.username);
+        };
+    });
+    requestsList.querySelectorAll('.reject-friend-btn').forEach(btn => {
+        btn.onclick = function() {
+            rejectFriendRequest(btn.dataset.username);
+        };
+    });
+}
+function addFriend(username, avatar) {
+    const data = getFriendsData();
+    if (data.friends.some(f => f.username === username)) return;
+    data.friends.push({username, avatar, status: 'accepted'});
+    setFriendsData(data);
+    renderFriendsList();
+}
+function removeFriend(username) {
+    const data = getFriendsData();
+    data.friends = data.friends.filter(f => f.username !== username);
+    setFriendsData(data);
+    renderFriendsList();
+}
+function addFriendRequest(username, avatar) {
+    const data = getFriendsData();
+    if (data.requests.some(r => r.username === username)) return;
+    data.requests.push({username, avatar});
+    setFriendsData(data);
+    renderFriendRequests();
+}
+function acceptFriendRequest(username) {
+    const data = getFriendsData();
+    const req = data.requests.find(r => r.username === username);
+    if (req) {
+        data.requests = data.requests.filter(r => r.username !== username);
+        data.friends.push({username: req.username, avatar: req.avatar, status: 'accepted'});
+        setFriendsData(data);
+        renderFriendsList();
+        renderFriendRequests();
+    }
+}
+function rejectFriendRequest(username) {
+    const data = getFriendsData();
+    data.requests = data.requests.filter(r => r.username !== username);
+    setFriendsData(data);
+    renderFriendRequests();
+}
+// Simulación de envío de solicitud (solo local)
+function sendFriendRequestTo(username) {
+    if (!username) return;
+    if (username === getCurrentUsername()) {
+        showAlert('Error', 'No puedes enviarte una solicitud a ti mismo.');
+        return;
+    }
+    // Simulación: guardar en localStorage como si fuera el otro usuario
+    // (En la vida real, esto sería por servidor)
+    // Guardar en "friendsData_<username>"
+    const key = 'friendsData_' + username;
+    let data = JSON.parse(localStorage.getItem(key) || '{"friends":[],"requests":[]}');
+    // No duplicar
+    if (data.requests.some(r => r.username === getCurrentUsername())) {
+        showAlert('Ya enviado', 'Ya enviaste una solicitud a este usuario.');
+        return;
+    }
+    data.requests.push({username: getCurrentUsername(), avatar: getCurrentAvatar()});
+    localStorage.setItem(key, JSON.stringify(data));
+    showAlert('Solicitud enviada', 'Tu solicitud fue enviada localmente. Si este usuario inicia sesión en este navegador, la verá.');
+}
+// Al cargar la sección, importar solicitudes "externas"
+function importExternalFriendRequests() {
+    const myName = getCurrentUsername();
+    if (!myName) return;
+    // Buscar en localStorage todas las claves que sean "friendsData_*"
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k.startsWith('friendsData_')) {
+            const data = JSON.parse(localStorage.getItem(k));
+            if (data && data.requests) {
+                // Si hay una solicitud para mí, importarla
+                data.requests.forEach(req => {
+                    if (req.username === myName) {
+                        // Importar a mis solicitudes
+                        addFriendRequest(k.replace('friendsData_', ''), req.avatar);
+                        // Eliminar de la otra lista
+                        data.requests = data.requests.filter(r => r.username !== myName);
+                        localStorage.setItem(k, JSON.stringify(data));
+                    }
+                });
+            }
+        }
+    }
+}
+function showFriendsSection() {
+    importExternalFriendRequests();
+    renderFriendsList();
+    renderFriendRequests();
+}
+// Inicialización de eventos
+(function(){
+    // Mostrar sección de amigos al hacer click en el sidebar
+    document.querySelector('.sidebar-item[data-section="friends"]').addEventListener('click', function() {
+        changeSection('friends');
+        document.getElementById('friendsSection').style.display = '';
+        showFriendsSection();
+    });
+    // Enviar solicitud
+    document.getElementById('sendFriendRequestBtn').onclick = function() {
+        const input = document.getElementById('friendUsernameInput');
+        const username = input.value.trim();
+        if (!username) return showAlert('Error', 'Escribe el nombre de usuario de tu amigo.');
+        sendFriendRequestTo(username);
+        input.value = '';
+    };
+    // Mostrar amigos al cargar la sección
+    if (window.location.hash === '#friends') {
+        changeSection('friends');
+        document.getElementById('friendsSection').style.display = '';
+        showFriendsSection();
+    }
+})();
+</script>

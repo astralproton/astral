@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reglas de la Plataforma - AstralProton</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+                body {
+                        font-family: 'Montserrat', sans-serif;
+                        background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+                        color: #fff;
+                        margin: 0;
+                        min-height: 100vh;
+                }
+                .manual-header {
+                        background: var(--header-bg, rgba(10,10,42,0.95));
+                        padding: 2rem 1rem 1rem 1rem;
+                        text-align: center;
+                        box-shadow: 0 2px 10px #0005;
+                }
+                .manual-header h1 {
+                        font-size: 2.5rem;
+                        font-weight: 800;
+                        letter-spacing: 2px;
+                        margin: 0 0 0.5em 0;
+                        color: var(--accent-color, #4169e1);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.7em;
+                }
+                .manual-header p {
+                        font-size: 1.2rem;
+                        opacity: 0.85;
+                        margin: 0;
+                }
+                .manual-container {
+                        max-width: 900px;
+                        margin: 2.5rem auto 2rem auto;
+                        background: rgba(26,26,74,0.85);
+                        border-radius: 18px;
+                        box-shadow: 0 10px 32px #0007;
+                        padding: 2.5rem 2rem 2rem 2rem;
+                        position: relative;
+                        z-index: 1;
+                }
+                .manual-section {
+                        margin-bottom: 2.2rem;
+                }
+                .manual-section h2 {
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                        color: var(--accent-color, #4169e1);
+                        margin-bottom: 0.7em;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5em;
+                }
+                .manual-section h3 {
+                        font-size: 1.15rem;
+                        font-weight: 600;
+                        color: #ff3366;
+                        margin: 1.2em 0 0.5em 0;
+                }
+                .manual-section ul, .manual-section ol {
+                        margin: 0 0 1em 1.5em;
+                        padding: 0;
+                        font-size: 1.05em;
+                        line-height: 1.7;
+                }
+                .manual-section li {
+                        margin-bottom: 0.5em;
+                }
+                .manual-section p {
+                        margin: 0 0 1em 0;
+                        line-height: 1.7;
+                        font-size: 1.08em;
+                }
+                .manual-section .manual-tip {
+                        background: linear-gradient(90deg, #4169e1 0%, #ff3366 100%);
+                        color: #fff;
+                        border-radius: 8px;
+                        padding: 1em 1.2em;
+                        margin: 1.2em 0;
+                        font-size: 1.05em;
+                        box-shadow: 0 2px 10px #0003;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.7em;
+                }
+                .manual-section .manual-tip i {
+                        font-size: 1.3em;
+                        opacity: 0.8;
+                }
+                .manual-section hr {
+                        border: none;
+                        border-top: 1px solid #4169e1;
+                        margin: 2em 0;
+                        opacity: 0.2;
+                }
+                .sancion {
+                        color: #ff3333;
+                        font-weight: 700;
+                }
+                @media (max-width: 700px) {
+                        .manual-container {
+                                padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+                        }
+                        .manual-header h1 {
+                                font-size: 1.5rem;
+                        }
+                }
+                .manual-bg {
+                        position: fixed;
+                        top: 0; left: 0; width: 100vw; height: 100vh;
+                        z-index: 0;
+                        pointer-events: none;
+                        background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+                        overflow: hidden;
+                }
+                .manual-star {
+                        position: absolute;
+                        background: #fff;
+                        border-radius: 50%;
+                        opacity: 0.7;
+                        animation: manual-twinkle 4s infinite ease-in-out;
+                }
+                @keyframes manual-twinkle {
+                        0%,100% { opacity: 0.7; }
+                        50% { opacity: 0.2; }
+                }
+                .manual-nebula {
+                        position: absolute;
+                        border-radius: 50%;
+                        filter: blur(40px);
+                        opacity: 0.13;
+                        background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+                        animation: manual-pulse 8s infinite ease-in-out;
+                }
+                @keyframes manual-pulse {
+                        0%,100% { transform: scale(1); opacity: 0.13; }
+                        50% { transform: scale(1.1); opacity: 0.19; }
+                }
+        </style>
+</head>
+<body>
+        <div class="manual-bg" id="manualBg"></div>
+        <div class="manual-header">
+                <h1><i class="fas fa-gavel"></i> Reglas de la Plataforma AstralProton</h1>
+                <p>Normas básicas para mantener una comunidad segura, respetuosa y divertida.</p>
+        </div>
+        <main class="manual-container">
+                <section class="manual-section">
+                        <h2><i class="fas fa-user-shield"></i> 1. Respeto y Convivencia</h2>
+                        <ul>
+                                <li>Trata a todos los usuarios con respeto y cortesía.</li>
+                                <li>No se permite ningún tipo de acoso, discriminación o lenguaje ofensivo.</li>
+                                <li>Evita discusiones tóxicas o provocaciones.</li>
+                        </ul>
+                        <p>El incumplimiento de estas normas puede resultar en una <span class="sancion">sanción</span> temporal o permanente.</p>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fas fa-ban"></i> 2. Contenido Prohibido</h2>
+                        <ul>
+                                <li>No publiques contenido inapropiado, violento, sexual o ilegal.</li>
+                                <li>Está prohibido compartir enlaces maliciosos o spam.</li>
+                                <li>No se permite la suplantación de identidad.</li>
+                        </ul>
+                        <p>Cualquier infracción será motivo de <span class="sancion">sanción</span> inmediata.</p>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fas fa-gamepad"></i> 3. Uso Justo de los Juegos</h2>
+                        <ul>
+                                <li>No utilices trampas, hacks o exploits para obtener ventajas injustas.</li>
+                                <li>Juega limpio y reporta cualquier error o vulnerabilidad que encuentres.</li>
+                        </ul>
+                        <p>El uso de trampas puede llevar a una <span class="sancion">sanción</span> y la pérdida de acceso a los juegos.</p>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fas fa-user-lock"></i> 4. Privacidad y Seguridad</h2>
+                        <ul>
+                                <li>No compartas datos personales tuyos ni de otros usuarios.</li>
+                                <li>Reporta cualquier intento de phishing o robo de cuentas.</li>
+                        </ul>
+                        <p>La violación de la privacidad será motivo de <span class="sancion">sanción</span> grave.</p>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fas fa-bullhorn"></i> 5. Publicidad y Promoción</h2>
+                        <ul>
+                                <li>No está permitido hacer publicidad de productos, servicios o plataformas externas sin autorización.</li>
+                                <li>El spam publicitario será eliminado y el usuario podrá recibir una <span class="sancion">sanción</span>.</li>
+                        </ul>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fas fa-balance-scale"></i> 6. Sanciones y Reclamaciones</h2>
+                        <ul>
+                                <li>Las <span class="sancion">sanciones</span> pueden incluir advertencias, suspensiones temporales o expulsión permanente.</li>
+                                <li>Si consideras que una <span class="sancion">sanción</span> fue injusta, puedes apelar contactando al soporte.</li>
+                                <li>La reincidencia agrava la <span class="sancion">sanción</span> aplicada.</li>
+                        </ul>
+                </section>
+                <section class="manual-section">
+                        <h2><i class="fa-solid fa-circle-user"></i> 7. Normativas para administradores</h2>
+                        <ul>
+                                <li>Los Administradores son personas que tienen la responsabilidad de moderar y gestionar la comunidad.</li>
+                                <li>Los Administradores se van a reestablecer, asi que los que quieran ser administradores, ¡Deben ganarselo!</li>
+                                <li>Si usted se pelea de manera <span class="sancion">personal</span> con un administrador y esta pelea NO tiene que ver con AstralProton, el administrador <span class="sancion">NO</span> puede banearte, restarte estrellas, expulsarte ni similares de AstralProton.</li>
+                                <li>Los administradores tienen el poder de <span class="sancion">sancionar</span> a los usuarios que violen las reglas, pero deben hacerlo de manera justa y transparente.</li>
+                        </ul>
+                </section>
+                <section class="manual-section">
+                        <div class="manual-tip"><i class="fas fa-lightbulb"></i> ¡Cumple las reglas y disfruta de AstralProton en un ambiente seguro para todos!</div>
+                </section>
+        </main>
+        <script>
+                // Fondo espacial decorativo
+                function createManualStars(containerId, count) {
+                        const container = document.getElementById(containerId);
+                        for (let i = 0; i < count; i++) {
+                                const star = document.createElement('div');
+                                star.className = 'manual-star';
+                                const size = Math.random() * 2 + 1;
+                                star.style.width = `${size}px`;
+                                star.style.height = `${size}px`;
+                                star.style.left = `${Math.random() * 100}%`;
+                                star.style.top = `${Math.random() * 100}%`;
+                                star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                                container.appendChild(star);
+                        }
+                        // Nebulosas
+                        for (let i = 0; i < 3; i++) {
+                                const nebula = document.createElement('div');
+                                nebula.className = 'manual-nebula';
+                                const size = Math.random() * 300 + 120;
+                                nebula.style.width = `${size}px`;
+                                nebula.style.height = `${size}px`;
+                                nebula.style.left = `${Math.random() * 100}%`;
+                                nebula.style.top = `${Math.random() * 100}%`;
+                                const colors = ['#4169e1', '#9c27b0', '#ff3366', '#00bcd4', '#4caf50'];
+                                nebula.style.setProperty('--color', colors[Math.floor(Math.random()*colors.length)]);
+                                container.appendChild(nebula);
+                        }
+                }
+                createManualStars('manualBg', 80);
+        </script>
+</body>
+</html>

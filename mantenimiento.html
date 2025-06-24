@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AstralProton - Mantenimiento</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ... (todo tu CSS igual, sin cambios) ... */
+:root {
+    --primary-color: #0a0a2a;
+    --secondary-color: #1a1a4a;
+    --accent-color: #4169e1;
+    --highlight-color: #ff3366;
+    --text-color: #fff;
+    --card-bg: rgba(26,26,74,0.7);
+    --star-color: #fff;
+}
+/* ... el resto de tu CSS igual ... */
+html, body {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    color: var(--text-color);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+body {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+}
+.space-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0;
+    overflow: hidden;
+}
+.stars {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+.star {
+    position: absolute;
+    background: var(--star-color);
+    border-radius: 50%;
+    opacity: .7;
+    animation: twinkle 4s infinite ease-in-out;
+}
+@keyframes twinkle {
+    0%,100% { opacity: .7; }
+    50% { opacity: .2; }
+}
+.nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.15;
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    animation: pulse 8s infinite ease-in-out;
+}
+@keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+}
+.center-card {
+    position: relative;
+    z-index: 2;
+    min-width: 320px;
+    max-width: 480px;
+    width: 95vw;
+    margin: 6vh auto 0 auto;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    padding: 2.5rem 2rem 2rem 2rem;
+    text-align: center;
+    animation: fadeIn 1.2s cubic-bezier(.23,1.01,.32,1) both;
+    backdrop-filter: blur(8px);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+.logo-img {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 1.2rem;
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--accent-color), 0 0 0 8px rgba(65,105,225,0.1);
+    background: #fff;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+@keyframes logoFloat {
+    0%,100% { transform: translateY(0);}
+    50% { transform: translateY(-15px);}
+}
+.maint-title {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.1rem;
+    letter-spacing: 1px;
+    text-shadow: 0 5px 20px rgba(65,105,225,0.25);
+    animation: welcomeGlow 3s infinite;
+}
+@keyframes welcomeGlow {
+    0%,100% { text-shadow: 0 5px 20px rgba(65,105,225,0.25);}
+    50% { text-shadow: 0 5px 35px rgba(65,105,225,0.5);}
+}
+.maint-desc {
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+    color: #e0e6ff;
+    line-height: 1.7;
+}
+.maint-info {
+    font-size: 0.98rem;
+    color: #bfcaff;
+    margin-bottom: 1.5rem;
+}
+.socials {
+    margin-top: 1.2rem;
+}
+.socials a {
+    display: inline-block;
+    margin: 0 10px;
+    color: var(--accent-color);
+    font-size: 1.7rem;
+    transition: color .2s, transform .2s;
+}
+.socials a:hover {
+    color: var(--highlight-color);
+    transform: scale(1.15);
+}
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    border-radius: 50%;
+    width: 46px; height: 46px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+}
+.audio-controls:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.audio-controls i {
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+#masterKeyForm {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+}
+#masterKeyForm input[type="password"] {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    background: #23235a;
+    color: #fff;
+    outline: none;
+    width: 180px;
+    text-align: center;
+}
+#masterKeyForm button {
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent-color);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#masterKeyForm button:hover {
+    background: var(--highlight-color);
+}
+#masterKeyError {
+    color: #ff3366;
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
+    min-height: 1.2em;
+}
+/* Iframe grande adaptado */
+#masterKeyIframeContainer {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: rgba(10,10,42,0.98);
+    box-shadow: 0 0 0 100vw rgba(10,10,42,0.98);
+    animation: fadeInIframe 0.7s;
+}
+@keyframes fadeInIframe {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+#masterKeyIframeContainer iframe {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    min-width: 100vw;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    display: block;
+}
+#closeIframeBtn {
+    position: absolute;
+    top: 20px;
+    right: 28px;
+    z-index: 101;
+    background: var(--card-bg);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: background 0.2s;
+}
+#closeIframeBtn:hover {
+    background: var(--highlight-color);
+}
+/* Chromebook: 1366x768 */
+@media (max-width: 1400px), (max-height: 800px) {
+    .center-card {
+        padding: 1.5rem 0.7rem 1.2rem 0.7rem;
+        min-width: 0;
+        max-width: 99vw;
+        width: 98vw;
+        margin: 2vh auto 0 auto;
+    }
+    .logo-img {
+        width: 80px; height: 80px;
+    }
+    .maint-title {
+        font-size: 1.2rem;
+    }
+    #masterKeyIframeContainer iframe {
+        min-height: 100vh;
+    }
+    #closeIframeBtn {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+    .audio-controls {
+        bottom: 10px;
+        right: 10px;
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
+</style>
+</head>
+<body>
+<div class="space-bg">
+    <div class="stars" id="stars"></div>
+</div>
+<div class="center-card">
+    <img class="logo-img" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo">
+    <div class="maint-title"><i class="fas fa-tools"></i> AstralProton está en mantenimiento</div>
+    <div class="maint-desc">
+        Estamos en mantenimiento por un bug muy fuerte. ¡Estamos trabajando para traerte una experiencia aún mejor!<br>
+        Por favor, vuelve más tarde.<br>
+        <span style="font-size:1.5rem;display:block;margin:1rem 0 0.5rem 0;">✨</span>
+    </div>
+    <div class="maint-info">
+        Si tienes dudas o quieres estar al tanto de las novedades, únete a nuestro Discord:<br>
+        <a href="https://discord.gg/GEPrCZkWhs" target="_blank" style="color:var(--accent-color);font-weight:600;text-decoration:underline;">discord.gg/GEPrCZkWhs</a>
+    </div>
+    <div class="socials">
+        <a href="https://discord.gg/GEPrCZkWhs" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+    </div>
+    <br/>
+    <div class="maint-info">
+        Si eres un betatester que tiene el permiso de acceder aún estando en mantenimiento, ingresa tu MASTER KEY Aqui:<br>
+    </div>
+    <!-- MASTER KEY FORM -->
+    <form id="masterKeyForm" autocomplete="off">
+        <input type="password" id="masterKeyInput" placeholder="MASTER KEY" maxlength="64" required>
+        <button type="submit"><i class="fas fa-unlock"></i> Acceder</button>
+        <div id="masterKeyError"></div>
+    </form>
+</div>
+<!-- IFRAME GRANDE -->
+<div id="masterKeyIframeContainer">
+    <button id="closeIframeBtn" title="Cerrar"><i class="fas fa-times"></i></button>
+    <iframe id="masterKeyIframe" src="" allowfullscreen></iframe>
+</div>
+<audio id="backgroundMusic" loop autoplay>
+    <source src="mantenimiento.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
+<div class="audio-controls" id="audioToggle">
+    <i class="fas fa-volume-up"></i>
+</div>
+<script>
+// Estrellas y nebulosas
+function createStars(containerId, count) {
+    const starsContainer = document.getElementById(containerId);
+    for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 1;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = Math.random() * 3 + 2;
+        const opacity = Math.random() * 0.5 + 0.3;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${posX}%`;
+        star.style.top = `${posY}%`;
+        star.style.setProperty('--duration', `${duration}s`);
+        star.style.opacity = opacity;
+        starsContainer.appendChild(star);
+    }
+    // Nebulosas
+    for (let i = 0; i < 4; i++) {
+        const nebula = document.createElement('div');
+        nebula.className = 'nebula';
+        const size = Math.random() * 220 + 120;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const colors = [
+            '#4169e1', '#9c27b0', '#ff3366', '#00bcd4', '#4caf50'
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        nebula.style.width = `${size}px`;
+        nebula.style.height = `${size}px`;
+        nebula.style.left = `${posX}%`;
+        nebula.style.top = `${posY}%`;
+        nebula.style.setProperty('--accent-color', color);
+        starsContainer.appendChild(nebula);
+    }
+}
+createStars('stars', 120);
+
+// Música de fondo
+const backgroundMusic = document.getElementById('backgroundMusic');
+const audioToggle = document.getElementById('audioToggle');
+let isMusicPlaying = true;
+backgroundMusic.volume = 0.5;
+backgroundMusic.play().catch(()=>{});
+audioToggle.addEventListener('click', () => {
+    if (isMusicPlaying) {
+        backgroundMusic.pause();
+        isMusicPlaying = false;
+        audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    } else {
+        backgroundMusic.play().catch(()=>{});
+        isMusicPlaying = true;
+        audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+    }
+});
+
+// MASTER KEY LOGIC (ahora acepta 4 claves)
+const MASTER_KEYS = [
+    "IsaacJicamas",      // Cambia estas claves por las que quieras
+    "GalavizSinEnergia",
+    "RicardoTralala",
+    "LennyMuro8714416771651447816@C#xV"
+];
+const IFRAME_URL = "indexquevolvera.html"; // Cambia esto por la URL a mostrar
+
+const masterKeyForm = document.getElementById('masterKeyForm');
+const masterKeyInput = document.getElementById('masterKeyInput');
+const masterKeyError = document.getElementById('masterKeyError');
+const masterKeyIframeContainer = document.getElementById('masterKeyIframeContainer');
+const masterKeyIframe = document.getElementById('masterKeyIframe');
+const closeIframeBtn = document.getElementById('closeIframeBtn');
+
+masterKeyForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    masterKeyError.textContent = '';
+    const key = masterKeyInput.value.trim();
+    if (MASTER_KEYS.includes(key)) {
+        masterKeyForm.style.display = 'none';
+        masterKeyIframeContainer.style.display = 'block';
+        masterKeyIframe.src = IFRAME_URL;
+        // Detener la música de fondo
+        backgroundMusic.pause();
+        isMusicPlaying = false;
+        audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    } else {
+        masterKeyError.textContent = 'Clave incorrecta.';
+        masterKeyInput.value = '';
+        masterKeyInput.focus();
+    }
+});
+
+// Botón para cerrar el iframe y volver a la página de mantenimiento
+closeIframeBtn.addEventListener('click', function() {
+    masterKeyIframeContainer.style.display = 'none';
+    masterKeyForm.style.display = 'flex';
+    masterKeyIframe.src = '';
+    // Opcional: volver a reproducir la música
+    backgroundMusic.play().catch(()=>{});
+    isMusicPlaying = true;
+    audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+});
+</script>
+</body>
+</html>

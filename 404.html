@@ -2,80 +2,215 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>403 Forbidden - ¡Has sido Baneado!</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>404 - Página no encontrada | AstralProton</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: #2d0000;
-            color: #fff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            text-align: center;
-            padding-top: 8vh;
-            min-height: 100vh;
+        :root {
+            --primary-color: #0a0a2a;
+            --secondary-color: #1a1a4a;
+            --accent-color: #4169e1;
+            --text-color: #fff;
+            --highlight-color: #ff3366;
+            --card-bg: rgba(26,26,74,0.7);
+        }
+        html, body {
+            height: 100%;
             margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow: hidden;
         }
-        h1 {
-            font-size: 5em;
-            color: #ff2222;
-            text-shadow: 0 0 20px #ff0000, 0 0 40px #900;
-            margin-bottom: 0.2em;
+        .space-background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            overflow: hidden;
         }
-        .drama {
-            font-size: 2em;
-            color: #ff5555;
-            margin-bottom: 1em;
-            text-shadow: 0 0 10px #ff0000;
-            font-weight: bold;
+        .stars {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
         }
-        .ban-message {
-            font-size: 1.3em;
-            background: rgba(60,0,0,0.7);
-            display: inline-block;
-            padding: 1.2em 2em;
-            border-radius: 12px;
-            border: 2px solid #ff2222;
-            margin-bottom: 2em;
-            box-shadow: 0 0 30px #900;
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: .7;
+            animation: twinkle 4s infinite ease-in-out;
         }
-        .info {
-            margin-top: 2em;
-            font-size: 1.1em;
-            color: #ffbbbb;
+        @keyframes twinkle {
+            0%,100% { opacity: .7; }
+            50% { opacity: .2; }
         }
-        strong {
+        .center-404 {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .img-404 {
+            width: 260px;
+            max-width: 80vw;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 8px 32px #0008);
+            animation: float404 3s ease-in-out infinite;
+        }
+        @keyframes float404 {
+            0%,100% { transform: translateY(0);}
+            50% { transform: translateY(-18px);}
+        }
+        .title-404 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 5px 15px rgba(65,105,225,0.3);
+            letter-spacing: 2px;
+        }
+        .desc-404 {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
             color: #fff;
+            opacity: .85;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        #codigo {
-            color: #ff4444;
-            font-weight: bold;
+        .btn-404 {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-top: 1rem;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: .7rem;
+        }
+        .btn-404:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .audio-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .audio-controls:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .audio-controls i {
+            font-size: 1.3rem;
+            color: var(--text-color);
+        }
+        @media (max-width: 600px) {
+            .title-404 { font-size: 2.1rem; }
+            .desc-404 { font-size: 1rem; }
+            .img-404 { width: 180px; }
+            .btn-404 { font-size: 1rem; padding: .8rem 1.5rem;}
         }
     </style>
-    <script>
-        async function mostrarError() {
-            let ip = "Desconocida";
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                ip = data.ip;
-            } catch (e) {
-                ip = "No se pudo obtener";
-            }
-            document.getElementById('ip').textContent = ip;
-            document.getElementById('codigo').textContent = "ERR_BANEADO";
-        }
-        window.onload = mostrarError;
-    </script>
 </head>
 <body>
-    <h1>403</h1>
-    <div class="drama">¡ACCESO PROHIBIDO!</div>
-    <div class="ban-message">
-        <p>Su acceso a esta pagina web ha sido <strong>REVOCADO.</strong></p>
-        <p>Tu acceso ha sido denegado de forma permanente.<br>
-        Si crees que esto es un error, contacta al administrador.</p>
+    <div class="space-background">
+        <div class="stars" id="stars"></div>
     </div>
-    <div class="info">
-        <p><strong>Tu IP:</strong> <span id="ip">Cargando...</span></p>
-        <p><strong>Código de error:</strong> <span id="codigo">Cargando...</span></p>
+    <div class="center-404">
+        <img src="404astral.png" alt="404 Astral" class="img-404" draggable="false">
+        <div class="title-404">¡404! Página no encontrada</div>
+        <div class="desc-404">
+            Lo sentimos, la página que buscas no existe o fue movida.<br>
+            <span style="opacity:.7;">¿Te perdiste en el espacio?</span>
+        </div>
+        <button class="btn-404" onclick="window.location.href='index.html'">
+            <i class="fas fa-home"></i> Volver al inicio
+        </button>
     </div>
+    <audio id="backgroundMusic404" src="404.mp3" loop autoplay></audio>
+    <div class="audio-controls" id="audioToggle404" title="Activar/desactivar música">
+        <i class="fas fa-volume-up"></i>
+    </div>
+    <script>
+        // Estrellas animadas
+        function createStars(containerId, count) {
+            const starsContainer = document.getElementById(containerId);
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const duration = Math.random() * 3 + 2;
+                const opacity = Math.random() * 0.5 + 0.3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--opacity', opacity);
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars('stars', 120);
+
+        // Música de fondo control
+        const music = document.getElementById('backgroundMusic404');
+        const audioToggle = document.getElementById('audioToggle404');
+        let isPlaying = true;
+        music.volume = 0.33;
+        music.play().catch(()=>{});
+        audioToggle.onclick = function() {
+            if (music.paused) {
+                music.play();
+                isPlaying = true;
+                audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                music.pause();
+                isPlaying = false;
+                audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        };
+        // Autoplay fix para navegadores
+        document.body.addEventListener('click', function once() {
+            if (music.paused) music.play().catch(()=>{});
+            document.body.removeEventListener('click', once);
+        });
+    </script>
 </body>
 </html>
