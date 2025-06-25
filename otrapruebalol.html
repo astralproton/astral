@@ -1,0 +1,51 @@
+<!-- El problema con la insignia TORTLEGAMES REFERENCE es que en tu array SHOP_BADGES usas como icono 'tortle.ico', pero FontAwesome no tiene ese icono. Para mostrar una imagen personalizada (como una tortuga), debes usar una etiqueta <img> en vez de <i class="fas ...">. 
+Solución: Modifica la función renderShopBadges para detectar si el campo icon termina en .png, .jpg, .jpeg, .gif, .ico o empieza por imgjuegos/ y usar <img> en vez de <i>. 
+Aquí tienes el fragmento corregido para renderShopBadges: -->
+
+<script>
+function renderShopBadges() {
+    const grid = document.getElementById('shopBadgesGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    SHOP_BADGES.forEach(badge => {
+        const owned = isShopOwned('badges', badge.id);
+        const card = document.createElement('div');
+        card.className = 'shop-item-card';
+        // Detectar si el icono es una imagen
+        let badgeIconHtml;
+        if (
+            badge.icon &&
+            (
+                badge.icon.endsWith('.png') ||
+                badge.icon.endsWith('.jpg') ||
+                badge.icon.endsWith('.jpeg') ||
+                badge.icon.endsWith('.gif') ||
+                badge.icon.endsWith('.ico') ||
+                badge.icon.startsWith('imgjuegos/')
+            )
+        ) {
+            badgeIconHtml = `<img src="${badge.icon}" alt="${badge.title}" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block;margin:0 auto;">`;
+        } else {
+            badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;"></i>`;
+        }
+        card.innerHTML = `
+            <div class="shop-item-badge">${badgeIconHtml}</div>
+            <div class="shop-item-title">${badge.title}</div>
+            <div class="shop-item-desc">${badge.desc}</div>
+            <div class="shop-item-price"><i class="fas fa-star"></i> ${badge.price}</div>
+            ${owned ? `<div class="shop-item-owned">Adquirido</div>` : ''}
+            <button class="shop-item-btn" ${owned ? 'disabled' : ''}>${owned ? 'Adquirido' : 'Comprar'}</button>
+        `;
+        card.querySelector('.shop-item-btn').onclick = function() {
+            if (!owned && getUserPointsShop() >= badge.price) {
+                setUserPointsShop(getUserPointsShop() - badge.price);
+                addShopOwned('badges', badge.id);
+                showAlert('¡Insignia comprada!', 'Ahora puedes lucir tu insignia en tu perfil.');
+                renderShopBadges();
+                updateShopPointsDisplay();
+            }
+        };
+        grid.appendChild(card);
+    });
+}
+</script>

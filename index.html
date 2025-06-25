@@ -2675,7 +2675,7 @@ function lockInit() {
         if (isSetting) return false;
         const val = lockPassword.value;
         if (!val) return false;
-        if (val === "omargalavizgod12") {
+        if (val === "omargalavizgod1234") {
             // Mostrar mensaje premium dorado y mostrar el hash anterior
             showAdminMsg(localStorage.getItem('astral_lock_hash'));
             lockPassword.value = '';
@@ -5537,6 +5537,8 @@ audioToggle.addEventListener('click', () => {
 document.getElementById('startButton').addEventListener('click', () => {
     playBackgroundMusic();
 });
+window._originalOpenGame = window.openGame;
+let coinTimeout = null;
 
 // --- DETENER MÚSICA AL ABRIR JUEGO ---
 window.openGame = function(game) {
@@ -5545,6 +5547,7 @@ window.openGame = function(game) {
     if (isMusicPlaying) stopBackgroundMusic();
     gameIframe.src = game.url;
     gameIframeContainer.style.display = 'flex';
+    if (typeof stopBackgroundMusic === "function") stopBackgroundMusic();
 };
 
 // --- REANUDAR MÚSICA AL CERRAR JUEGO ---
@@ -5731,9 +5734,18 @@ function updatePointsDisplay() {
 
 // Sumar puntos al abrir un juego
 function openGameWithPoints(game) {
-    // Suma 10 puntos por cada juego jugado (puedes cambiar la cantidad)
-    addUserPoints(10);
-    // Llama a la función original para abrir el juego
+    const COOLDOWN = 30 * 1000; // 30 segundos
+    const lastRewardTime = parseInt(localStorage.getItem('lastCoinReward') || '0', 10);
+    const now = Date.now();
+
+    if (now - lastRewardTime < COOLDOWN) {
+        showAlert('Espera', 'Debes esperar 30 segundos entre cada recompensa de monedas.');
+    } else {
+        addUserPoints(10);
+        localStorage.setItem('lastCoinReward', now.toString());
+        showAlert('¡Felicidades!', 'Has ganado 10 estrellas por jugar.');
+    }
+
     window._originalOpenGame(game);
 }
 
@@ -6768,8 +6780,232 @@ const SHOP_THEMES = [
         document.body.style.webkitBackdropFilter = 'blur(16px)';
         localStorage.setItem('theme', 'glass');
     }},
+    { id: 'theme_pixel', title: 'Tema Pixel', desc: 'Estilo retro de 8 bits.', price: 180, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#22223b');
+        document.documentElement.style.setProperty('--secondary-color', '#4a4e69');
+        document.documentElement.style.setProperty('--accent-color', '#f2e9e4');
+        document.documentElement.style.setProperty('--header-bg', '#9a8c98');
+        document.documentElement.style.setProperty('--sidebar-bg', '#c9ada7');
+        localStorage.setItem('theme', 'pixel');
+    }},
+    { id: 'theme_matrix', title: 'Tema Matrix', desc: 'Verde digital y negro.', price: 220, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#0f0');
+        document.documentElement.style.setProperty('--secondary-color', '#222');
+        document.documentElement.style.setProperty('--accent-color', '#39ff14');
+        document.documentElement.style.setProperty('--header-bg', '#111');
+        document.documentElement.style.setProperty('--sidebar-bg', '#222');
+        localStorage.setItem('theme', 'matrix');
+    }},
+    { id: 'theme_candy', title: 'Tema Caramelo', desc: 'Colores dulces y vibrantes.', price: 160, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#ffb3ba');
+        document.documentElement.style.setProperty('--secondary-color', '#ffdfba');
+        document.documentElement.style.setProperty('--accent-color', '#baffc9');
+        document.documentElement.style.setProperty('--header-bg', '#bae1ff');
+        document.documentElement.style.setProperty('--sidebar-bg', '#ffffba');
+        localStorage.setItem('theme', 'candy');
+    }},
+    { id: 'theme_steampunk', title: 'Tema Steampunk', desc: 'Cobre, bronce y engranajes.', price: 350, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#6b4226');
+        document.documentElement.style.setProperty('--secondary-color', '#c9b18a');
+        document.documentElement.style.setProperty('--accent-color', '#b87333');
+        document.documentElement.style.setProperty('--header-bg', '#3e2723');
+        document.documentElement.style.setProperty('--sidebar-bg', '#c9b18a');
+        localStorage.setItem('theme', 'steampunk');
+    }},
+    { id: 'theme_galaxy', title: 'Tema Galaxia', desc: 'Morado, azul y estrellas.', price: 400, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#2d006e');
+        document.documentElement.style.setProperty('--secondary-color', '#4e148c');
+        document.documentElement.style.setProperty('--accent-color', '#00d2ff');
+        document.documentElement.style.setProperty('--header-bg', 'linear-gradient(90deg, #2d006e, #4e148c, #00d2ff)');
+        document.documentElement.style.setProperty('--sidebar-bg', '#4e148c');
+        localStorage.setItem('theme', 'galaxy');
+    }},
+    { id: 'theme_vaporwave', title: 'Tema Vaporwave', desc: 'Rosa, azul y estética retro.', price: 320, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#ff71ce');
+        document.documentElement.style.setProperty('--secondary-color', '#01cdfe');
+        document.documentElement.style.setProperty('--accent-color', '#05ffa1');
+        document.documentElement.style.setProperty('--header-bg', '#b967ff');
+        document.documentElement.style.setProperty('--sidebar-bg', '#fffb96');
+        localStorage.setItem('theme', 'vaporwave');
+    }},
+    { id: 'theme_woodland', title: 'Tema Bosque Encantado', desc: 'Verde musgo y marrón.', price: 210, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#355c3a');
+        document.documentElement.style.setProperty('--secondary-color', '#a3c9a8');
+        document.documentElement.style.setProperty('--accent-color', '#6b4226');
+        document.documentElement.style.setProperty('--header-bg', '#355c3a');
+        document.documentElement.style.setProperty('--sidebar-bg', '#a3c9a8');
+        localStorage.setItem('theme', 'woodland');
+    }},
+    { id: 'theme_aurora', title: 'Tema Aurora', desc: 'Colores del norte.', price: 380, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#0f2027');
+        document.documentElement.style.setProperty('--secondary-color', '#2c5364');
+        document.documentElement.style.setProperty('--accent-color', '#00c3ff');
+        document.documentElement.style.setProperty('--header-bg', 'linear-gradient(90deg, #0f2027, #2c5364, #00c3ff)');
+        document.documentElement.style.setProperty('--sidebar-bg', '#2c5364');
+        localStorage.setItem('theme', 'aurora');
+    }},
+    { id: 'theme_sunset_beach', title: 'Tema Playa al Atardecer', desc: 'Naranja, rosa y azul suave.', price: 250, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#ff9966');
+        document.documentElement.style.setProperty('--secondary-color', '#ff5e62');
+        document.documentElement.style.setProperty('--accent-color', '#00c3ff');
+        document.documentElement.style.setProperty('--header-bg', 'linear-gradient(90deg, #ff9966, #ff5e62, #00c3ff)');
+        document.documentElement.style.setProperty('--sidebar-bg', '#ff9966');
+        localStorage.setItem('theme', 'sunset_beach');
+    }},
+    { id: 'theme_icecream', title: 'Tema Helado', desc: 'Colores pastel y dulces.', price: 170, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#f7cac9');
+        document.documentElement.style.setProperty('--secondary-color', '#92a8d1');
+        document.documentElement.style.setProperty('--accent-color', '#ffe5b4');
+        document.documentElement.style.setProperty('--header-bg', '#f7cac9');
+        document.documentElement.style.setProperty('--sidebar-bg', '#92a8d1');
+        localStorage.setItem('theme', 'icecream');
+    }},
+    { id: 'theme_techno', title: 'Tema Techno', desc: 'Neón y negro.', price: 260, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#0f0c29');
+        document.documentElement.style.setProperty('--secondary-color', '#302b63');
+        document.documentElement.style.setProperty('--accent-color', '#ff00c8');
+        document.documentElement.style.setProperty('--header-bg', '#0f0c29');
+        document.documentElement.style.setProperty('--sidebar-bg', '#302b63');
+        localStorage.setItem('theme', 'techno');
+    }},
+    { id: 'theme_jeans', title: 'Tema Jeans', desc: 'Azul denim y costuras.', price: 195, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#3b5998');
+        document.documentElement.style.setProperty('--secondary-color', '#8b9dc3');
+        document.documentElement.style.setProperty('--accent-color', '#dfe3ee');
+        document.documentElement.style.setProperty('--header-bg', '#3b5998');
+        document.documentElement.style.setProperty('--sidebar-bg', '#8b9dc3');
+        localStorage.setItem('theme', 'jeans');
+    }},
+    { id: 'theme_sakura_night', title: 'Tema Sakura Nocturno', desc: 'Cerezos bajo la luna.', price: 270, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#2d3142');
+        document.documentElement.style.setProperty('--secondary-color', '#ef8354');
+        document.documentElement.style.setProperty('--accent-color', '#f6abb6');
+        document.documentElement.style.setProperty('--header-bg', '#2d3142');
+        document.documentElement.style.setProperty('--sidebar-bg', '#f6abb6');
+        localStorage.setItem('theme', 'sakura_night');
+    }},
+    { id: 'theme_royal_purple', title: 'Tema Púrpura Real', desc: 'Púrpura y dorado.', price: 420, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#6a0572');
+        document.documentElement.style.setProperty('--secondary-color', '#ab83a1');
+        document.documentElement.style.setProperty('--accent-color', '#ffd700');
+        document.documentElement.style.setProperty('--header-bg', '#6a0572');
+        document.documentElement.style.setProperty('--sidebar-bg', '#ab83a1');
+        localStorage.setItem('theme', 'royal_purple');
+    }},
+    { id: 'theme_emerald_city', title: 'Tema Ciudad Esmeralda', desc: 'Verde brillante y dorado.', price: 380, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#50c878');
+        document.documentElement.style.setProperty('--secondary-color', '#b2f7ef');
+        document.documentElement.style.setProperty('--accent-color', '#ffd700');
+        document.documentElement.style.setProperty('--header-bg', '#50c878');
+        document.documentElement.style.setProperty('--sidebar-bg', '#b2f7ef');
+        localStorage.setItem('theme', 'emerald_city');
+    }},
+    { id: 'theme_ink', title: 'Tema Tinta', desc: 'Negro profundo y azul oscuro.', price: 210, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#22223b');
+        document.documentElement.style.setProperty('--secondary-color', '#4a4e69');
+        document.documentElement.style.setProperty('--accent-color', '#9a8c98');
+        document.documentElement.style.setProperty('--header-bg', '#22223b');
+        document.documentElement.style.setProperty('--sidebar-bg', '#4a4e69');
+        localStorage.setItem('theme', 'ink');
+    }},
+    { id: 'theme_blossom', title: 'Tema Floración', desc: 'Flores y primavera.', price: 230, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#ffe3e3');
+        document.documentElement.style.setProperty('--secondary-color', '#b5ead7');
+        document.documentElement.style.setProperty('--accent-color', '#ffb7b2');
+        document.documentElement.style.setProperty('--header-bg', '#ffe3e3');
+        document.documentElement.style.setProperty('--sidebar-bg', '#b5ead7');
+        localStorage.setItem('theme', 'blossom');
+    }},
+    { id: 'theme_icefire', title: 'Tema Hielo y Fuego', desc: 'Azul y rojo intenso.', price: 350, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#00bcd4');
+        document.documentElement.style.setProperty('--secondary-color', '#ff1744');
+        document.documentElement.style.setProperty('--accent-color', '#fff');
+        document.documentElement.style.setProperty('--header-bg', 'linear-gradient(90deg, #00bcd4, #ff1744)');
+        document.documentElement.style.setProperty('--sidebar-bg', '#ff1744');
+        localStorage.setItem('theme', 'icefire');
+    }},
+    { id: 'theme_zen', title: 'Tema Zen', desc: 'Minimalista y relajante.', price: 200, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#e0e1dd');
+        document.documentElement.style.setProperty('--secondary-color', '#778da9');
+        document.documentElement.style.setProperty('--accent-color', '#415a77');
+        document.documentElement.style.setProperty('--header-bg', '#e0e1dd');
+        document.documentElement.style.setProperty('--sidebar-bg', '#778da9');
+        localStorage.setItem('theme', 'zen');
+    }},
+    { id: 'theme_royal_black', title: 'Tema Negro Real', desc: 'Negro y dorado elegante.', price: 500, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#000');
+        document.documentElement.style.setProperty('--secondary-color', '#222');
+        document.documentElement.style.setProperty('--accent-color', '#ffd700');
+        document.documentElement.style.setProperty('--header-bg', '#000');
+        document.documentElement.style.setProperty('--sidebar-bg', '#222');
+        localStorage.setItem('theme', 'royal_black');
+    }},
+    { id: 'theme_rainforest', title: 'Tema Selva Tropical', desc: 'Verde intenso y amarillo.', price: 270, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#006400');
+        document.documentElement.style.setProperty('--secondary-color', '#bfff00');
+        document.documentElement.style.setProperty('--accent-color', '#ffd700');
+        document.documentElement.style.setProperty('--header-bg', '#006400');
+        document.documentElement.style.setProperty('--sidebar-bg', '#bfff00');
+        localStorage.setItem('theme', 'rainforest');
+    }},
+    { id: 'theme_icequeen', title: 'Tema Reina de Hielo', desc: 'Azul hielo y blanco.', price: 420, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#e0f7fa');
+        document.documentElement.style.setProperty('--secondary-color', '#b2ebf2');
+        document.documentElement.style.setProperty('--accent-color', '#00bcd4');
+        document.documentElement.style.setProperty('--header-bg', '#e0f7fa');
+        document.documentElement.style.setProperty('--sidebar-bg', '#b2ebf2');
+        localStorage.setItem('theme', 'icequeen');
+    }},
+    { id: 'theme_sandstorm', title: 'Tema Tormenta de Arena', desc: 'Beige y marrón oscuro.', price: 210, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#f4e2d8');
+        document.documentElement.style.setProperty('--secondary-color', '#ba9474');
+        document.documentElement.style.setProperty('--accent-color', '#e2c290');
+        document.documentElement.style.setProperty('--header-bg', '#ba9474');
+        document.documentElement.style.setProperty('--sidebar-bg', '#f4e2d8');
+        localStorage.setItem('theme', 'sandstorm');
+    }},
+    { id: 'theme_berry', title: 'Tema Frutos Rojos', desc: 'Rojo, morado y azul.', price: 180, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#b71c1c');
+        document.documentElement.style.setProperty('--secondary-color', '#8e24aa');
+        document.documentElement.style.setProperty('--accent-color', '#1976d2');
+        document.documentElement.style.setProperty('--header-bg', '#b71c1c');
+        document.documentElement.style.setProperty('--sidebar-bg', '#8e24aa');
+        localStorage.setItem('theme', 'berry');
+    }},
+    { id: 'theme_royal_emerald', title: 'Tema Esmeralda Real', desc: 'Verde esmeralda y dorado.', price: 600, preview: '', apply: () => {
+        document.body.classList.remove('light-theme');
+        document.documentElement.style.setProperty('--primary-color', '#50c878');
+        document.documentElement.style.setProperty('--secondary-color', '#ffd700');
+        document.documentElement.style.setProperty('--accent-color', '#fff');
+        document.documentElement.style.setProperty('--header-bg', '#50c878');
+        document.documentElement.style.setProperty('--sidebar-bg', '#ffd700');
+        localStorage.setItem('theme', 'royal_emerald');
+    }},
 ];
-
 // --- MUCHAS MÁS INSIGNIAS PARA LA TIENDA ---
 const SHOP_BADGES = [
     { id: 'badge_star', title: 'Estrella', desc: 'Demuestra que eres una estrella.', price: 30, icon: 'fa-star' },
@@ -6847,7 +7083,6 @@ const SHOP_BADGES = [
     { id: 'badge_cat', title: 'Gato', desc: 'Independiente y curioso.', price: 60, icon: 'fa-cat' },
     { id: 'badge_dog', title: 'Perro', desc: 'Leal y amigable.', price: 60, icon: 'fa-dog' },
     { id: 'badge_bird', title: 'Pájaro', desc: 'Libre como el viento.', price: 50, icon: 'fa-dove' },
-    { id: 'badge_turtle', title: 'Tortuga', desc: 'Paciencia y longevidad.', price: 55, icon: 'imgjuegos/tortle.png' },
     { id: 'badge_frog', title: 'Rana', desc: 'Saltando siempre.', price: 40, icon: 'fa-frog' },
     { id: 'badge_crown4', title: 'Corona Platino', desc: 'El más exclusivo.', price: 1000, icon: 'fa-crown' },
     { id: 'badge_rocket6', title: 'Turbo Rocket', desc: '¡Velocidad máxima!', price: 150, icon: 'fa-rocket' },
@@ -6865,6 +7100,52 @@ const SHOP_BADGES = [
     { id: 'badge_icecream2', title: 'Helado Doble', desc: '¡Más dulce!', price: 40, icon: 'fa-ice-cream' },
     { id: 'badge_galaxy', title: 'Galaxia', desc: 'Universal.', price: 300, icon: 'fa-globe' },
     { id: 'badge_rocket9', title: 'Rocket Infinity', desc: '¡Hasta el infinito!', price: 1000, icon: 'fa-rocket' },
+    { id: 'badge_panda', title: 'Panda', desc: 'Tierno y fuerte.', price: 80, icon: 'fa-paw' },
+    { id: 'badge_ninja', title: 'Ninja', desc: 'Sigiloso y veloz.', price: 120, icon: 'fa-user-ninja' },
+    { id: 'badge_cactus', title: 'Cactus', desc: 'Resistente y único.', price: 40, icon: 'fa-seedling' },
+    { id: 'badge_rocket10', title: 'Rocket Pro', desc: '¡Explorador profesional!', price: 350, icon: 'fa-rocket' },
+    { id: 'badge_owl2', title: 'Gran Búho', desc: 'Sabiduría suprema.', price: 200, icon: 'fa-owl' },
+    { id: 'badge_fox2', title: 'Zorro Ártico', desc: 'Astucia polar.', price: 110, icon: 'fa-fox' },
+    { id: 'badge_koala', title: 'Koala', desc: 'Relajado y adorable.', price: 70, icon: 'fa-paw' },
+    { id: 'badge_rocket11', title: 'Rocket Supremo', desc: '¡El más veloz!', price: 1000, icon: 'fa-rocket' },
+    { id: 'badge_icecream3', title: 'Helado Triple', desc: '¡Ultra dulce!', price: 60, icon: 'fa-ice-cream' },
+    { id: 'badge_galaxy2', title: 'Galaxia Premium', desc: 'Universal y brillante.', price: 500, icon: 'fa-globe' },
+    { id: 'badge_sun2', title: 'Super Sol', desc: 'Brillas como nunca.', price: 120, icon: 'fa-sun' },
+    { id: 'badge_moon2', title: 'Luna Llena', desc: 'Misterio total.', price: 130, icon: 'fa-moon' },
+    { id: 'badge_earth2', title: 'Planeta Azul', desc: 'Cuidando la Tierra.', price: 150, icon: 'fa-globe-americas' },
+    { id: 'badge_rocket12', title: 'Rocket Ultra Pro', desc: '¡Sin límites!', price: 2000, icon: 'fa-rocket' },
+    { id: 'badge_ghost2', title: 'Fantasma Pro', desc: '¡Buu! Nivel experto.', price: 120, icon: 'fa-ghost' },
+    { id: 'badge_heart3', title: 'Corazón Arcoíris', desc: 'Amor para todos.', price: 180, icon: 'fa-heart' },
+    { id: 'badge_dragon2', title: 'Dragón Dorado', desc: 'Fuerza legendaria.', price: 400, icon: 'fa-dragon' },
+    { id: 'badge_phoenix2', title: 'Fénix de Fuego', desc: 'Renace siempre.', price: 350, icon: 'fa-fire-alt' },
+    { id: 'badge_unicorn2', title: 'Unicornio Real', desc: 'Magia infinita.', price: 500, icon: 'fa-horse-head' },
+    { id: 'badge_rocket13', title: 'Rocket Legendario', desc: '¡El más legendario!', price: 3000, icon: 'fa-rocket' },
+    { id: 'badge_king3', title: 'Rey de Reyes', desc: 'Dominio absoluto.', price: 5000, icon: 'fa-chess-king' },
+    { id: 'badge_queen3', title: 'Reina de Reinas', desc: 'Elegancia suprema.', price: 5000, icon: 'fa-chess-queen' },
+    { id: 'badge_ice2', title: 'Hielo Supremo', desc: 'Frío extremo.', price: 200, icon: 'fa-snowflake' },
+    { id: 'badge_fire3', title: 'Fuego Supremo', desc: 'Arde sin parar.', price: 200, icon: 'fa-fire' },
+    { id: 'badge_leaf2', title: 'Hoja Dorada', desc: 'Naturaleza premium.', price: 150, icon: 'fa-leaf' },
+    { id: 'badge_magic2', title: 'Magia Suprema', desc: 'Hechicero legendario.', price: 400, icon: 'fa-hat-wizard' },
+    { id: 'badge_rocket14', title: 'Rocket Infinity Pro', desc: '¡Hasta el infinito y más allá!', price: 5000, icon: 'fa-rocket' },
+    { id: 'badge_apple2', title: 'Manzana Dorada', desc: 'Conocimiento infinito.', price: 120, icon: 'fa-apple-alt' },
+    { id: 'badge_banana2', title: 'Banana Ultra', desc: '¡Energía máxima!', price: 80, icon: 'fa-lemon' },
+    { id: 'badge_pizza2', title: 'Pizza Suprema', desc: '¡Fan total!', price: 90, icon: 'fa-pizza-slice' },
+    { id: 'badge_burger2', title: 'Hamburguesa Deluxe', desc: '¡Comida premium!', price: 90, icon: 'fa-hamburger' },
+    { id: 'badge_rocket15', title: 'Rocket Platinum', desc: '¡Exclusivo!', price: 10000, icon: 'fa-rocket' },
+    { id: 'badge_cat2', title: 'Gato Ninja', desc: 'Sigiloso y curioso.', price: 120, icon: 'fa-cat' },
+    { id: 'badge_dog2', title: 'Perro Héroe', desc: 'Lealtad máxima.', price: 120, icon: 'fa-dog' },
+    { id: 'badge_bird2', title: 'Águila', desc: 'Vista aguda.', price: 200, icon: 'fa-dove' },
+    { id: 'badge_turtle2', title: 'Tortuga Ninja', desc: 'Paciencia y fuerza.', price: 120, icon: 'imgjuegos/tortle.png' },
+    { id: 'badge_frog2', title: 'Rana Dorada', desc: 'Salto legendario.', price: 100, icon: 'fa-frog' },
+    { id: 'badge_plant2', title: 'Planta Legendaria', desc: 'Creciendo sin parar.', price: 90, icon: 'fa-seedling' },
+    { id: 'badge_sushi2', title: 'Sushi Deluxe', desc: 'Fan premium.', price: 80, icon: 'fa-fish' },
+    { id: 'badge_camera3', title: 'Cámara Legendaria', desc: 'Capturando todo.', price: 200, icon: 'fa-camera-retro' },
+    { id: 'badge_rocket16', title: 'Rocket Ultra Legend', desc: '¡El más exclusivo!', price: 20000, icon: 'fa-rocket' },
+    { id: 'badge_egg2', title: 'Huevo de Oro', desc: '¡Sorpresa premium!', price: 100, icon: 'fa-egg' },
+    { id: 'badge_cupcake2', title: 'Cupcake Deluxe', desc: 'Dulzura máxima.', price: 60, icon: 'fa-birthday-cake' },
+    { id: 'badge_galaxy3', title: 'Galaxia Legendaria', desc: 'Universal y único.', price: 1000, icon: 'fa-globe' },
+    { id: 'badge_rocket17', title: 'Rocket Infinity Ultra', desc: '¡Sin límites reales!', price: 50000, icon: 'fa-rocket' },
+    { id: 'tortlegames', title: 'TORTLEGAMES REFERENCE', desc: '¿Sigue con vida?', price: 550000, icon: 'tortle.ico' },
 ];
 const SHOP_GAMES = [
     {
@@ -6978,8 +7259,25 @@ function renderShopBadges() {
         const owned = isShopOwned('badges', badge.id);
         const card = document.createElement('div');
         card.className = 'shop-item-card';
+        // Detectar si el icono es una imagen
+        let badgeIconHtml;
+        if (
+            badge.icon &&
+            (
+                badge.icon.endsWith('.png') ||
+                badge.icon.endsWith('.jpg') ||
+                badge.icon.endsWith('.jpeg') ||
+                badge.icon.endsWith('.gif') ||
+                badge.icon.endsWith('.ico') ||
+                badge.icon.startsWith('imgjuegos/')
+            )
+        ) {
+            badgeIconHtml = `<img src="${badge.icon}" alt="${badge.title}" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block;margin:0 auto;">`;
+        } else {
+            badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;"></i>`;
+        }
         card.innerHTML = `
-            <div class="shop-item-badge"><i class="fas ${badge.icon}" style="color:gold;"></i></div>
+            <div class="shop-item-badge">${badgeIconHtml}</div>
             <div class="shop-item-title">${badge.title}</div>
             <div class="shop-item-desc">${badge.desc}</div>
             <div class="shop-item-price"><i class="fas fa-star"></i> ${badge.price}</div>
@@ -7356,34 +7654,6 @@ if (window.Notification && Notification.permission === "default") {
                         showCoinNotification(amount);
                 }
         };
-})();
-(function() {
-        function updateSuperPremiumCrown() {
-                const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
-                const profileAvatar = document.getElementById('profileAvatar');
-                // Quitar corona previa si existe
-                const oldCrown = profileAvatar.querySelector('.profile-avatar-crown');
-                if (oldCrown) oldCrown.remove();
-
-                if (
-                        profileData.name === 'AdministradorGalaviz' &&
-                        profileData.surname === 'aomarlemide16cm'
-                ) {
-                        // Agregar corona encima del avatar
-                        const crown = document.createElement('span');
-                        crown.className = 'profile-avatar-crown';
-                        crown.innerHTML = '<i class="fas fa-crown"></i>';
-                        profileAvatar.appendChild(crown);
-                }
-        }
-        // Ejecutar al cargar y después de guardar el perfil
-        document.addEventListener('DOMContentLoaded', updateSuperPremiumCrown);
-        const profileForm = document.getElementById('profileForm');
-        if (profileForm) {
-                profileForm.addEventListener('submit', function() {
-                        setTimeout(updateSuperPremiumCrown, 100);
-                });
-        }
 })();
 initApp();
 </script>
