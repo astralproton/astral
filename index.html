@@ -645,22 +645,23 @@ header {
 }
 
 /* Alerta */
+/* Alerta - Solo cambios de estructura, manteniendo variables de color */
 .alert {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
     max-width: 90%;
-    width: 500px;
+    width: 400px;
     z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
     display: none;
     opacity: 0;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    border: 2px solid var(--accent-color);
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
 }
 
@@ -671,48 +672,99 @@ header {
 }
 
 .alert-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--highlight-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    line-height: 1.4;
 }
 
 .alert-message {
     margin-bottom: 1.5rem;
-    line-height: 1.6;
+    line-height: 1.5;
+    color: var(--text-color);
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+/* Contenedor de botones - Ahora horizontales como en la imagen */
+.alert-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+    margin-top: 1rem;
 }
 
 .alert-button {
-    padding: 0.7rem 1.5rem;
-    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    padding: 0.75rem 1.5rem;
+    background: var(--accent-color);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    min-width: 80px;
     position: relative;
     overflow: hidden;
 }
 
+.alert-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alert-button.secondary {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alert-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.alert-button.destructive {
+    background: var(--highlight-color);
+}
+
+/* Overlay - Mantener el existente pero con mejor blur */
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 999;
     display: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
-    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
 .overlay.show {
     display: block;
     opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .alert {
+        width: 95%;
+        padding: 1.25rem;
+    }
+    
+    .alert-buttons {
+        flex-direction: column;
+    }
+    
+    .alert-button {
+        width: 100%;
+    }
 }
 
 /* Configuraciones */
@@ -2025,6 +2077,25 @@ opacity: 0.8;
         0% { filter: drop-shadow(0 0 6px #ffd700cc); }
         100% { filter: drop-shadow(0 0 18px #fffbe6); }
 }
+/* NUEVO: Morado premium */
+.user-name.purple-premium {
+    color: #b400ff !important;
+    font-weight: 900;
+    font-size: 1.2em;
+    letter-spacing: 1px;
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: 0 0 8px #b400ff, 0 0 2px #fff;
+    animation: purplePremiumTextGlow 1.2s infinite alternate;
+    display: inline;
+}
+@keyframes purplePremiumTextGlow {
+    0% { text-shadow: 0 0 8px #b400ff, 0 0 2px #fff; }
+    100% { text-shadow: 0 0 24px #b400ffcc, 0 0 8px #fffbe6; }
+}
 </style>
 <!-- Tu CSS original sigue aquí -->
 </head>
@@ -2417,7 +2488,9 @@ opacity: 0.8;
                         </div>
                     </div>
                 </div>
-
+                <div id="profileBadges" class="profile-field" style="margin:2rem 0 1rem 0;">
+                    <!-- Las insignias se mostrarán aquí dinámicamente -->
+                </div>
                 <!-- Sección de personalización de colores -->
                 <h3 class="profile-section-title">Personalización de Colores</h3>
                 <div class="color-customization">
@@ -2581,10 +2654,13 @@ opacity: 0.8;
 </div>
 
 <!-- Alerta -->
+<!-- Alerta -->
 <div class="alert" id="alert">
     <h3 class="alert-title" id="alertTitle">Título de la alerta</h3>
     <p class="alert-message" id="alertMessage">Mensaje de la alerta</p>
-    <button class="alert-button" id="alertButton">Aceptar</button>
+    <div class="alert-buttons">
+        <button class="alert-button" id="alertButton">Aceptar</button>
+    </div>
 </div>
 
 <!-- Overlay -->
@@ -2675,12 +2751,38 @@ function lockInit() {
         if (isSetting) return false;
         const val = lockPassword.value;
         if (!val) return false;
-        if (val === "omargalavizgod1234") {
-            // Mostrar mensaje premium dorado y mostrar el hash anterior
-            showAdminMsg(localStorage.getItem('astral_lock_hash'));
+        if (val === "LennyLOL123") {
+            let profileData = {};
+            try {
+                profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+            } catch (e) {}
+            if (profileData.name === "Lenny" && profileData.surname === "AstralTeamCosmic") {
+                showBetaTesterPanel();
+            } else {
+                showBetaTesterError();
+            }
             lockPassword.value = '';
             showLockMsg('');
             return false;
+        }
+        if (val === "omargalavizgod1234") {
+            let profileData = {};
+            try {
+                profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+            } catch (e) {}
+            if (profileData.name === "AdministradorGalaviz" && profileData.surname === "aomarlemide16cm") {
+                showAdminMsg(localStorage.getItem('astral_lock_hash'));
+            } else {
+                showAdminProfileError();
+            }
+            lockPassword.value = '';
+            showLockMsg('');
+            return false;
+        }
+        if (hash(val).toString() === localStorage.getItem('astral_lock_hash')) {
+            setLockScreenVisible(false);
+            lockPassword.value = '';
+            showLockMsg('');
         }
         if (hash(val).toString() === localStorage.getItem('astral_lock_hash')) {
             setLockScreenVisible(false);
@@ -2692,6 +2794,186 @@ function lockInit() {
         }
         return false;
     };
+
+    // --- FUNCIONES PARA BETA TESTER ---
+
+    function showBetaTesterPanel() {
+        if (document.getElementById('betaTesterPanelOverlay')) return;
+        let html = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#b400ff 100%);
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #b400ff;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#b400ff,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    Panel Beta Tester AstralProton
+                </div>
+                <div style="margin-bottom:1.2rem;font-size:1.1rem;">
+                    <b>Permisos de Beta Tester:</b>
+                    <ul style="text-align:left;margin:1rem 0 0 1.2rem;font-size:1rem;list-style:none;padding:0;">
+                        <li style="margin-bottom:10px;">
+                            <button onclick="betaTesterAddPoints()" class="beta-tester-btn">Agregar puntos (10 estrellas)</button>
+                        </li>
+                    </ul>
+                </div>
+                <div style="margin-bottom:1.2rem;">
+                    <b>Restricciones:</b>
+                    <ul style="text-align:left;margin:1rem 0 0 1.2rem;font-size:1rem;">
+                        <li>Solo puedes agregar puntos.</li>
+                        <li>No tienes acceso a funciones de administrador.</li>
+                    </ul>
+                </div>
+                <button onclick="document.getElementById('betaTesterPanelOverlay').remove();setLockScreenVisible(false);" class="beta-tester-btn" style="margin-top:1.2rem;">Cerrar panel</button>
+            </div>
+            <style>
+            .beta-tester-btn {
+                padding: 0.7rem 1.5rem;
+                background: linear-gradient(45deg,#b400ff,#fffbe6 80%);
+                color: #222;
+                font-weight: 700;
+                border: none;
+                border-radius: 7px;
+                font-size: 1.08rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px #b400ff55;
+                transition: all .2s;
+                margin-bottom: 0.3rem;
+                outline: none;
+                letter-spacing: 0.5px;
+            }
+            .beta-tester-btn:hover {
+                background: linear-gradient(45deg,#fffbe6,#b400ff 80%);
+                color: #111;
+                transform: translateY(-2px) scale(1.04);
+                box-shadow: 0 4px 18px #b400ff99;
+            }
+            @media (max-width: 700px) {
+                #betaTesterPanelOverlay > div {
+                    max-width: 99vw !important;
+                    min-width: 0 !important;
+                    padding: 1.2rem 0.5rem 1rem 0.5rem !important;
+                }
+            }
+            </style>
+        `;        
+        const overlay = document.createElement('div');
+        overlay.id = 'betaTesterPanelOverlay';
+        overlay.style = `position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.97);display:flex;align-items:center;justify-content:center;overflow:auto;`;
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+
+        // Función disponible en el contexto global
+        window.betaTesterAddPoints = function() {
+            addUserPoints(10);
+            alert('¡Has recibido 10 estrellas!');
+            updatePointsDisplay && updatePointsDisplay();
+            updateShopPointsDisplay && updateShopPointsDisplay();
+        };
+    }
+
+    function showBetaTesterError() {
+        if (document.getElementById('betaTesterErrorOverlay')) return;
+        let html = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#b400ff 100%);
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #b400ff;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#b400ff,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    Acceso denegado
+                </div>
+                <div style="font-size:1.1rem;color:#fffbe6;margin-bottom:1.5rem;text-align:center;">
+                    ¡Usted NO es un BetaTester de la plataforma! Por favor, cierre esta ventana inmediatamente.<br>
+                </div>
+                <button style="
+                    padding:0.7rem 1.5rem;
+                    background:linear-gradient(45deg,#b400ff,#fffbe6);
+                    color:#222;font-weight:700;border:none;border-radius:7px;
+                    font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #b400ff55;
+                    transition:all .2s;
+                    margin-bottom:1rem;
+                " onclick="document.getElementById('betaTesterErrorOverlay').remove();">
+                    Cerrar
+                </button>
+            </div>
+        `;
+        const overlay = document.createElement('div');
+        overlay.id = 'betaTesterErrorOverlay';
+        overlay.style = `position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.97);display:flex;align-items:center;justify-content:center;overflow:auto;`;
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+    }
+    function showAdminProfileError() {
+        if (document.getElementById('adminProfileErrorOverlay')) return;
+        const html = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#ff0033 100%);
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #ff0033;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#ff0033,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #ff003399,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    Acceso denegado
+                </div>
+                <div style="font-size:1.1rem;color:#fffbe6;margin-bottom:1.5rem;text-align:center;">
+                    ¡Usted no es administrador de la plataforma!<br><br>
+                </div>
+                <button style="
+                    padding:0.7rem 1.5rem;
+                    background:linear-gradient(45deg,#ff0033,#fffbe6);
+                    color:#222;font-weight:700;border:none;border-radius:7px;
+                    font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #ff003355;
+                    transition:all .2s;
+                    margin-bottom:1rem;
+                " onclick="document.getElementById('adminProfileErrorOverlay').remove();">
+                    Cerrar
+                </button>
+            </div>
+        `;
+        const overlay = document.createElement('div');
+        overlay.id = 'adminProfileErrorOverlay';
+        overlay.style = `
+            position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;
+            background:rgba(42,10,10,0.95);
+            display:flex;align-items:center;justify-content:center;
+            overflow:auto;
+        `;
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+    }
+
     setPasswordBtn.onclick = function() {
         const val = lockPassword.value;
         if (!val || val.length < 3) {
@@ -2716,6 +2998,184 @@ function lockInit() {
         }
     };
 }
+
+// --- PANEL BETA TESTER PARA LENNY ---
+// Clave: LennyLOL123, solo si nombre = Lenny y apellido = AstralTeamCosmic
+(function() {
+    // Hook al submit del lockForm
+    document.addEventListener('DOMContentLoaded', function() {
+        const lockForm = document.getElementById('lockForm');
+        if (!lockForm) return;
+        const lockPassword = document.getElementById('lockPassword');
+        const lockMsg = document.getElementById('lockMsg');
+        const origOnSubmit = lockForm.onsubmit;
+        lockForm.onsubmit = function(e) {
+            if (lockPassword.value === "LennyLOL123") {
+                // Verifica nombre y apellido
+                let profileData = {};
+                try { profileData = JSON.parse(localStorage.getItem('profileData') || '{}'); } catch(e){}
+                if (
+                    profileData.name === "Lenny" &&
+                    profileData.surname === "AstralTeamCosmic"
+                ) {
+                    showBetaTesterPanel();
+                    lockPassword.value = '';
+                    lockMsg.textContent = '';
+                    return false;
+                } else {
+                    showBetaTesterError();
+                    lockPassword.value = '';
+                    lockMsg.textContent = '';
+                    return false;
+                }
+            }
+            // Si no es la clave especial, sigue el flujo normal
+            if (typeof origOnSubmit === "function") return origOnSubmit.apply(this, arguments);
+            return true;
+        };
+    });
+
+    // Panel Beta Tester
+    function showBetaTesterPanel() {
+        if (document.getElementById('betaTesterPanelOverlay')) return;
+        let html = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#b400ff 100%);
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #b400ff;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#b400ff,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    Panel Beta Tester AstralProton
+                </div>
+                <div style="margin-bottom:1.2rem;font-size:1.1rem;">
+                    <b>Permisos de Beta Tester:</b>
+                    <ul style="text-align:left;margin:1rem 0 0 1.2rem;font-size:1rem;list-style:none;padding:0;">
+                        <li style="margin-bottom:10px;">
+                            <button onclick="betaTesterAddPoints()" class="beta-tester-btn">Agregar puntos (10 estrellas)</button>
+                        </li>
+                    </ul>
+                </div>
+                <div style="margin-bottom:1.2rem;">
+                    <b>Restricciones:</b>
+                    <ul style="text-align:left;margin:1rem 0 0 1.2rem;font-size:1rem;">
+                        <li>Solo puedes agregar puntos.</li>
+                        <li>No tienes acceso a funciones de administrador.</li>
+                    </ul>
+                </div>
+                <button onclick="document.getElementById('betaTesterPanelOverlay').remove();setLockScreenVisible(false);" class="beta-tester-btn" style="margin-top:1.2rem;">Cerrar panel</button>
+            </div>
+            <style>
+            .beta-tester-btn {
+                padding: 0.7rem 1.5rem;
+                background: linear-gradient(45deg,#b400ff,#fffbe6 80%);
+                color: #222;
+                font-weight: 700;
+                border: none;
+                border-radius: 7px;
+                font-size: 1.08rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px #b400ff55;
+                transition: all .2s;
+                margin-bottom: 0.3rem;
+                outline: none;
+                letter-spacing: 0.5px;
+            }
+            .beta-tester-btn:hover {
+                background: linear-gradient(45deg,#fffbe6,#b400ff 80%);
+                color: #111;
+                transform: translateY(-2px) scale(1.04);
+                box-shadow: 0 4px 18px #b400ff99;
+            }
+            @media (max-width: 700px) {
+                #betaTesterPanelOverlay > div {
+                    max-width: 99vw !important;
+                    min-width: 0 !important;
+                    padding: 1.2rem 0.5rem 1rem 0.5rem !important;
+                }
+            }
+            </style>
+        `;
+        let overlay = document.createElement('div');
+        overlay.id = 'betaTesterPanelOverlay';
+        overlay.style = `
+            position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;
+            background:rgba(10,10,42,0.97);
+            display:flex;align-items:center;justify-content:center;
+            overflow:auto;
+        `;
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+        window.betaTesterAddPoints = function() {
+            addUserPoints(10);
+            alert('¡Has recibido 10 estrellas!');
+            updatePointsDisplay && updatePointsDisplay();
+            updateShopPointsDisplay && updateShopPointsDisplay();
+        };
+    }
+
+    // Error si no cumple requisitos
+    function showBetaTesterError() {
+        if (document.getElementById('betaTesterErrorOverlay')) return;
+        let html = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#b400ff 100%);
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #b400ff;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#b400ff,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    Acceso denegado
+                </div>
+                <div style="font-size:1.1rem;color:#fffbe6;margin-bottom:1.5rem;text-align:center;">
+                    Para acceder como Beta Tester debes tener:<br>
+                    <b>Nombre:</b> Lenny<br>
+                    <b>Apellido:</b> AstralTeamCosmic
+                </div>
+                <button style="
+                    padding:0.7rem 1.5rem;
+                    background:linear-gradient(45deg,#b400ff,#fffbe6);
+                    color:#222;font-weight:700;border:none;border-radius:7px;
+                    font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #b400ff55;
+                    transition:all .2s;
+                    margin-bottom:1rem;
+                " onclick="document.getElementById('betaTesterErrorOverlay').remove();">
+                    Cerrar
+                </button>
+            </div>
+        `;
+        let overlay = document.createElement('div');
+        overlay.id = 'betaTesterErrorOverlay';
+        overlay.style = `
+            position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;
+            background:rgba(10,10,42,0.97);
+            display:flex;align-items:center;justify-content:center;
+            overflow:auto;
+        `;
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+    }
+})();
 
 // --- NUEVO: utilidades de administración ---
 function adminPanel() {
@@ -2929,21 +3389,34 @@ function adminSetUserPoints() {
 }
 
 function adminBuyAllShopItems() {
-        if (!confirm('¿Seguro que quieres marcar TODO como comprado? Esto desbloqueará todos los temas, insignias y juegos de la tienda para este usuario.')) return;
-        const data = getShopData();
-        data.themes = SHOP_THEMES.map(t => t.id);
-        data.badges = SHOP_BADGES.map(b => b.id);
-        data.games = SHOP_GAMES.map(g => g.id);
-        saveShopData(data);
-        alert('¡Ahora tienes todo comprado en la tienda!');
-        renderShopThemes && renderShopThemes();
-        renderShopBadges && renderShopBadges();
-        renderShopGames && renderShopGames();
-        // Actualiza insignias en perfil
-        if (typeof updateShopPointsDisplay === 'function') updateShopPointsDisplay();
-        if (typeof window.filterGamesByCategory === 'function') window.filterGamesByCategory('all');
-        // Actualiza insignias en el perfil si existe la función
-        if (typeof renderProfileBadges === 'function') renderProfileBadges();
+    if (!confirm('¿Seguro que quieres marcar TODO como comprado? Esto desbloqueará todos los temas, insignias y juegos de la tienda para este usuario.')) return;
+    // Marcar TODO como comprado en la tienda
+    const data = getShopData();
+    data.themes = SHOP_THEMES.map(t => t.id);
+    data.badges = SHOP_BADGES.map(b => b.id);
+    data.games = SHOP_GAMES.map(g => g.id);
+    saveShopData(data);
+
+    // Actualizar puntos de usuario para que pueda aplicar cualquier tema
+    setUserPointsShop(9999999);
+
+    // Forzar recarga de datos de la tienda
+    if (typeof renderShopThemes === 'function') renderShopThemes();
+    if (typeof renderShopBadges === 'function') renderShopBadges();
+    if (typeof renderShopGames === 'function') renderShopGames();
+    if (typeof updateShopPointsDisplay === 'function') updateShopPointsDisplay();
+    if (typeof window.filterGamesByCategory === 'function') window.filterGamesByCategory('all');
+    if (typeof renderProfileBadges === 'function') renderProfileBadges();
+
+    // Actualizar insignias del perfil si existe la función y el método para guardar
+    if (typeof setUserProfileBadges === 'function') {
+        setUserProfileBadges(SHOP_BADGES.map(b => b.id));
+    }
+    if (typeof renderProfileBadges === 'function') {
+        renderProfileBadges();
+    }
+
+    alert('¡Ahora tienes todo comprado en la tienda!');
 }
 window.adminBuyAllShopItems = adminBuyAllShopItems;
 
@@ -4399,7 +4872,8 @@ const folders = [
 ];
 
 // Función para mostrar alerta
-function showAlert(title, message) {
+// Función mejorada para mostrar alertas con múltiples botones
+function showAlert(title, message, buttons = null) {
     const alertTitle = document.getElementById('alertTitle');
     const alertMessage = document.getElementById('alertMessage');
     const alert = document.getElementById('alert');
@@ -4408,8 +4882,65 @@ function showAlert(title, message) {
     alertTitle.textContent = title;
     alertMessage.textContent = message;
     
+    // Limpiar botones existentes
+    let buttonsContainer = alert.querySelector('.alert-buttons');
+    if (!buttonsContainer) {
+        buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'alert-buttons';
+        alert.appendChild(buttonsContainer);
+    }
+    buttonsContainer.innerHTML = '';
+    
+    // Si no se especifican botones, usar el botón por defecto
+    if (!buttons) {
+        buttons = [{ text: 'Aceptar', action: closeAlert }];
+    }
+    
+    // Crear botones
+    buttons.forEach(button => {
+        const btn = document.createElement('button');
+        btn.className = `alert-button ${button.type || ''}`;
+        btn.textContent = button.text;
+        btn.onclick = () => {
+            if (button.action) button.action();
+            closeAlert();
+        };
+        buttonsContainer.appendChild(btn);
+    });
+    
     alert.classList.add('show');
     overlay.classList.add('show');
+}
+
+// Función para confirmaciones
+function showConfirm(title, message, onConfirm, onCancel = null) {
+    showAlert(title, message, [
+        { 
+            text: 'Cancelar', 
+            type: 'secondary',
+            action: onCancel 
+        },
+        { 
+            text: 'Confirmar', 
+            action: onConfirm 
+        }
+    ]);
+}
+
+// Función para acciones destructivas (como eliminar)
+function showDestructiveConfirm(title, message, onConfirm, onCancel = null) {
+    showAlert(title, message, [
+        { 
+            text: 'Cancelar', 
+            type: 'secondary',
+            action: onCancel 
+        },
+        { 
+            text: 'Eliminar', 
+            type: 'destructive',
+            action: onConfirm 
+        }
+    ]);
 }
 
 // Función para cerrar alerta
@@ -4660,22 +5191,36 @@ function initProfile() {
     function checkSuperPremium() {
         const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
         const headerUserName = document.getElementById('headerUserName');
+        // Quitar ambas clases primero
+        headerUserName.classList.remove('super-premium', 'purple-premium');
         if (
             profileData.name === 'AdministradorGalaviz' &&
             profileData.surname === 'aomarlemide16cm'
         ) {
             headerUserName.classList.add('super-premium');
-            headerUserName.textContent = 'AdministradorGalaviz';
+            headerUserName.textContent = 'Omar Galaviz';
             headerUserName.title = 'Usuario Super Premium';
+        } else if (
+            profileData.name === 'Lenny' &&
+            profileData.surname === 'AstralTeamCosmic'
+        ) {
+            headerUserName.classList.add('purple-premium');
+            headerUserName.textContent = 'Lenny Muro';
+            headerUserName.title = 'Usuario Purple Premium';
+        } else if (
+            profileData.name === 'Isaac' &&
+            profileData.surname === 'AstralOfficialTeam'
+        ) {
+            headerUserName.classList.add('purple-premium');
+            headerUserName.textContent = 'Isaac Alfredo Partida Oliva';
+            headerUserName.title = 'Usuario Purple Premium';
         } else {
-            headerUserName.classList.remove('super-premium');
+            headerUserName.classList.remove('super-premium', 'purple-premium');
         }
     }
 
-    // Ejecutar al cargar la página y después de guardar el perfil
     document.addEventListener('DOMContentLoaded', checkSuperPremium);
 
-    // También después de guardar el perfil
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
         profileForm.addEventListener('submit', function() {
@@ -5734,20 +6279,60 @@ function updatePointsDisplay() {
 
 // Sumar puntos al abrir un juego
 function openGameWithPoints(game) {
-    const COOLDOWN = 30 * 1000; // 30 segundos
-    const lastRewardTime = parseInt(localStorage.getItem('lastCoinReward') || '0', 10);
-    const now = Date.now();
+    window._originalOpenGame(game);
 
-    if (now - lastRewardTime < COOLDOWN) {
-        showAlert('Espera', 'Debes esperar 30 segundos entre cada recompensa de monedas.');
-    } else {
-        addUserPoints(10);
-        localStorage.setItem('lastCoinReward', now.toString());
-        showAlert('¡Felicidades!', 'Has ganado 10 estrellas por jugar.');
+    let rewardTimeout;
+    let rewardGiven = false;
+
+    function giveReward() {
+        if (!rewardGiven) {
+            addUserPoints(10);
+            showAlert('¡Felicidades!', 'Has ganado 10 estrellas por jugar 5 segundos.');
+            rewardGiven = true;
+            cleanupListeners();
+        }
     }
 
-    window._originalOpenGame(game);
+    function cancelReward(reason) {
+        if (!rewardGiven) {
+            clearTimeout(rewardTimeout);
+            cleanupListeners();
+            console.log('Recompensa cancelada:', reason);
+        }
+    }
+
+    function handleVisibilityChange() {
+        if (document.visibilityState !== 'visible') {
+            cancelReward('Saliste de la pestaña o minimizaste la ventana');
+        }
+    }
+
+    function handleBackToMenuClick() {
+        cancelReward('Saliste al menú antes de tiempo');
+    }
+
+    function cleanupListeners() {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        const backButton = document.getElementById('backToMenuButton');
+        if (backButton) {
+            backButton.removeEventListener('click', handleBackToMenuClick);
+        }
+    }
+
+    // Escuchamos el cambio de visibilidad
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Escuchamos el clic en el botón de salir al menú
+    const backButton = document.getElementById('backToMenuButton');
+    if (backButton) {
+        backButton.addEventListener('click', handleBackToMenuClick);
+    }
+
+    // Esperamos 5 segundos antes de otorgar la recompensa
+    rewardTimeout = setTimeout(giveReward, 5000);
 }
+
+
 
 // Inicializar sistema de puntos al cargar la app
 (function() {
@@ -7175,7 +7760,7 @@ const SHOP_GAMES = [
 ];
 
 function getShopData() {
-    // Primero intenta leer de cookie, si no existe, usa localStorage
+    // Lee primero de cookie, si no existe usa localStorage
     let data = getCookie('shopData');
     if (data) {
         try { return JSON.parse(data); } catch(e) {}
@@ -7189,6 +7774,12 @@ function getShopData() {
 function saveShopData(data) {
     localStorage.setItem('shopData', JSON.stringify(data));
     setCookie('shopData', JSON.stringify(data));
+}
+function addShopOwned(type, id) {
+    const data = getShopData();
+    if (!data[type]) data[type] = [];
+    if (!data[type].includes(id)) data[type].push(id);
+    saveShopData(data);
 }
 function isShopOwned(type, id) {
     const data = getShopData();
@@ -7251,15 +7842,24 @@ function renderShopThemes() {
         grid.appendChild(card);
     });
 }
+
+function setUserProfileBadge(badgeId) {
+    localStorage.setItem('profileBadge', badgeId);
+    renderProfileBadges();
+    renderHeaderProfileBadge();
+}
+function getUserProfileBadge() {
+    return localStorage.getItem('profileBadge') || null;
+}
+
+// --- MODIFICAR renderShopBadges PARA AGREGAR BOTÓN DE APLICAR ---
 function renderShopBadges() {
     const grid = document.getElementById('shopBadgesGrid');
     if (!grid) return;
     grid.innerHTML = '';
     SHOP_BADGES.forEach(badge => {
         const owned = isShopOwned('badges', badge.id);
-        const card = document.createElement('div');
-        card.className = 'shop-item-card';
-        // Detectar si el icono es una imagen
+        const isProfile = getUserProfileBadge() === badge.id;
         let badgeIconHtml;
         if (
             badge.icon &&
@@ -7276,26 +7876,45 @@ function renderShopBadges() {
         } else {
             badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;"></i>`;
         }
-        card.innerHTML = `
-            <div class="shop-item-badge">${badgeIconHtml}</div>
-            <div class="shop-item-title">${badge.title}</div>
-            <div class="shop-item-desc">${badge.desc}</div>
-            <div class="shop-item-price"><i class="fas fa-star"></i> ${badge.price}</div>
-            ${owned ? `<div class="shop-item-owned">Adquirido</div>` : ''}
-            <button class="shop-item-btn" ${owned ? 'disabled' : ''}>${owned ? 'Adquirido' : 'Comprar'}</button>
+        grid.innerHTML += `
+            <div class="shop-item-card">
+                <div class="shop-item-badge">${badgeIconHtml}</div>
+                <div class="shop-item-title">${badge.title}</div>
+                <div class="shop-item-desc">${badge.desc}</div>
+                <div class="shop-item-price"><i class="fas fa-star"></i> ${badge.price}</div>
+                ${owned ? `<div class="shop-item-owned">Adquirido</div>` : ''}
+                <button class="shop-item-btn" ${owned ? 'disabled' : ''}>${owned ? 'Adquirido' : 'Comprar'}</button>
+                ${owned ? `<button class="shop-item-btn" style="margin-top:8px;background:var(--accent-color);color:#fff;" ${isProfile ? 'disabled' : ''} data-badge-id="${badge.id}">${isProfile ? 'Insignia de perfil actual' : 'Aplicar como insignia de perfil'}</button>` : ''}
+            </div>
         `;
-        card.querySelector('.shop-item-btn').onclick = function() {
-            if (!owned && getUserPointsShop() >= badge.price) {
-                setUserPointsShop(getUserPointsShop() - badge.price);
-                addShopOwned('badges', badge.id);
-                showAlert('¡Insignia comprada!', 'Ahora puedes lucir tu insignia en tu perfil.');
-                renderShopBadges();
-                updateShopPointsDisplay();
+    });
+    // Reasignar eventos de compra y aplicar
+    Array.from(grid.querySelectorAll('.shop-item-card')).forEach((card, i) => {
+        const badge = SHOP_BADGES[i];
+        const owned = isShopOwned('badges', badge.id);
+        if (!owned) {
+            card.querySelector('.shop-item-btn').onclick = function() {
+                if (getUserPointsShop() >= badge.price) {
+                    setUserPointsShop(getUserPointsShop() - badge.price);
+                    addShopOwned('badges', badge.id);
+                    showAlert('¡Insignia comprada!', 'Ahora puedes lucir tu insignia en tu perfil.');
+                    renderShopBadges();
+                    updateShopPointsDisplay();
+                }
+            };
+        } else {
+            // Botón de aplicar insignia de perfil
+            const applyBtn = card.querySelector('button[data-badge-id]');
+            if (applyBtn && !applyBtn.disabled) {
+                applyBtn.onclick = function() {
+                    setUserProfileBadge(badge.id);
+                    renderShopBadges(); // Para actualizar el estado de los botones
+                };
             }
-        };
-        grid.appendChild(card);
+        }
     });
 }
+
 function renderShopGames() {
     const grid = document.getElementById('shopGamesGrid');
     if (!grid) return;
@@ -7376,43 +7995,126 @@ function renderShopGames() {
     });
 })();
 
-// --- MOSTRAR INSIGNIAS EN EL PERFIL ---
-(function(){
-    // Mostrar insignias adquiridas en el perfil
-    function renderProfileBadges() {
-        let container = document.getElementById('profileBadges');
-        if (!container) {
-            // Crear contenedor si no existe
-            const profileContainer = document.querySelector('.profile-container');
-            if (!profileContainer) return;
-            container = document.createElement('div');
-            container.id = 'profileBadges';
-            container.style.margin = '2rem 0 1rem 0';
-            profileContainer.insertBefore(container, profileContainer.querySelector('.profile-section-title'));
-        }
-        const data = getShopData();
-        const badges = (data.badges || []);
-        container.innerHTML = `<h3 class="profile-section-title">Insignias</h3>`;
-        if (badges.length === 0) {
-            container.innerHTML += `<div style="opacity:0.7;">No tienes insignias aún. ¡Cómpralas en la tienda!</div>`;
+function setUserProfileBadge(badgeId) {
+    localStorage.setItem('profileBadge', badgeId);
+    renderProfileBadges();
+    renderHeaderProfileBadge();
+}
+
+// --- MOSTRAR INSIGNIA EN EL PERFIL ---
+function renderProfileBadges() {
+    let container = document.getElementById('profileBadges');
+    if (!container) return;
+    const badgeId = getUserProfileBadge();
+    container.innerHTML = `<h3 class="profile-section-title">Insignia de Perfil</h3>`;
+    if (!badgeId) {
+        container.innerHTML += `<div style="opacity:0.7;">No has seleccionado una insignia de perfil.<br>¡Cómprala y aplícala desde la tienda!</div>`;
+    } else {
+        const badge = SHOP_BADGES.find(b => b.id === badgeId);
+        if (!badge) return;
+        let badgeIconHtml;
+        if (
+            badge.icon &&
+            (
+                badge.icon.endsWith('.png') ||
+                badge.icon.endsWith('.jpg') ||
+                badge.icon.endsWith('.jpeg') ||
+                badge.icon.endsWith('.gif') ||
+                badge.icon.endsWith('.ico') ||
+                badge.icon.startsWith('imgjuegos/')
+            )
+        ) {
+            badgeIconHtml = `<img src="${badge.icon}" alt="${badge.title}" style="width:2.2rem;height:2.2rem;object-fit:contain;vertical-align:middle;">`;
         } else {
-            container.innerHTML += `<div style="display:flex;gap:1.2rem;flex-wrap:wrap;">` +
-                badges.map(id => {
-                    const badge = SHOP_BADGES.find(b => b.id === id);
-                    if (!badge) return '';
-                    return `<span title="${badge.title}" style="font-size:2.2rem;"><i class="fas ${badge.icon}" style="color:gold;"></i></span>`;
-                }).join('') +
-                `</div>`;
+            badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;"></i>`;
         }
+        container.innerHTML += `<div style="font-size:2.2rem;display:flex;align-items:center;gap:0.7em;">${badgeIconHtml}<span style="font-size:1.1rem;">${badge.title}</span></div>`;
     }
-    document.addEventListener('DOMContentLoaded', renderProfileBadges);
-    // Actualizar al comprar insignia
-    const orig = window.addShopOwned;
-    window.addShopOwned = function(type, id) {
-        orig(type, id);
-        if (type === 'badges') setTimeout(renderProfileBadges, 200);
-    };
-})();
+}
+
+// --- MOSTRAR INSIGNIA EN EL HEADER ---
+function renderHeaderProfileBadge() {
+    const badgeId = getUserProfileBadge();
+    const headerUserName = document.getElementById('headerUserName');
+    if (!headerUserName) return;
+    // Quitar insignia previa
+    let badgeSpan = headerUserName.nextElementSibling;
+    if (badgeSpan && badgeSpan.classList && badgeSpan.classList.contains('profile-badge-header')) {
+        badgeSpan.remove();
+    }
+    if (badgeId) {
+        const badge = SHOP_BADGES.find(b => b.id === badgeId);
+        if (!badge) return;
+        let badgeIconHtml;
+        if (
+            badge.icon &&
+            (
+                badge.icon.endsWith('.png') ||
+                badge.icon.endsWith('.jpg') ||
+                badge.icon.endsWith('.jpeg') ||
+                badge.icon.endsWith('.gif') ||
+                badge.icon.endsWith('.ico') ||
+                badge.icon.startsWith('imgjuegos/')
+            )
+        ) {
+            badgeIconHtml = `<img src="${badge.icon}" alt="${badge.title}" style="width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;">`;
+        } else {
+            badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;font-size:1.3em;vertical-align:middle;"></i>`;
+        }
+        const span = document.createElement('span');
+        span.className = 'profile-badge-header';
+        span.style.marginLeft = '0.4em';
+        span.innerHTML = badgeIconHtml;
+        headerUserName.after(span);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderProfileBadges();
+    renderHeaderProfileBadge();
+});
+
+function renderHeaderProfileBadge() {
+    const badgeId = getUserProfileBadge();
+    const headerUserName = document.getElementById('headerUserName');
+    if (!headerUserName) return;
+    // Quitar insignia previa
+    let badgeSpan = headerUserName.nextElementSibling;
+    if (badgeSpan && badgeSpan.classList && badgeSpan.classList.contains('profile-badge-header')) {
+        badgeSpan.remove();
+    }
+    if (badgeId) {
+        const badge = SHOP_BADGES.find(b => b.id === badgeId);
+        if (!badge) return;
+        let badgeIconHtml;
+        if (
+            badge.icon &&
+            (
+                badge.icon.endsWith('.png') ||
+                badge.icon.endsWith('.jpg') ||
+                badge.icon.endsWith('.jpeg') ||
+                badge.icon.endsWith('.gif') ||
+                badge.icon.endsWith('.ico') ||
+                badge.icon.startsWith('imgjuegos/')
+            )
+        ) {
+            badgeIconHtml = `<img src="${badge.icon}" alt="${badge.title}" style="width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;">`;
+        } else {
+            badgeIconHtml = `<i class="fas ${badge.icon}" style="color:gold;font-size:1.3em;vertical-align:middle;"></i>`;
+        }
+        const span = document.createElement('span');
+        span.className = 'profile-badge-header';
+        span.style.marginLeft = '0.4em';
+        span.innerHTML = badgeIconHtml;
+        headerUserName.after(span);
+    }
+}
+
+// --- INICIALIZAR AL CARGAR ---
+document.addEventListener('DOMContentLoaded', function() {
+    renderProfileBadges();
+    renderHeaderProfileBadge();
+});
 
 // --- INTEGRACIÓN CON EL SISTEMA DE PUNTOS ---
 (function(){
@@ -7655,6 +8357,17 @@ if (window.Notification && Notification.permission === "default") {
                 }
         };
 })();
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof renderProfileBadges === 'function') {
+        renderProfileBadges();
+    }
+});
+
+if (typeof renderProfileBadges === 'function') {
+    renderProfileBadges();
+}
+
 initApp();
 </script>
 </body>
