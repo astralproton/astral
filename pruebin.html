@@ -1,0 +1,41 @@
+function filterGamesByCategory(category) {
+    const gamesGrid = document.getElementById('gamesGrid');
+    gamesGrid.innerHTML = '';
+    
+    let filteredGames = games;
+    
+    if (category !== 'all') {
+        if (category === 'favorites') {
+            const favoriteGames = folders.find(folder => folder.title === "Favoritos").games;
+            filteredGames = games.filter(game => favoriteGames.includes(game.id));
+        } else {
+            filteredGames = games.filter(game => game.categories.includes(category));
+        }
+    }
+    
+    filteredGames.forEach((game, index) => {
+        const gameCard = document.createElement('div');
+        gameCard.className = 'game-card';
+        gameCard.style.animationDelay = `${index * 0.1}s`;
+        
+        gameCard.innerHTML = `
+            <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
+            <div class="game-info">
+                <h3 class="game-title">${game.title}</h3>
+                <p class="game-artist">${game.artist}</p>
+            </div>
+            <div class="play-button">
+                <i class="fas fa-play"></i>
+            </div>
+        `;
+        
+        gameCard.addEventListener('click', () => {
+            openGame(game);
+        });
+        
+        gamesGrid.appendChild(gameCard);
+    });
+
+    // --- BLOQUEO DE JUEGOS HASTA REGISTRO ---
+    markGamesLockedIfNeeded();
+}

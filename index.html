@@ -2483,6 +2483,27 @@ opacity: 0.8;
     color: #ff3333;
     font-weight: 700;
 }
+        .game-card.locked {
+            filter: grayscale(1) blur(1.5px) brightness(0.7);
+            pointer-events: none;
+            position: relative;
+        }
+        .game-card.locked::after {
+            content: "🔒 Regístrate para jugar";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10,10,42,0.92);
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 0.7em 1.2em;
+            border-radius: 12px;
+            z-index: 2;
+            text-align: center;
+            box-shadow: 0 2px 12px #0008;
+            pointer-events: none;
+        }
 </style>
 <!-- Tu CSS original sigue aquí -->
 </head>
@@ -3165,6 +3186,50 @@ opacity: 0.8;
 
 
 <script>
+
+  (async () => {
+    const API = 'https://astral-ban-api.onrender.com';
+
+    // ¿Ya está registrado?
+    let id = localStorage.getItem('astralID');
+    let nombre = localStorage.getItem('astralNombre');
+
+    if (!id || !nombre) {
+      // Pedimos el nombre
+      nombre = prompt("¡Bienvenido a AstralProton! Por favor, escribe tu nombre para continuar:");
+
+      if (!nombre || !nombre.trim()) {
+        alert("Debes ingresar un nombre para acceder.");
+        window.location.reload();
+        return;
+      }
+
+      // Pedimos un ID único
+      try {
+        const res = await fetch(`${API}/nuevo-usuario`);
+        const data = await res.json();
+        id = data.id;
+
+        // Guardamos en localStorage
+        localStorage.setItem('astralID', id);
+        localStorage.setItem('astralNombre', nombre);
+
+        // Registramos en la API
+        await fetch(`${API}/registrar-usuario`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, nombre })
+        });
+
+        alert(`¡Registro exitoso! Tu ID es: ${id}`);
+      } catch (err) {
+        alert("Hubo un error al registrarte. Intenta más tarde.");
+        console.error(err);
+      }
+    } else {
+      console.log(`Bienvenido de nuevo, ${nombre} (${id})`);
+    }
+  })();
 
 const API_URL = 'https://astral-ban-api.onrender.com';
 

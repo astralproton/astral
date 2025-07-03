@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios registrados - AstralProton</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #0a0a2a;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      color: #ffd700;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #181848;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px #0006;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+    }
+    th {
+      background: #22224a;
+      color: #ffd700;
+    }
+    tr:nth-child(even) {
+      background: #1c1c3c;
+    }
+    tr:hover {
+      background: #2a2a5a;
+    }
+    td {
+      color: #ccc;
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Usuarios registrados en AstralProton</h1>
+
+  <div class="loading" id="loading">Cargando usuarios...</div>
+
+  <table style="display: none;" id="tabla">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Fecha de Registro</th>
+      </tr>
+    </thead>
+    <tbody id="tablaUsuarios"></tbody>
+  </table>
+
+  <script>
+    fetch('https://astral-ban-api.onrender.com/usuarios')
+      .then(res => res.json())
+      .then(data => {
+        const tabla = document.getElementById('tabla');
+        const loading = document.getElementById('loading');
+        const tbody = document.getElementById('tablaUsuarios');
+
+        loading.style.display = 'none';
+
+        if (!data.length) {
+          loading.textContent = 'No hay usuarios registrados aún.';
+          loading.style.display = 'block';
+          return;
+        }
+
+        tabla.style.display = 'table';
+
+        data.forEach(usuario => {
+          const fila = document.createElement('tr');
+          
+          const tdID = document.createElement('td');
+          tdID.textContent = usuario.id;
+
+          const tdNombre = document.createElement('td');
+          tdNombre.textContent = usuario.nombre;
+
+          const tdFecha = document.createElement('td');
+          const fecha = new Date(usuario.fecha);
+          tdFecha.textContent = fecha.toLocaleString('es-MX');
+
+          fila.appendChild(tdID);
+          fila.appendChild(tdNombre);
+          fila.appendChild(tdFecha);
+
+          tbody.appendChild(fila);
+        });
+      })
+      .catch(() => {
+        document.getElementById('loading').textContent = 'Error al cargar la lista de usuarios.';
+      });
+  </script>
+
+</body>
+</html>
