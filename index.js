@@ -79,6 +79,38 @@ app.get('/nuevo-usuario', (req, res) => {
   res.json({ id: nuevoID });
 });
 
+const USUARIOS_FILE = './usuarios.json';
+
+// Leer usuarios
+function leerUsuarios() {
+  try {
+    return JSON.parse(fs.readFileSync(USUARIOS_FILE));
+  } catch {
+    return [];
+  }
+}
+
+// Guardar usuarios
+function guardarUsuarios(lista) {
+  fs.writeFileSync(USUARIOS_FILE, JSON.stringify(lista, null, 2));
+}
+
+// POST /registrar-usuario
+app.post('/registrar-usuario', (req, res) => {
+  const { id, nombre } = req.body;
+  if (!id || !nombre) return res.status(400).json({ error: 'Faltan datos' });
+
+  const usuarios = leerUsuarios();
+  usuarios.push({ id, nombre, fecha: new Date().toISOString() });
+  guardarUsuarios(usuarios);
+  res.json({ success: true });
+});
+
+// GET /usuarios
+app.get('/usuarios', (req, res) => {
+  const usuarios = leerUsuarios();
+  res.json(usuarios);
+});
 
 app.listen(PORT, () => {
   console.log(`API corriendo en http://localhost:${PORT}`);
