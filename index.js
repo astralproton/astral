@@ -3,6 +3,32 @@ const fs = require('fs');
 const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CONTADOR_FILE = './contador.json';
+const USUARIOS_FILE = './usuarios.json';
+
+// Contador
+function leerContador() {
+  try {
+    return JSON.parse(fs.readFileSync(CONTADOR_FILE)).contador || 1;
+  } catch {
+    return 1;
+  }
+}
+function guardarContador(valor) {
+  fs.writeFileSync(CONTADOR_FILE, JSON.stringify({ contador: valor }, null, 2));
+}
+
+// Usuarios
+function leerUsuarios() {
+  try {
+    return JSON.parse(fs.readFileSync(USUARIOS_FILE));
+  } catch {
+    return [];
+  }
+}
+function guardarUsuarios(lista) {
+  fs.writeFileSync(USUARIOS_FILE, JSON.stringify(lista, null, 2));
+}
 
 app.use(cors());
 app.use(express.json());
@@ -66,18 +92,30 @@ function leerContador() {
   }
 }
 
-// Guardar nuevo contador
-function guardarContador(valor) {
-  fs.writeFileSync(CONTADOR_FILE, JSON.stringify({ contador: valor }, null, 2));
-}
-
-// Ruta para generar nuevo ID
+// Generar nuevo ID único
 app.get('/nuevo-usuario', (req, res) => {
   let contador = leerContador();
   const nuevoID = `astraluser${contador}`;
   guardarContador(contador + 1);
   res.json({ id: nuevoID });
 });
+
+// Registrar usuario con nombre e ID
+app.post('/registrar-usuario', (req, res) => {
+  const { id, nombre } = req.body;
+  if (!id || !nombre) return res.status(400).json({ error: 'Faltan datos' });
+
+  const usuarios = leerUsuarios();
+  usuarios.push({ id, nombre, fecha: new Date().toISOString() });
+  guardarUsuarios(usuarios);
+  res.json({ success: true });
+});
+
+// Guardar nuevo contador
+function guardarContador(valor) {
+  fs.writeFileSync(CONTADOR_FILE, JSON.stringify({ contador: valor }, null, 2));
+}
+
 
 const USUARIOS_FILE = './usuarios.json';
 
@@ -94,17 +132,6 @@ function leerUsuarios() {
 function guardarUsuarios(lista) {
   fs.writeFileSync(USUARIOS_FILE, JSON.stringify(lista, null, 2));
 }
-
-// POST /registrar-usuario
-app.post('/registrar-usuario', (req, res) => {
-  const { id, nombre } = req.body;
-  if (!id || !nombre) return res.status(400).json({ error: 'Faltan datos' });
-
-  const usuarios = leerUsuarios();
-  usuarios.push({ id, nombre, fecha: new Date().toISOString() });
-  guardarUsuarios(usuarios);
-  res.json({ success: true });
-});
 
 // GET /usuarios
 app.get('/usuarios', (req, res) => {
