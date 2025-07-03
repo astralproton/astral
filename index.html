@@ -645,127 +645,133 @@ header {
 }
 
 /* Alerta */
-/* Alerta - Solo cambios de estructura, manteniendo variables de color */
+/* REDISEÑO TOTAL DE LA ALERTA */
 .alert {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    background-color: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    max-width: 90%;
-    width: 400px;
-    z-index: 1000;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    display: none;
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: radial-gradient(circle at top left, #1a1a4a, #0a0a2a);
+  border: 2px solid rgba(65, 105, 225, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  color: #fff;
+  z-index: 1001;
+  box-shadow: 0 0 30px rgba(65, 105, 225, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.05);
+  display: none;
+  opacity: 0;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(20px);
 }
 
 .alert.show {
-    display: block;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
+/* Título con neón sutil */
 .alert-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-color);
-    line-height: 1.4;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(65, 105, 225, 0.4);
 }
 
+/* Texto del mensaje */
 .alert-message {
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-    color: var(--text-color);
-    opacity: 0.9;
-    font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+  color: #e0e0e0;
 }
 
-/* Contenedor de botones - Ahora horizontales como en la imagen */
+/* Botones alineados a la derecha */
 .alert-buttons {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1rem;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  margin-top: 1rem;
 }
 
+/* Estilos para botones */
 .alert-button {
-    padding: 0.75rem 1.5rem;
-    background: var(--accent-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    min-width: 80px;
-    position: relative;
-    overflow: hidden;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .alert-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.1);
 }
 
+/* Botón secundario */
 .alert-button.secondary {
-    background: transparent;
-    color: var(--text-color);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .alert-button.secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
+/* Botón destructivo */
 .alert-button.destructive {
-    background: var(--highlight-color);
+  background: linear-gradient(45deg, #ff3366, #ff0033);
 }
 
-/* Overlay - Mantener el existente pero con mejor blur */
+/* Fondo desenfocado detrás de la alerta */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 999;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    backdrop-filter: blur(4px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .overlay.show {
-    display: block;
-    opacity: 1;
+  display: block;
+  opacity: 1;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
-    .alert {
-        width: 95%;
-        padding: 1.25rem;
-    }
-    
-    .alert-buttons {
-        flex-direction: column;
-    }
-    
-    .alert-button {
-        width: 100%;
-    }
+  .alert {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .alert-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .alert-button {
+    width: 100%;
+  }
 }
+
 
 /* Configuraciones */
 .settings-container {
@@ -2096,10 +2102,399 @@ opacity: 0.8;
     0% { text-shadow: 0 0 8px #b400ff, 0 0 2px #fff; }
     100% { text-shadow: 0 0 24px #b400ffcc, 0 0 8px #fffbe6; }
 }
+/* Pantalla de carga con animaciones fluidas */
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #000000 0%, #000000 100%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 2rem;
+    overflow: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateZ(0);
+    will-change: opacity, transform;
+}
+
+.loading-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    transform: translateZ(0);
+}
+
+.loading-stars .star {
+    position: absolute;
+    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 70%, transparent 100%);
+    border-radius: 50%;
+    animation: twinkle var(--duration, 2s) ease-in-out infinite alternate,
+               float 6s ease-in-out infinite;
+    transform: translateZ(0);
+    will-change: opacity, transform;
+    box-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+
+.loading-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both,
+               pulse 2s ease-in-out infinite;
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.loading-text {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    animation: textGlow 2s ease-in-out infinite alternate;
+    transform: translateZ(0);
+}
+
+.loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top: 3px solid #4169e1;
+    border-right: 3px solid #6a5acd;
+    border-radius: 50%;
+    animation: smoothSpin 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    transform: translateZ(0);
+    will-change: transform;
+    filter: drop-shadow(0 0 8px rgba(65, 105, 225, 0.4));
+}
+
+/* Animaciones mejoradas */
+@keyframes twinkle {
+    0% { 
+        opacity: var(--opacity, 0.3);
+        transform: scale(1) translateZ(0);
+    }
+    100% { 
+        opacity: 1;
+        transform: scale(1.2) translateZ(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) translateZ(0);
+    }
+    50% { 
+        transform: translateY(-10px) translateZ(0);
+    }
+}
+
+@keyframes smoothSpin {
+    0% { 
+        transform: rotate(0deg) translateZ(0);
+    }
+    100% { 
+        transform: rotate(360deg) translateZ(0);
+    }
+}
+
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) translateZ(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1) translateZ(0);
+    }
+    50% {
+        transform: scale(1.02) translateZ(0);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    100% {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 
+                     0 0 20px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Optimización para dispositivos móviles */
+@media (max-width: 768px) {
+    .loading-content {
+        padding: 1rem 1.5rem;
+        gap: 0.8rem;
+    }
+    
+    .loading-text {
+        font-size: 1.1rem;
+    }
+    
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Reducir animaciones para usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .loading-stars .star {
+        animation: twinkle var(--duration, 2s) ease-in-out infinite alternate;
+    }
+    
+    .loading-content {
+        animation: slideInUp 1s ease 0.5s both;
+    }
+    
+    .loading-spinner {
+        animation: smoothSpin 2s linear infinite;
+    }
+}
+#friendsPanel {
+    position: fixed;
+    top: 80px;
+    left: 30px;
+    width: 340px;
+    max-height: 70vh;
+    background: var(--card-bg);
+    color: var(--text-color);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 3000;
+    overflow-y: auto;
+    padding: 1.2rem;
+    display: none;
+    transition: box-shadow .3s, background .3s;
+}
+#friendsPanel.show { display: block; }
+#friendsPanel h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.friend-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 0.7rem;
+    transition: background .2s;
+    position: relative;
+}
+.friend-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    overflow: hidden;
+}
+.friend-name {
+    font-weight: 700;
+    font-size: 1.08rem;
+}
+.friend-status {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+.friend-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+.friend-btn {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.3rem 0.7rem;
+    transition: background .2s;
+}
+.friend-btn.remove { background: #ff3366; }
+.friend-btn.connect { background: #4caf50; }
+.friend-btn.copy { background: #2196f3; }
+#friendsBtn {
+    position: fixed;
+    top: 80px;
+    left: 30px;
+    z-index: 3001;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    box-shadow: 0 2px 12px var(--accent-color, #4169e1);
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow .2s, background .2s;
+}
+#friendsBtn:hover {
+    box-shadow: 0 4px 24px var(--highlight-color, #ff3366);
+    background: linear-gradient(45deg, var(--highlight-color), var(--accent-color));
+}
+#friendAddSection {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#friendCodeInput {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 7px;
+    border: 1px solid var(--accent-color);
+    margin-bottom: 0.5rem;
+    background: rgba(255,255,255,0.07);
+    color: var(--text-color);
+}
+#friendCodeDisplay {
+    background: rgba(255,255,255,0.07);
+    border-radius: 7px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    word-break: break-all;
+    color: var(--accent-color);
+    text-align: center;
+}
+#friendQrCanvas {
+    display: block;
+    margin: 0 auto 0.5rem auto;
+    background: #fff;
+    border-radius: 8px;
+}
+/* Agrega este CSS para mejorar el diseño de los botones en el apartado amigos */
+#friendsSection button,
+#friendsSection input[type="file"] + label,
+.friend-btn {
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 10px #0002;
+    margin: 0 0.3em 0.5em 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+}
+#friendsSection button:hover,
+.friend-btn:hover {
+    background: linear-gradient(45deg, var(--highlight-color), var(--accent-color));
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 18px var(--accent-color, #4169e1);
+}
+.friend-btn.copy {
+    background: linear-gradient(45deg, #2196f3, #4169e1);
+}
+.friend-btn.copy:hover {
+    background: linear-gradient(45deg, #4169e1, #2196f3);
+}
+.friend-btn.remove {
+    background: linear-gradient(45deg, #ff3366, #ff0033);
+}
+.friend-btn.remove:hover {
+    background: linear-gradient(45deg, #ff0033, #ff3366);
+}
+.friend-btn.connect {
+    background: linear-gradient(45deg, #4caf50, #2196f3);
+}
+.friend-btn.connect:hover {
+    background: linear-gradient(45deg, #2196f3, #4caf50);
+}
+.friend-btn:active {
+    transform: scale(0.97);
+}
+#friendsSection input[type="file"] {
+    display: none;
+}
+#friendsSection input[type="text"],
+#friendCodeInput {
+    padding: 0.5rem 1rem;
+    border-radius: 7px;
+    border: 1px solid var(--accent-color);
+    background: rgba(255,255,255,0.07);
+    color: var(--text-color);
+    margin-bottom: 0.5em;
+    font-size: 1rem;
+}
+#friendsSection #friendCodeDisplay {
+    background: rgba(255,255,255,0.07);
+    border-radius: 7px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    text-align: center;
+    user-select: all;
+}
+.sancion {
+    color: #ff3333;
+    font-weight: 700;
+}
 </style>
 <!-- Tu CSS original sigue aquí -->
 </head>
 <body>
+<!-- Pantalla de carga -->
+<div id="loadingScreen">
+    <div class="loading-stars" id="loadingStars"></div>
+    <div class="loading-content">
+        <div class="loading-text">Cargando AstralProton</div>
+        <div class="loading-spinner"></div>
+    </div>
+</div>
 <!-- Pantalla de bloqueo -->
 <div class="lock-screen" id="lockScreen" style="display:flex;">
     <form class="lock-box" id="lockForm" autocomplete="off">
@@ -2114,7 +2509,7 @@ opacity: 0.8;
 
 <!-- El resto de tu HTML original aquí, sin cambios -->
 <audio id="backgroundMusic" loop>
-    <source src="titulonuevo.mp3" type="audio/mpeg">
+    <source src="MenuMain.mp3" type="audio/mpeg">
     Tu navegador no soporta el elemento de audio.
 </audio>
 <audio id="hoverSound">
@@ -2192,6 +2587,18 @@ opacity: 0.8;
             <i class="fas fa-store"></i>
             <span data-en="Shop" data-es="Tienda">Tienda</span>
         </a>
+        <a class="sidebar-item" data-section="friends">
+            <i class="fas fa-users"></i>
+            <span data-en="Friends" data-es="Amigos">Amigos</span>
+        </a>
+        <a class="sidebar-item" data-section="rules">
+            <i class="fas fa-gavel"></i>
+            <span data-en="Rules" data-es="Reglas">Reglas</span>
+        </a>
+        <a class="sidebar-item" data-section="manual">
+            <i class="fas fa-book-open"></i>
+            <span data-en="Manual" data-es="Manual">Manual</span>
+        </a>
     </div>
 
     <!-- Contenido principal -->
@@ -2204,16 +2611,9 @@ opacity: 0.8;
                 <p class="welcome-text" data-en="Now, enjoy!" data-es="Sin mas preambulo, ¡A disfrutar!">Sin mas preambulo, ¡A disfrutar!</p>
                 <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.</p>
                 <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop. Checalo en el apartado acerca de!">Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.</p>                            
-                <a href="manual.html" class="background-button primary" style="min-width:200px; text-align:center; font-size:1.1rem; display:flex; align-items:center; justify-content:center; gap:0.7em;">
-                        <i class="fas fa-book-open"></i>
-                        <span>Entrar al Manual</span>
-                </a>
                 <a href="https://discord.gg/GEPrCZkWhs" class="background-button primary" style="min-width:200px; text-align:center; font-size:1.1rem; display:flex; align-items:center; justify-content:center; gap:0.7em;">
                         <i class="fab fa-discord"></i>
                         <span>Unirse al Discord</span>
-                <a href="reglas.html" class="background-button" style="min-width:200px; text-align:center; font-size:1.1rem; display:flex; align-items:center; justify-content:center; gap:0.7em;">
-                        <i class="fas fa-gavel"></i>
-                        <span>Entrar a las Reglas</span>
                 </a>
             </div>
         </div>
@@ -2252,6 +2652,10 @@ opacity: 0.8;
             <!-- Botón de juego aleatorio -->
 
             <!-- Grid de juegos -->
+             <!-- Botón de juego aleatorio -->
+            <button class="random-game-button" onclick="openRandomGameModal()">
+                <i class="fas fa-dice"></i> Juego aleatorio
+            </button>
             <div class="games-grid" id="gamesGrid">
                 <!-- Los juegos se cargarán dinámicamente aquí -->
             </div>
@@ -2458,7 +2862,7 @@ opacity: 0.8;
                 <!-- Sección de fondo personalizado -->
                 <h3 class="profile-section-title">Fondo Personalizado</h3>
                 <div class="background-options">
-                    <div class="background-preview">
+                    <div class="background-tpreview">
                         <div class="background-preview-container" id="backgroundPreview">
                             <i class="fas fa-image"></i>
                             <span data-en="Background Preview" data-es="Vista previa del fondo">Vista previa del fondo</span>
@@ -2650,10 +3054,74 @@ opacity: 0.8;
                 <div class="games-grid" id="shopGamesGrid"></div>
             </div>
         </div>
+        <div id="friendsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-users"></i> <span data-en="Friends" data-es="Amigos">Amigos</span>
+            </h1>
+            <div>
+                <button id="exportProfileBtn">Exportar mi perfil</button>
+                <input type="file" id="importProfileInput" accept=".json" style="display:none;">
+                <button id="importProfileBtn">Importar perfil de amigo</button>
+                <button id="addFriendByCodeBtn" href="">Checa las intrucciones abajo</button>
+            </div>
+            <ul id="friendList"></ul>
+            <div class="welcome-container" style="margin-top:2rem;">
+                <p class="welcome-text" data-en="Para agregar un amigo, tu amigo debe de acceder a su AstralProton, irse al apartado Amigos y presionar Exportar mi perfil Despues, debe de enviarte ese archivo por algun medio." data-es="Para agregar un amigo, tu amigo debe de acceder a su AstralProton, irse al apartado Amigos y presionar Exportar mi perfil Despues, debe de enviarte ese archivo por algun medio.">Para agregar un amigo, tu amigo debe de acceder a su AstralProton, irse al apartado "Amigos" y presionar "Exportar mi perfil". Despues, debe de enviarte ese archivo por algun medio.</p>
+                <p class="welcome-text" data-en="Una vez que tengas el archivo, haz click en Importar perfil de amigo. Selecciona el archivo y listo!" data-es="Una vez que tengas el archivo, haz click en Importar perfil de amigo. Selecciona el archivo y listo!">Una vez que tengas el archivo, haz click en "Importar perfil de amigo". Selecciona el archivo y listo!</p>
+            </div>
+        </div>
+        <div id="rulesSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-gavel"></i> <span data-en="Rules" data-es="Reglas">Reglas</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Please follow these rules to ensure a safe and fun environment for everyone." data-es="Por favor, sigue estas reglas para asegurar un entorno seguro y divertido para todos.">
+                    Por favor, sigue estas reglas para asegurar un entorno seguro y divertido para todos.
+                </p>
+                <ul style="text-align:left;max-width:700px;margin:1.5em auto 0 auto;line-height:1.7;">
+                    <li><b>Respeta a los demás usuarios</b>. No se tolerarán insultos, acoso o lenguaje ofensivo.</li>
+                    <li><b>No hagas spam</b> ni promociones contenido externo sin permiso.</li>
+                    <li><b>No intentes vulnerar la seguridad</b> de la plataforma ni uses hacks o trampas en los juegos.</li>
+                    <li><b>Reporta cualquier problema</b> o comportamiento inapropiado a los administradores.</li>
+                    <li><b>Usa la plataforma de acuerdo a las normas de tu escuela o institución</b> si aplica.</li>
+                    <li><b>El incumplimiento de estas normas puede resultar en una <span class="sancion">sanción</span> temporal o permanente.</b></li>
+                    <li><b>No publiques contenido inapropiado, violento, sexual o ilegal.</b></li>
+                    <li><b>Está prohibido compartir enlaces maliciosos o spam.</b></li>
+                    <li><b>Los administradores se reservan el derecho de eliminar contenido o usuarios que consideren inapropiados.</b></li>
+                    <li><b>No se permite la suplantación de identidad.</b></li>
+                    <li><b>Si usted se pelea de manera <span class="sancion">personal</span> con un administrador y esta pelea NO tiene que ver con AstralProton, el administrador <span class="sancion">NO</span> puede banearte, restarte estrellas, expulsarte ni similares de AstralProton.</b></li>
+                </ul>
+                <p class="welcome-text" style="margin-top:2em;" data-en="If you have questions about the rules, contact the support team." data-es="Si tienes dudas sobre las reglas, contacta al equipo de soporte.">
+                    Si tienes dudas sobre las reglas, contacta al equipo de soporte.
+                </p>
+            </div>
+        </div>
+        <div id="manualSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-book-open"></i> <span data-en="Manual" data-es="Manual de la Plataforma">Manual de la Plataforma</span>
+            </h1>
+            <div class="welcome-container">
+                <p class="welcome-text" data-en="Welcome to the AstralProton platform manual. Here you will find information on how to use all the features." data-es="Bienvenido al manual de la plataforma AstralProton. Aquí encontrarás información sobre cómo usar todas las funciones.">
+                    Bienvenido al manual de la plataforma AstralProton. Aquí encontrarás información sobre cómo usar todas las funciones.
+                </p>
+                <ul style="text-align:left;max-width:700px;margin:1.5em auto 0 auto;line-height:1.7;">
+                    <li><b>Inicio:</b> Pantalla principal con mensajes y enlaces rápidos.</li>
+                    <li><b>Juegos:</b> Explora y juega títulos disponibles. Haz clic en un juego para abrirlo. Puedes ganar estrellas por jugar.</li>
+                    <li><b>Tienda:</b> Usa tus estrellas para comprar temas, insignias y juegos exclusivos.</li>
+                    <li><b>Perfil:</b> Personaliza tu avatar, fondo, colores, música y fuente. Guarda los cambios para mantenerlos.</li>
+                    <li><b>Configuración:</b> Cambia el idioma, tema, tamaño de fuente y otras opciones de accesibilidad.</li>
+                    <li><b>Amigos:</b> Exporta tu perfil para compartirlo y agrega amigos importando sus archivos.</li>
+                    <li><b>Logros:</b> Desbloquea logros por actividades en la plataforma y gana recompensas.</li>
+                    <li><b>Manual y Reglas:</b> Consulta este manual y las reglas en cualquier momento desde la barra lateral.</li>
+                </ul>
+                <p class="welcome-text" style="margin-top:2em;" data-en="For more help, visit our Discord or contact support." data-es="Para más ayuda, visita nuestro Discord o contacta al soporte.">
+                    Para más ayuda, visita nuestro Discord o contacta al soporte.
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Alerta -->
 <!-- Alerta -->
 <div class="alert" id="alert">
     <h3 class="alert-title" id="alertTitle">Título de la alerta</h3>
@@ -2681,7 +3149,34 @@ opacity: 0.8;
         </button>
     </div>
 </div>
+
+<!-- Modal de juego aleatorio -->
+<div class="overlay" id="randomGameOverlay">
+  <div class="alert show" id="randomGameModal">
+    <div class="alert-title" id="randomGameTitle">Juego aleatorio</div>
+    <img id="randomGameImage" src="" alt="Juego" style="width:100%; border-radius:12px; margin:1rem 0;">
+    <div class="alert-buttons">
+      <button class="alert-button" onclick="playRandomGame()">Jugar</button>
+      <button class="alert-button secondary" onclick="openRandomGameModal()">Elegir de nuevo</button>
+      <button class="alert-button destructive" onclick="closeRandomGameModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
 <script>
+
+const API_URL = 'https://astral-ban-api.onrender.com';
+
+fetch('https://astral-ban-api.onrender.com/nuevo-usuario')
+  .then(res => res.json())
+  .then(data => {
+    const idAsignado = data.id;
+    console.log('Tu ID es:', idAsignado);
+    // Puedes guardarlo en localStorage o usarlo en tu lógica
+    localStorage.setItem('astralID', idAsignado);
+  });
+
  // --- BLOQUEO Y CONTRASEÑA ---
 // Código original restaurado (bloqueo simple con contraseña y pantalla de bloqueo)
 function hash(str) {
@@ -2926,52 +3421,77 @@ function lockInit() {
         document.body.appendChild(overlay);
     }
     function showAdminProfileError() {
-        if (document.getElementById('adminProfileErrorOverlay')) return;
-        const html = `
-            <div style="
-                background: linear-gradient(135deg,#222 60%,#ff0033 100%);
-                border-radius: 18px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
-                padding: 2.5rem 2rem 2rem 2rem;
-                min-width:320px;max-width:95vw;
-                display:flex;flex-direction:column;align-items:center;
-                border: 3px solid #ff0033;
-                color:#fffbe6;
-                max-height: 90vh;
-                overflow-y: auto;
-            ">
-                <div style="font-size:2.1rem;font-weight:900;
-                    background: linear-gradient(90deg,#ff0033,#fffbe6 80%);
-                    -webkit-background-clip:text;background-clip:text;color:transparent;
-                    text-shadow:0 2px 12px #ff003399,0 0 2px #fff;
-                    margin-bottom:1.2rem;letter-spacing:1px;">
-                    Acceso denegado
-                </div>
-                <div style="font-size:1.1rem;color:#fffbe6;margin-bottom:1.5rem;text-align:center;">
-                    ¡Usted no es administrador de la plataforma!<br><br>
-                </div>
-                <button style="
-                    padding:0.7rem 1.5rem;
-                    background:linear-gradient(45deg,#ff0033,#fffbe6);
-                    color:#222;font-weight:700;border:none;border-radius:7px;
-                    font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #ff003355;
-                    transition:all .2s;
-                    margin-bottom:1rem;
-                " onclick="document.getElementById('adminProfileErrorOverlay').remove();">
-                    Cerrar
-                </button>
-            </div>
-        `;
-        const overlay = document.createElement('div');
-        overlay.id = 'adminProfileErrorOverlay';
-        overlay.style = `
-            position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;
-            background:rgba(42,10,10,0.95);
-            display:flex;align-items:center;justify-content:center;
-            overflow:auto;
-        `;
-        overlay.innerHTML = html;
-        document.body.appendChild(overlay);
+            if (document.getElementById('adminProfileErrorOverlay')) return;
+            const html = `
+                    <div style="
+                            background: linear-gradient(135deg,#222 60%,#ff0033 100%);
+                            border-radius: 18px;
+                            box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                            padding: 2.5rem 2rem 2rem 2rem;
+                            min-width:320px;max-width:95vw;
+                            display:flex;flex-direction:column;align-items:center;
+                            border: 3px solid #ff0033;
+                            color:#fffbe6;
+                            max-height: 90vh;
+                            overflow-y: auto;
+                    ">
+                            <div style="font-size:2.1rem;font-weight:900;
+                                    background: linear-gradient(90deg,#ff0033,#fffbe6 80%);
+                                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                                    text-shadow:0 2px 12px #ff003399,0 0 2px #fff;
+                                    margin-bottom:1.2rem;letter-spacing:1px;">
+                                    Acceso denegado
+                            </div>
+                            <div style="font-size:1.1rem;color:#fffbe6;margin-bottom:1.5rem;text-align:center;">
+                                    ¡Usted no es administrador de la plataforma!<br><br>
+                                    <b>¿Tienes una llave maestra?</b>
+                                    <input type="password" id="masterKeyInput" placeholder="Ingresa la llave maestra" style="margin-top:1em;padding:0.6em 1em;border-radius:8px;border:2px solid #ff0033;background:rgba(255,255,255,0.07);color:#fff;width:100%;box-sizing:border-box;">
+                                    <button id="masterKeyBtn" style="margin-top:1em;padding:0.7rem 1.5rem;background:linear-gradient(45deg,#ff0033,#fffbe6);color:#222;font-weight:700;border:none;border-radius:7px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #ff003355;transition:all .2s;">Usar llave maestra</button>
+                                    <div id="masterKeyMsg" style="color:#ffd700;margin-top:0.7em;min-height:1.2em;"></div>
+                            </div>
+                            <button style="
+                                    padding:0.7rem 1.5rem;
+                                    background:linear-gradient(45deg,#ff0033,#fffbe6);
+                                    color:#222;font-weight:700;border:none;border-radius:7px;
+                                    font-size:1.1rem;cursor:pointer;box-shadow:0 2px 10px #ff003355;
+                                    transition:all .2s;
+                                    margin-bottom:1rem;
+                            " onclick="document.getElementById('adminProfileErrorOverlay').remove();">
+                                    Cerrar
+                            </button>
+                    </div>
+            `;
+            const overlay = document.createElement('div');
+            overlay.id = 'adminProfileErrorOverlay';
+            overlay.style = `
+                    position:fixed;z-index:20001;top:0;left:0;width:100vw;height:100vh;
+                    background:rgba(42,10,10,0.95);
+                    display:flex;align-items:center;justify-content:center;
+                    overflow:auto;
+            `;
+            overlay.innerHTML = html;
+            document.body.appendChild(overlay);
+
+            // Lógica de la llave maestra
+            overlay.querySelector('#masterKeyBtn').onclick = function() {
+                    const key = overlay.querySelector('#masterKeyInput').value.trim();
+                    const msg = overlay.querySelector('#masterKeyMsg');
+                    if (key === 'lennyesfeoxd123') {
+                            msg.textContent = '¡Llave maestra correcta! Accediendo como administrador...';
+                            msg.style.color = '#ffd700';
+                            setTimeout(() => {
+                                    overlay.remove();
+                                    setLockScreenVisible(false);
+                                    setTimeout(adminPanel, 300);
+                            }, 1000);
+                    } else {
+                            msg.textContent = 'Llave maestra incorrecta.';
+                            msg.style.color = 'red';
+                    }
+            };
+            overlay.querySelector('#masterKeyInput').addEventListener('keydown', function(e){
+                    if (e.key === 'Enter') overlay.querySelector('#masterKeyBtn').click();
+            });
     }
 
     setPasswordBtn.onclick = function() {
@@ -3512,7 +4032,7 @@ function adminResetMusic() {
         localStorage.removeItem('customMusic');
         let bgm = document.getElementById('backgroundMusic');
         if (bgm) {
-            bgm.src = 'titulonuevo.mp3';
+            bgm.src = 'MenuMain.mp3';
             bgm.load();
         }
         alert('Música personalizada eliminada.');
@@ -8368,6 +8888,272 @@ if (typeof renderProfileBadges === 'function') {
     renderProfileBadges();
 }
 
+// Función para crear estrellas en la pantalla de carga
+function createLoadingStars() {
+    const container = document.getElementById('loadingStars');
+    if (!container) return;
+    
+    for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        const size = Math.random() * 3 + 1;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = Math.random() * 3 + 2;
+        const opacity = Math.random() * 0.5 + 0.3;
+        
+        star.className = 'star';
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${posX}%`;
+        star.style.top = `${posY}%`;
+        star.style.setProperty('--duration', `${duration}s`);
+        star.style.setProperty('--opacity', opacity);
+        
+        container.appendChild(star);
+    }
+}
+
+// Función para ocultar la pantalla de carga
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }
+}
+
+// Inicializar pantalla de carga al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    createLoadingStars();
+    
+    // Ocultar después de 3 segundos (puedes cambiar este tiempo)
+    setTimeout(hideLoadingScreen, 3000);
+});
+
+let currentRandomGame = null;
+
+function openRandomGameModal() {
+  const gameCards = document.querySelectorAll('.game-card');
+  if (!gameCards.length) {
+    alert('No hay juegos disponibles.');
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * gameCards.length);
+  const selectedCard = gameCards[randomIndex];
+  currentRandomGame = selectedCard;
+
+  const title = selectedCard.querySelector('.game-title')?.textContent || 'Juego aleatorio';
+  const image = selectedCard.querySelector('img')?.src || '';
+
+  document.getElementById('randomGameTitle').textContent = title;
+  document.getElementById('randomGameImage').src = image;
+
+  document.getElementById('randomGameOverlay').classList.add('show');
+}
+
+function closeRandomGameModal() {
+  document.getElementById('randomGameOverlay').classList.remove('show');
+  currentRandomGame = null;
+}
+
+function playRandomGame() {
+  if (!currentRandomGame) return;
+  currentRandomGame.click();
+  closeRandomGameModal();
+}
+
+// --- SISTEMA DE AMIGOS FUNCIONAL Y PERSISTENTE ---
+
+// Utilidades para obtener y guardar perfil y amigos
+function getMyProfile() {
+    // Lee el perfil real del usuario desde localStorage
+    const data = JSON.parse(localStorage.getItem('profileData') || '{}');
+    return {
+        id: data.id || (data.name && data.surname ? (data.name + data.surname).toLowerCase().replace(/\s+/g, '') : 'user_' + Math.random().toString(36).substr(2,8)),
+        name: data.name || 'Usuario',
+        surname: data.surname || '',
+        age: data.age || '',
+        gender: data.gender || '',
+        avatar: data.avatar || '',
+        email: data.email || '',
+        // Puedes agregar más campos si lo deseas
+    };
+}
+function setMyProfileIdIfNeeded() {
+    // Si el perfil no tiene id, asígnale uno y guárdalo
+    let data = JSON.parse(localStorage.getItem('profileData') || '{}');
+    if (!data.id) {
+        data.id = (data.name && data.surname ? (data.name + data.surname).toLowerCase().replace(/\s+/g, '') : 'user_' + Math.random().toString(36).substr(2,8));
+        localStorage.setItem('profileData', JSON.stringify(data));
+    }
+}
+function getFriendsList() {
+    return JSON.parse(localStorage.getItem('friendsList') || '[]');
+}
+function saveFriendsList(list) {
+    localStorage.setItem('friendsList', JSON.stringify(list));
+}
+function isFriend(profile) {
+    const myProfile = getMyProfile();
+    if (profile.id === myProfile.id) return true;
+    return getFriendsList().some(f => f.id === profile.id);
+}
+
+// Mostrar el código de amigo (id) del usuario
+function showMyFriendCode() {
+    setMyProfileIdIfNeeded();
+    const myProfile = getMyProfile();
+    let codeDiv = document.getElementById('friendCodeDisplay');
+    if (!codeDiv) {
+        codeDiv = document.createElement('div');
+        codeDiv.id = 'friendCodeDisplay';
+        codeDiv.style.margin = '10px 0';
+        codeDiv.style.fontWeight = 'bold';
+        codeDiv.style.background = 'rgba(255,255,255,0.07)';
+        codeDiv.style.borderRadius = '7px';
+        codeDiv.style.padding = '0.5rem';
+        codeDiv.style.color = 'var(--accent-color)';
+        codeDiv.style.textAlign = 'center';
+        const parent = document.getElementById('friendsSection');
+        parent.insertBefore(codeDiv, parent.querySelector('div').nextSibling);
+    }
+    codeDiv.innerHTML = `Tu código de amigo: <span style="user-select:all">${myProfile.id}</span>`;
+}
+
+// Renderizar la lista de amigos
+function renderFriendsList() {
+    const ul = document.getElementById('friendList');
+    ul.innerHTML = '';
+    const friends = getFriendsList();
+    if (!friends.length) {
+        ul.innerHTML = '<li style="opacity:0.7;">No tienes amigos agregados aún.</li>';
+        return;
+    }
+    friends.forEach(friend => {
+        const li = document.createElement('li');
+        li.className = 'friend-item';
+        li.innerHTML = `
+            <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}" style="width:100%;height:100%;border-radius:50%;">` : `<i class="fas fa-user"></i>`}</div>
+            <div>
+                <div class="friend-name">${friend.name || 'Amigo'} ${friend.surname || ''}</div>
+                <div class="friend-status" style="font-size:0.9em;opacity:0.7;">${friend.age ? `Edad: ${friend.age}` : ''} ${friend.gender ? `| ${friend.gender}` : ''}</div>
+                <div class="friend-status" style="font-size:0.9em;opacity:0.7;">ID: <span style="user-select:all">${friend.id}</span></div>
+            </div>
+            <div class="friend-actions">
+                <button class="friend-btn copy" title="Copiar código" onclick="navigator.clipboard.writeText('${friend.id}');showAlert('Copiado','Código de amigo copiado.');"><i class="fas fa-copy"></i></button>
+                <button class="friend-btn remove" title="Eliminar amigo" onclick="removeFriend('${friend.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        ul.appendChild(li);
+    });
+}
+
+// Eliminar amigo
+function removeFriend(id) {
+    let friends = getFriendsList();
+    friends = friends.filter(f => f.id !== id);
+    saveFriendsList(friends);
+    renderFriendsList();
+    showAlert('Amigo eliminado', 'El amigo ha sido eliminado de tu lista.');
+}
+
+// Exportar perfil como JSON
+document.getElementById('exportProfileBtn').addEventListener('click', function() {
+    setMyProfileIdIfNeeded();
+    const myProfile = getMyProfile();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(myProfile, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "mi_perfil.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+});
+
+// Mostrar input file al hacer clic en importar
+document.getElementById('importProfileBtn').addEventListener('click', function() {
+    document.getElementById('importProfileInput').click();
+});
+
+// Importar perfil de amigo desde archivo JSON
+document.getElementById('importProfileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const friendProfile = JSON.parse(e.target.result);
+            if (!friendProfile.id || !friendProfile.name) throw new Error();
+            if (isFriend(friendProfile)) {
+                showAlert('Ya es tu amigo', 'Este perfil ya está en tu lista de amigos.');
+                return;
+            }
+            // Guardar en la lista de amigos
+            const friends = getFriendsList();
+            friends.push(friendProfile);
+            saveFriendsList(friends);
+            renderFriendsList();
+            showAlert('Amigo agregado', 'El perfil ha sido agregado a tu lista de amigos.');
+        } catch {
+            showAlert('Archivo inválido', 'El archivo seleccionado no es un perfil válido.');
+        }
+    };
+    reader.readAsText(file);
+});
+
+// Agregar amigo por código
+document.getElementById('addFriendByCodeBtn').addEventListener('click', function() {
+    const code = document.getElementById('friendCodeInput').value.trim();
+    if (!code) {
+        showAlert('Código vacío', 'Ingresa un código de amigo.');
+        return;
+    }
+    // Buscar en la base de datos simulada (puedes reemplazar esto por una API real)
+    // Aquí solo busca en tu propio perfil (no hay backend)
+    if (code === getMyProfile().id) {
+        showAlert('No puedes agregarte', 'No puedes agregarte a ti mismo como amigo.');
+        return;
+    }
+    // Busca en amigos ya agregados
+    if (getFriendsList().some(f => f.id === code)) {
+        showAlert('Ya es tu amigo', 'Este usuario ya está en tu lista de amigos.');
+        return;
+    }
+    // Simulación: no hay base de datos real, así que no se puede buscar el perfil completo por código
+    showAlert('No encontrado', 'No se encontró un usuario con ese código. Solo puedes agregar amigos importando su perfil JSON.');
+});
+
+// Inicializar sistema de amigos al cargar la sección
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        showMyFriendCode();
+        renderFriendsList();
+    });
+    // Si cambias de sección a amigos, recarga la lista
+    const origChangeSection = window.changeSection;
+    window.changeSection = function(sectionId) {
+        origChangeSection(sectionId);
+        if (sectionId === 'friends') {
+            showMyFriendCode();
+            renderFriendsList();
+        }
+    };
+})();
+(function(){
+    const banList = JSON.parse(localStorage.getItem('astral_ban_list')||'[]');
+    // Reemplaza esto por el identificador real del usuario
+    const profile = JSON.parse(localStorage.getItem('profileData')||'{}');
+    const myId = (profile.id || '').trim();
+    const myName = (profile.name || '').trim();
+    const myMail = (profile.email || '').trim();
+    if (banList.includes(myId) || banList.includes(myName) || banList.includes(myMail)) {
+        alert('Tu acceso a AstralProton ha sido bloqueado por el administrador.');
+        window.location.href = 'https://classroom.google.com/h';
+    }
+})();
 initApp();
 </script>
 </body>

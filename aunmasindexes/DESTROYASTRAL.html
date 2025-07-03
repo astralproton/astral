@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Destruye esta página!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #181818;
+            color: #fff;
+            font-family: 'Montserrat', Arial, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            transition: background 0.5s;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px #000a;
+        }
+        #gameArea {
+            position: relative;
+            width: 90vw;
+            max-width: 700px;
+            min-height: 320px;
+            background: #23233a;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #0008;
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: background 0.4s;
+        }
+        .destroy-btn {
+            background: linear-gradient(45deg, #ff3366, #4169e1);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 1rem 2.5rem;
+            margin: 1rem 0.5rem 0 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #0005;
+            transition: background 0.2s, transform 0.2s;
+            outline: none;
+        }
+        .destroy-btn:hover {
+            background: linear-gradient(45deg, #ff3366, #ffcc00);
+            transform: scale(1.07) rotate(-2deg);
+            box-shadow: 0 4px 24px #ff336688;
+        }
+        .part {
+            display: inline-block;
+            margin: 0.5rem 0.3rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: #31315a;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s, opacity 0.4s;
+            box-shadow: 0 2px 8px #0003;
+            user-select: none;
+        }
+        .part.destroyed {
+            opacity: 0;
+            transform: scale(0.2) rotate(20deg) translateY(-40px);
+            pointer-events: none;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        #progressBar {
+            width: 100%;
+            height: 18px;
+            background: #222;
+            border-radius: 10px;
+            margin: 1.2rem 0 0.5rem 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #0004;
+        }
+        #progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff3366, #4169e1, #ffcc00);
+            border-radius: 10px;
+            transition: width 0.4s;
+        }
+        #msg {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.5rem 0;
+            min-height: 2.2em;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 2px 8px #000a;
+        }
+        #finalScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            z-index: 1000;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            color: #fff;
+            animation: fadeIn 1s;
+        }
+        #finalScreen h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            color: #ff3366;
+            text-shadow: 0 2px 12px #ff3366aa;
+        }
+        #finalScreen p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        #finalScreen button {
+            background: linear-gradient(45deg, #4169e1, #ff3366);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 0.8rem 2.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #0005;
+            transition: background 0.2s, transform 0.2s;
+        }
+        #finalScreen button:hover {
+            background: linear-gradient(45deg, #ff3366, #ffd700);
+            transform: scale(1.07);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            #gameArea { padding: 1.2rem 0.5rem 2rem 0.5rem; }
+            h1 { font-size: 1.5rem; }
+            .destroy-btn { font-size: 1rem; padding: 0.7rem 1.2rem; }
+            .part { font-size: 1rem; padding: 0.4rem 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Juego: ¡Destruye esta página!</h1>
+    <div id="gameArea">
+        <div id="msg">Haz clic en los elementos para destruirlos.<br>¡O usa los botones para causar caos!</div>
+        <div id="parts"></div>
+        <div id="progressBar"><div id="progress"></div></div>
+        <div style="text-align:center;">
+            <button class="destroy-btn" id="btnRandom">Destruir elemento aleatorio</button>
+            <button class="destroy-btn" id="btnExplosion">¡Explosión!</button>
+            <button class="destroy-btn" id="btnGlitch">Glitch</button>
+            <button class="destroy-btn" id="btnReset">Reiniciar</button>
+        </div>
+    </div>
+    <div id="finalScreen">
+        <h2>¡Página destruida!</h2>
+        <p>¡Felicidades, has destruido todos los elementos!<br>¿Quieres volver a intentarlo?</p>
+        <button onclick="location.reload()">Jugar de nuevo</button>
+    </div>
+    <audio id="sfxDestroy" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e2.mp3"></audio>
+    <audio id="sfxExplosion" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b9b7e.mp3"></audio>
+    <audio id="sfxGlitch" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b9b7e.mp3"></audio>
+    <script>
+        // Elementos a destruir (simulan partes de una página)
+        const PARTS = [
+            "Header", "Sidebar", "Menú", "Logo", "Botón de inicio", "Sección de juegos",
+            "Sección de perfil", "Sección de configuración", "Sección de logros", "Tienda",
+            "Barra de búsqueda", "Avatar", "Nombre de usuario", "Footer", "Fondo espacial",
+            "Estrellas", "Nebulosas", "Audio", "Controles", "Alerta", "Overlay", "Iframe de juego"
+        ];
+        let destroyed = Array(PARTS.length).fill(false);
+
+        const partsDiv = document.getElementById('parts');
+        const progress = document.getElementById('progress');
+        const msg = document.getElementById('msg');
+        const sfxDestroy = document.getElementById('sfxDestroy');
+        const sfxExplosion = document.getElementById('sfxExplosion');
+        const sfxGlitch = document.getElementById('sfxGlitch');
+        const finalScreen = document.getElementById('finalScreen');
+
+        function renderParts() {
+            partsDiv.innerHTML = '';
+            PARTS.forEach((name, i) => {
+                const el = document.createElement('span');
+                el.className = 'part' + (destroyed[i] ? ' destroyed' : '');
+                el.textContent = name;
+                el.title = destroyed[i] ? 'Ya destruido' : 'Haz clic para destruir';
+                if (!destroyed[i]) {
+                    el.onclick = () => destroyPart(i, true);
+                }
+                partsDiv.appendChild(el);
+            });
+            updateProgress();
+        }
+
+        function destroyPart(i, playSound) {
+            if (destroyed[i]) return;
+            destroyed[i] = true;
+            renderParts();
+            if (playSound) {
+                sfxDestroy.currentTime = 0;
+                sfxDestroy.play();
+            }
+            msg.textContent = `¡Destruiste "${PARTS[i]}"!`;
+            checkWin();
+        }
+
+        function destroyRandom() {
+            const idxs = destroyed.map((d, i) => !d ? i : null).filter(i => i !== null);
+            if (idxs.length === 0) return;
+            const i = idxs[Math.floor(Math.random() * idxs.length)];
+            destroyPart(i, true);
+        }
+
+        function explosion() {
+            let count = 0;
+            for (let i = 0; i < destroyed.length; ++i) {
+                if (!destroyed[i]) {
+                    destroyed[i] = true;
+                    count++;
+                }
+            }
+            renderParts();
+            sfxExplosion.currentTime = 0;
+            sfxExplosion.play();
+            msg.textContent = count > 0 ? `¡Explosión! ${count} elementos destruidos.` : "Nada más que destruir.";
+            checkWin();
+        }
+
+        function glitch() {
+            document.body.style.background = "#ff3366";
+            document.getElementById('gameArea').style.background = "#222";
+            sfxGlitch.currentTime = 0;
+            sfxGlitch.play();
+            msg.textContent = "¡Glitch! La página se distorsiona...";
+            setTimeout(() => {
+                document.body.style.background = "#181818";
+                document.getElementById('gameArea').style.background = "#23233a";
+                msg.textContent = "¿Qué fue eso?";
+            }, 900);
+        }
+
+        function updateProgress() {
+            const total = destroyed.length;
+            const done = destroyed.filter(Boolean).length;
+            progress.style.width = ((done / total) * 100) + "%";
+            if (done === 0) {
+                msg.textContent = "Haz clic en los elementos para destruirlos.\n¡O usa los botones para causar caos!";
+            }
+        }
+
+        function checkWin() {
+            if (destroyed.every(Boolean)) {
+                setTimeout(() => {
+                    document.getElementById('gameArea').style.display = 'none';
+                    finalScreen.style.display = 'flex';
+                }, 700);
+            }
+        }
+
+        document.getElementById('btnRandom').onclick = destroyRandom;
+        document.getElementById('btnExplosion').onclick = explosion;
+        document.getElementById('btnGlitch').onclick = glitch;
+        document.getElementById('btnReset').onclick = () => {
+            destroyed = Array(PARTS.length).fill(false);
+            renderParts();
+            msg.textContent = "¡Juego reiniciado!";
+            document.getElementById('gameArea').style.display = '';
+            finalScreen.style.display = 'none';
+        };
+
+        renderParts();
+    </script>
+</body>
+</html>

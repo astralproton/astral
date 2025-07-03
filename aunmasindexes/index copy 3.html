@@ -1,0 +1,7 @@
+function showAlert(title, html) {
+    // Ejemplo de implementación
+    const modal = document.getElementById('alertModal');
+    modal.querySelector('.modal-title').textContent = title;
+    modal.querySelector('.modal-body').innerHTML = html; // Usa innerHTML aquí
+    modal.style.display = 'block';
+}

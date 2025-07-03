@@ -1,0 +1,723 @@
+<script>
+// Utilidades de cookies
+function setCookie(name, value, days = 365) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i=0;i < ca.length;i++) {
+        let c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length,c.length));
+    }
+    return null;
+}
+
+// Guardar y cargar configuraciones en cookies
+function saveConfigToCookies() {
+    setCookie('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    setCookie('fontSize', document.querySelector('input[name="fontSize"]:checked').value);
+    setCookie('reduceMotion', document.getElementById('reduceMotionToggle').checked);
+    setCookie('language', document.getElementById('languageSelect').value);
+    setCookie('graphicsQuality', document.getElementById('graphicsQualitySlider').value);
+    setCookie('visualEffects', document.getElementById('visualEffectsToggle').checked);
+}
+function loadConfigFromCookies() {
+    // Modo oscuro por defecto
+    let theme = getCookie('theme') || 'dark';
+    document.body.classList.toggle('light-theme', theme === 'light');
+    document.getElementById('themeToggle').checked = (theme === 'light');
+    let fontSize = getCookie('fontSize') || 'medium';
+    document.querySelector(`input[name="fontSize"][value="${fontSize}"]`).checked = true;
+    document.body.classList.remove('font-small', 'font-large');
+    if (fontSize !== 'medium') document.body.classList.add(`font-${fontSize}`);
+    let reduceMotion = getCookie('reduceMotion') === 'true';
+    document.getElementById('reduceMotionToggle').checked = reduceMotion;
+    document.body.classList.toggle('reduced-motion', reduceMotion);
+    let language = getCookie('language') || 'es';
+    document.getElementById('languageSelect').value = language;
+    document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.dataset[language];
+    });
+    let graphicsQuality = getCookie('graphicsQuality') || '2';
+    document.getElementById('graphicsQualitySlider').value = graphicsQuality;
+    document.getElementById('graphicsQualityValue').textContent = graphicsQuality;
+    let visualEffects = getCookie('visualEffects');
+    if (visualEffects !== null) document.getElementById('visualEffectsToggle').checked = (visualEffects === 'true');
+}
+
+// Guardar y cargar perfil en cookies
+function saveProfileToCookies(profileData) {
+    setCookie('profileData', JSON.stringify(profileData));
+}
+function loadProfileFromCookies() {
+    let data = getCookie('profileData');
+    return data ? JSON.parse(data) : {};
+}
+
+// Guardar y cargar fondo/color/música en cookies
+function saveCustomToCookies(key, value) {
+    setCookie(key, value);
+}
+function loadCustomFromCookies(key) {
+    return getCookie(key);
+}
+
+// Confeti animado
+function showConfetti() {
+    if (document.getElementById('confetti-canvas')) return;
+    let canvas = document.createElement('canvas');
+    canvas.id = 'confetti-canvas';
+    canvas.style.position = 'fixed';
+    canvas.style.left = 0;
+    canvas.style.top = 0;
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = 99999;
+    document.body.appendChild(canvas);
+    let ctx = canvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+    let particles = [];
+    for (let i = 0; i < 120; i++) {
+        particles.push({
+            x: Math.random()*W,
+            y: Math.random()*-H,
+            r: Math.random()*8+4,
+            d: Math.random()*120,
+            color: `hsl(${Math.random()*360},90%,60%)`,
+            tilt: Math.random()*10-10
+        });
+    }
+    let angle = 0;
+    function draw() {
+        ctx.clearRect(0,0,W,H);
+        for (let i=0;i<particles.length;i++) {
+            let p = particles[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, false);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        }
+        update();
+    }
+    function update() {
+        angle += 0.01;
+        for (let i=0;i<particles.length;i++) {
+            let p = particles[i];
+            p.y += (Math.cos(angle+p.d)+3+p.r/2)/2;
+            p.x += Math.sin(angle)*2;
+            if (p.y > H) {
+                p.x = Math.random()*W;
+                p.y = Math.random()*-20;
+            }
+        }
+    }
+    let interval = setInterval(draw, 16);
+    setTimeout(()=>{
+        clearInterval(interval);
+        canvas.remove();
+    }, 1800);
+}
+
+// Parallax fondo espacial
+function enableParallaxBackground() {
+    const bg = document.querySelector('.space-background');
+    window.addEventListener('mousemove', e => {
+        let x = (e.clientX / window.innerWidth - 0.5) * 20;
+        let y = (e.clientY / window.innerHeight - 0.5) * 20;
+        bg.style.backgroundPosition = `${50+x}% ${50+y}%`;
+    });
+}
+
+// Botón flotante scroll-top
+function addScrollTopButton() {
+    let btn = document.createElement('div');
+    btn.id = 'scrollTopBtn';
+    btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    btn.style.position = 'fixed';
+    btn.style.bottom = '80px';
+    btn.style.right = '30px';
+    btn.style.width = '48px';
+    btn.style.height = '48px';
+    btn.style.background = 'linear-gradient(45deg, var(--accent-color), var(--highlight-color))';
+    btn.style.borderRadius = '50%';
+    btn.style.display = 'flex';
+    btn.style.justifyContent = 'center';
+    btn.style.alignItems = 'center';
+    btn.style.color = '#fff';
+    btn.style.fontSize = '1.5rem';
+    btn.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+    btn.style.cursor = 'pointer';
+    btn.style.zIndex = 1000;
+    btn.style.opacity = 0;
+    btn.style.transition = 'opacity 0.4s';
+    document.body.appendChild(btn);
+    window.addEventListener('scroll', ()=>{
+        btn.style.opacity = (window.scrollY > 200) ? 1 : 0;
+    });
+    btn.addEventListener('click', ()=>{
+        window.scrollTo({top:0,behavior:'smooth'});
+    });
+}
+
+// Avatar animado
+function enableAvatarAnimation() {
+    const avatar = document.getElementById('profileAvatar');
+    avatar.addEventListener('mouseenter', ()=>{
+        avatar.style.transition = 'transform 0.4s cubic-bezier(.68,-0.55,.27,1.55)';
+        avatar.style.transform = 'rotate(-10deg) scale(1.12)';
+        avatar.style.boxShadow = '0 8px 30px 0 rgba(65,105,225,0.5)';
+    });
+    avatar.addEventListener('mouseleave', ()=>{
+        avatar.style.transform = '';
+        avatar.style.boxShadow = '';
+    });
+}
+
+// Efecto onda en botones
+function enableButtonWaves() {
+    document.body.addEventListener('click', function(e){
+        let target = e.target.closest('button, .background-button, .settings-button, .game-control-button');
+        if (!target) return;
+        let wave = document.createElement('span');
+        wave.className = 'button-wave';
+        wave.style.position = 'absolute';
+        wave.style.borderRadius = '50%';
+        wave.style.background = 'rgba(255,255,255,0.3)';
+        wave.style.pointerEvents = 'none';
+        let rect = target.getBoundingClientRect();
+        let size = Math.max(rect.width, rect.height);
+        wave.style.width = wave.style.height = size+'px';
+        wave.style.left = (e.clientX-rect.left-size/2)+'px';
+        wave.style.top = (e.clientY-rect.top-size/2)+'px';
+        wave.style.animation = 'buttonWaveAnim 0.7s cubic-bezier(.4,0,.2,1)';
+        target.style.position = 'relative';
+        target.appendChild(wave);
+        setTimeout(()=>{wave.remove();},700);
+    });
+    // CSS para la onda
+    let style = document.createElement('style');
+    style.innerHTML = `
+    @keyframes buttonWaveAnim {
+        0% {transform: scale(0); opacity: 0.7;}
+        100% {transform: scale(2.5); opacity: 0;}
+    }
+    .button-wave {z-index:2;}
+    `;
+    document.head.appendChild(style);
+}
+
+// Animación de transición de secciones
+function enableSectionTransitions() {
+    document.querySelectorAll('.sidebar-item').forEach(item=>{
+        item.addEventListener('click', ()=>{
+            let current = document.querySelector('.content-section.active');
+            if (current) {
+                current.style.animation = 'fadeOutSection 0.4s';
+                setTimeout(()=>{
+                    current.style.animation = '';
+                },400);
+            }
+        });
+    });
+    let style = document.createElement('style');
+    style.innerHTML = `
+    @keyframes fadeOutSection {
+        from {opacity:1;}
+        to {opacity:0;}
+    }
+    `;
+    document.head.appendChild(style);
+}
+
+// Animación de entrada de cards
+function enableCardEntryAnimation() {
+    const observer = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+                entry.target.style.transition = 'all 0.7s cubic-bezier(.4,0,.2,1)';
+            }
+        });
+    }, {threshold: 0.2});
+    setTimeout(()=>{
+        document.querySelectorAll('.game-card').forEach(card=>{
+            observer.observe(card);
+        });
+    }, 800);
+}
+
+// Partículas flotantes
+function addFloatingParticles() {
+    let container = document.createElement('div');
+    container.id = 'floating-particles';
+    container.style.position = 'fixed';
+    container.style.left = 0;
+    container.style.top = 0;
+    container.style.width = '100vw';
+    container.style.height = '100vh';
+    container.style.pointerEvents = 'none';
+    container.style.zIndex = 0;
+    document.body.appendChild(container);
+    let colors = ['#4169e1','#ff3366','#9c27b0','#00bcd4','#4caf50','#fff'];
+    let particles = [];
+    for (let i=0;i<40;i++) {
+        let el = document.createElement('div');
+        el.style.position = 'absolute';
+        el.style.width = el.style.height = (Math.random()*16+8)+'px';
+        el.style.borderRadius = '50%';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.opacity = Math.random()*0.3+0.1;
+        el.style.left = Math.random()*100+'vw';
+        el.style.top = Math.random()*100+'vh';
+        el.style.transition = 'top 8s linear, left 8s linear';
+        container.appendChild(el);
+        particles.push(el);
+    }
+    setInterval(()=>{
+        particles.forEach(el=>{
+            el.style.left = Math.random()*100+'vw';
+            el.style.top = Math.random()*100+'vh';
+        });
+    }, 8000);
+}
+
+// --- FUNCIONES NUEVAS Y MEJORAS ---
+// 1. Reloj en tiempo real en la cabecera
+function addLiveClock() {
+    let clock = document.createElement('div');
+    clock.id = 'liveClock';
+    clock.style.position = 'absolute';
+    clock.style.top = '12px';
+    clock.style.right = '32px';
+    clock.style.fontSize = '1.1rem';
+    clock.style.color = 'var(--accent-color)';
+    clock.style.fontWeight = 'bold';
+    clock.style.letterSpacing = '1px';
+    document.querySelector('.header').appendChild(clock);
+    setInterval(()=>{
+        let now = new Date();
+        clock.textContent = now.toLocaleTimeString();
+    }, 1000);
+}
+
+// 2. Notificaciones de logros (gamificación)
+function showAchievement(title, desc) {
+    let notif = document.createElement('div');
+    notif.className = 'achievement-toast';
+    notif.innerHTML = `<strong>🏆 ${title}</strong><br><span>${desc}</span>`;
+    notif.style.position = 'fixed';
+    notif.style.bottom = '30px';
+    notif.style.left = '50%';
+    notif.style.transform = 'translateX(-50%)';
+    notif.style.background = 'rgba(30,30,60,0.98)';
+    notif.style.color = '#fff';
+    notif.style.padding = '18px 32px';
+    notif.style.borderRadius = '16px';
+    notif.style.boxShadow = '0 6px 32px rgba(0,0,0,0.4)';
+    notif.style.fontSize = '1.1rem';
+    notif.style.zIndex = 999999;
+    notif.style.opacity = 0;
+    notif.style.transition = 'opacity 0.5s';
+    document.body.appendChild(notif);
+    setTimeout(()=>{notif.style.opacity=1;},50);
+    setTimeout(()=>{notif.style.opacity=0; setTimeout(()=>notif.remove(),600);}, 3500);
+}
+
+// 3. Modo "Focus": oculta sidebar y header para jugar sin distracciones
+function enableFocusMode() {
+    let btn = document.createElement('button');
+    btn.id = 'focusModeBtn';
+    btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    btn.title = 'Modo Focus';
+    btn.style.position = 'fixed';
+    btn.style.bottom = '140px';
+    btn.style.right = '30px';
+    btn.style.width = '48px';
+    btn.style.height = '48px';
+    btn.style.background = 'linear-gradient(45deg, var(--accent-color), var(--highlight-color))';
+    btn.style.borderRadius = '50%';
+    btn.style.display = 'flex';
+    btn.style.justifyContent = 'center';
+    btn.style.alignItems = 'center';
+    btn.style.color = '#fff';
+    btn.style.fontSize = '1.5rem';
+    btn.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+    btn.style.cursor = 'pointer';
+    btn.style.zIndex = 1000;
+    btn.style.opacity = 0.7;
+    btn.style.transition = 'opacity 0.3s';
+    btn.onmouseenter = ()=>btn.style.opacity=1;
+    btn.onmouseleave = ()=>btn.style.opacity=0.7;
+    document.body.appendChild(btn);
+    let focus = false;
+    btn.onclick = ()=>{
+        focus = !focus;
+        document.querySelector('.header').style.display = focus ? 'none' : '';
+        document.querySelector('.sidebar').style.display = focus ? 'none' : '';
+        btn.innerHTML = focus ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        showAchievement(focus ? 'Modo Focus Activado' : 'Modo Focus Desactivado', focus ? '¡Disfruta tu juego sin distracciones!' : 'Interfaz restaurada.');
+    };
+}
+
+// 4. Efecto de "shake" al perder en un juego (llamar shakeScreen())
+function shakeScreen() {
+    document.body.classList.add('shake');
+    setTimeout(()=>document.body.classList.remove('shake'), 600);
+}
+(function(){
+    let style = document.createElement('style');
+    style.innerHTML = `
+    .shake {
+        animation: shakeAnim 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shakeAnim {
+        10%, 90% { transform: translateX(-2px);}
+        20%, 80% { transform: translateX(4px);}
+        30%, 50%, 70% { transform: translateX(-8px);}
+        40%, 60% { transform: translateX(8px);}
+    }
+    `;
+    document.head.appendChild(style);
+})();
+
+// 5. Estadísticas de juegos jugados y tiempo total jugado
+function updateGameStats(started) {
+    let stats = JSON.parse(localStorage.getItem('gameStats') || '{"played":0,"time":0,"lastStart":null}');
+    if (started) {
+        stats.lastStart = Date.now();
+    } else if (stats.lastStart) {
+        stats.time += Math.floor((Date.now() - stats.lastStart)/1000);
+        stats.lastStart = null;
+        stats.played++;
+    }
+    localStorage.setItem('gameStats', JSON.stringify(stats));
+    showGameStats();
+}
+function showGameStats() {
+    let stats = JSON.parse(localStorage.getItem('gameStats') || '{"played":0,"time":0}');
+    let el = document.getElementById('gameStats');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'gameStats';
+        el.style.position = 'fixed';
+        el.style.top = '12px';
+        el.style.left = '50%';
+        el.style.transform = 'translateX(-50%)';
+        el.style.background = 'rgba(20,20,40,0.92)';
+        el.style.color = '#fff';
+        el.style.padding = '8px 24px';
+        el.style.borderRadius = '12px';
+        el.style.fontSize = '1rem';
+        el.style.zIndex = 9999;
+        el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.2)';
+        document.body.appendChild(el);
+    }
+    el.innerHTML = `🎮 Juegos jugados: <b>${stats.played}</b> &nbsp; ⏱️ Tiempo jugado: <b>${Math.floor(stats.time/60)}m ${stats.time%60}s</b>`;
+}
+
+// 6. Atajo de teclado: presiona "G" para mostrar menú de juegos rápido
+function enableQuickGameMenu() {
+    let menu = document.createElement('div');
+    menu.id = 'quickGameMenu';
+    menu.style.position = 'fixed';
+    menu.style.top = '50%';
+    menu.style.left = '50%';
+    menu.style.transform = 'translate(-50%,-50%) scale(0)';
+    menu.style.background = 'rgba(30,30,60,0.98)';
+    menu.style.color = '#fff';
+    menu.style.padding = '32px 48px';
+    menu.style.borderRadius = '24px';
+    menu.style.boxShadow = '0 8px 40px rgba(0,0,0,0.5)';
+    menu.style.zIndex = 999999;
+    menu.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)';
+    menu.style.textAlign = 'center';
+    menu.innerHTML = '<h2 style="margin-bottom:16px;">Menú Rápido de Juegos</h2><div id="quickGameList"></div><button onclick="document.getElementById(\'quickGameMenu\').style.transform=\'scale(0)\'" style="margin-top:24px;">Cerrar</button>';
+    document.body.appendChild(menu);
+    document.addEventListener('keydown', function(e){
+        if (e.key.toLowerCase() === 'g' && !e.repeat) {
+            menu.style.transform = 'translate(-50%,-50%) scale(1)';
+            let list = document.getElementById('quickGameList');
+            list.innerHTML = '';
+            document.querySelectorAll('.game-card').forEach(card=>{
+                let btn = document.createElement('button');
+                btn.textContent = card.querySelector('.game-title')?.textContent || 'Juego';
+                btn.onclick = ()=>{card.querySelector('.play-button')?.click(); menu.style.transform='scale(0)';};
+                btn.style.margin = '8px 0';
+                btn.style.display = 'block';
+                btn.style.width = '100%';
+                btn.style.fontSize = '1.1rem';
+                btn.style.padding = '8px 0';
+                list.appendChild(btn);
+            });
+        }
+        if (e.key === "Escape") menu.style.transform = 'scale(0)';
+    });
+}
+
+// 7. Efecto de partículas al hacer clic en cualquier parte
+function enableClickParticles() {
+    document.body.addEventListener('click', function(e){
+        for(let i=0;i<12;i++){
+            let p = document.createElement('div');
+            p.className = 'click-particle';
+            let size = Math.random()*8+6;
+            p.style.position = 'fixed';
+            p.style.left = (e.clientX-4)+'px';
+            p.style.top = (e.clientY-4)+'px';
+            p.style.width = p.style.height = size+'px';
+            p.style.background = `hsl(${Math.random()*360},90%,60%)`;
+            p.style.borderRadius = '50%';
+            p.style.pointerEvents = 'none';
+            p.style.zIndex = 999999;
+            p.style.opacity = 0.7;
+            document.body.appendChild(p);
+            let angle = Math.random()*2*Math.PI;
+            let dist = Math.random()*60+30;
+            setTimeout(()=>{
+                p.style.transition = 'all 0.7s cubic-bezier(.4,0,.2,1)';
+                p.style.transform = `translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px) scale(0.2)`;
+                p.style.opacity = 0;
+            },10);
+            setTimeout(()=>p.remove(),800);
+        }
+    });
+    let style = document.createElement('style');
+    style.innerHTML = `.click-particle{transition:all 0.7s cubic-bezier(.4,0,.2,1);}`;
+    document.head.appendChild(style);
+}
+
+// 8. Cambia el cursor por uno personalizado gamer
+function setCustomCursor() {
+    let url = 'https://cdn.jsdelivr.net/gh/astralassets/cursors/gamer.cur';
+    document.body.style.cursor = `url('${url}'), auto`;
+}
+
+// 9. Easter egg: Konami code para desbloquear un fondo secreto
+function enableKonamiEasterEgg() {
+    let code = [38,38,40,40,37,39,37,39,66,65], pos=0;
+    document.addEventListener('keydown', function(e){
+        if (e.keyCode === code[pos]) {
+            pos++;
+            if (pos === code.length) {
+                showAchievement('¡Easter Egg!', '¡Fondo secreto desbloqueado!');
+                let bg = document.getElementById('customBackground');
+                if (!bg) {
+                    bg = document.createElement('div');
+                    bg.id = 'customBackground';
+                    bg.className = 'custom-background';
+                    document.body.appendChild(bg);
+                }
+                bg.style.backgroundImage = 'url(https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1500&q=80)';
+                document.querySelector('.space-background').style.display = 'none';
+                pos=0;
+            }
+        } else {
+            pos=0;
+        }
+    });
+}
+
+// 10. Modo oscuro SIEMPRE por defecto
+function forceDarkMode() {
+    document.body.classList.remove('light-theme');
+    document.body.classList.add('dark-theme');
+    document.getElementById('themeToggle').checked = false;
+    setCookie('theme', 'dark');
+}
+
+// 11. Música: detener al iniciar juego y reanudar al cerrar
+function setupMusicPauseOnGame() {
+    // Suponiendo que los juegos se abren con .play-button y cierran con .close-game-button
+    let music = document.getElementById('backgroundMusic');
+    document.querySelectorAll('.play-button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            if (!music.paused) music.pause();
+            updateGameStats(true);
+        });
+    });
+    document.querySelectorAll('.close-game-button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            setTimeout(()=>{ // Espera a que cierre el modal/juego
+                if (music.src) music.play();
+                updateGameStats(false);
+            }, 400);
+        });
+    });
+}
+
+// --- MODIFICAR FUNCIONES DE GUARDADO PARA USAR COOKIES ---
+function patchSaveButtons() {
+    // Configuración
+    document.getElementById('saveSettingsButton').onclick = function() {
+        saveConfigToCookies();
+        showAlert('Configuración Guardada', 'Tu configuración ha sido guardada correctamente y se aplicará en tu próxima visita.');
+        showConfetti();
+    };
+    // Perfil
+    document.getElementById('saveProfileButton').onclick = function(e) {
+        e.preventDefault();
+        let profileData = {
+            name: document.getElementById('profileName').value,
+            surname: document.getElementById('profileSurname').value,
+            age: document.getElementById('profileAge').value,
+            gender: document.getElementById('genderMale').checked ? 'male' : (document.getElementById('genderFemale').checked ? 'female' : ''),
+            avatar: document.getElementById('profileAvatar').querySelector('img')?.src || ''
+        };
+        saveProfileToCookies(profileData);
+        document.getElementById('headerUserName').textContent = profileData.name;
+        showAlert('Perfil Guardado', 'Tu información de perfil ha sido guardada correctamente.');
+        showConfetti();
+    };
+    // Fondo personalizado
+    document.getElementById('saveBackgroundButton').onclick = function() {
+        let bg = document.getElementById('backgroundPreview').style.backgroundImage;
+        if (bg && bg.startsWith('url(')) {
+            let url = bg.slice(5,-2);
+            saveCustomToCookies('customBackground', url);
+            showAlert('Fondo Guardado', 'Tu fondo personalizado ha sido guardado correctamente.');
+            showConfetti();
+        } else {
+            saveCustomToCookies('customBackground','');
+            showAlert('Fondo Eliminado', 'El fondo personalizado ha sido eliminado.');
+        }
+    };
+    // Colores
+    document.getElementById('applyColors').onclick = function() {
+        let headerColor = document.getElementById('headerColor').value;
+        let sidebarColor = document.getElementById('sidebarColor').value;
+        let r = parseInt(document.getElementById('colorR').value)||0;
+        let g = parseInt(document.getElementById('colorG').value)||0;
+        let b = parseInt(document.getElementById('colorB').value)||0;
+        let accentColor = rgbToHex(r,g,b);
+        saveCustomToCookies('headerColor', headerColor);
+        saveCustomToCookies('sidebarColor', sidebarColor);
+        saveCustomToCookies('accentColor', accentColor);
+        showAlert('Colores aplicados', 'Los colores se han aplicado correctamente y se guardarán para tu próxima visita.');
+        showConfetti();
+    };
+    document.getElementById('resetColors').onclick = function() {
+        saveCustomToCookies('headerColor', '#0a0a2a');
+        saveCustomToCookies('sidebarColor', '#0a0a2a');
+        saveCustomToCookies('accentColor', '#4169e1');
+        showAlert('Colores restablecidos', 'Los colores se han restablecido a los valores predeterminados.');
+        showConfetti();
+    };
+    // Música personalizada
+    document.getElementById('saveCustomMusicButton').onclick = function() {
+        let file = document.getElementById('customMusicFile').files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                saveCustomToCookies('customMusic', e.target.result);
+                showAlert('Música Guardada', 'Tu música personalizada ha sido guardada correctamente.');
+                showConfetti();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            showAlert('Error', 'No hay música personalizada para guardar.');
+        }
+    };
+    document.getElementById('removeCustomMusicButton').onclick = function() {
+        saveCustomToCookies('customMusic','');
+        showAlert('Música Eliminada', 'La música personalizada ha sido eliminada.');
+        showConfetti();
+    };
+}
+
+// --- CARGAR CONFIGURACIONES Y PERFIL DESDE COOKIES AL INICIAR ---
+function applyCustomizationsFromCookies() {
+    // Configuración
+    loadConfigFromCookies();
+    // Forzar modo oscuro SIEMPRE
+    forceDarkMode();
+    // Perfil
+    let profileData = loadProfileFromCookies();
+    if (profileData.name) document.getElementById('profileName').value = profileData.name;
+    if (profileData.surname) document.getElementById('profileSurname').value = profileData.surname;
+    if (profileData.age) document.getElementById('profileAge').value = profileData.age;
+    if (profileData.gender === 'male') document.getElementById('genderMale').checked = true;
+    if (profileData.gender === 'female') document.getElementById('genderFemale').checked = true;
+    if (profileData.avatar) {
+        document.getElementById('profileAvatar').innerHTML = `<img src="${profileData.avatar}" alt="Avatar">`;
+        document.getElementById('headerAvatar').innerHTML = `<img src="${profileData.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+    }
+    if (profileData.name) document.getElementById('headerUserName').textContent = profileData.name;
+    // Fondo
+    let bg = loadCustomFromCookies('customBackground');
+    if (bg) {
+        let customBg = document.getElementById('customBackground');
+        if (!customBg) {
+            customBg = document.createElement('div');
+            customBg.id = 'customBackground';
+            customBg.className = 'custom-background';
+            document.body.appendChild(customBg);
+        }
+        customBg.style.backgroundImage = `url(${bg})`;
+        document.querySelector('.space-background').style.display = 'none';
+        document.getElementById('backgroundPreview').style.backgroundImage = `url(${bg})`;
+        document.getElementById('backgroundPreview').classList.add('has-image');
+    }
+    // Colores
+    let headerColor = loadCustomFromCookies('headerColor') || '#0a0a2a';
+    let sidebarColor = loadCustomFromCookies('sidebarColor') || '#0a0a2a';
+    let accentColor = loadCustomFromCookies('accentColor') || '#4169e1';
+    document.documentElement.style.setProperty('--header-bg', headerColor);
+    document.documentElement.style.setProperty('--sidebar-bg', sidebarColor);
+    document.documentElement.style.setProperty('--accent-color', accentColor);
+    document.getElementById('headerColor').value = headerColor;
+    document.getElementById('sidebarColor').value = sidebarColor;
+    document.getElementById('headerColorPreview').style.backgroundColor = headerColor;
+    document.getElementById('sidebarColorPreview').style.backgroundColor = sidebarColor;
+    document.getElementById('accentColorPreview').style.backgroundColor = accentColor;
+    // Música personalizada
+    let music = loadCustomFromCookies('customMusic');
+    if (music) {
+        document.getElementById('backgroundMusic').src = music;
+        document.getElementById('customMusicInfo').textContent = 'Música personalizada guardada';
+        document.getElementById('customMusicInfo').style.color = 'var(--accent-color)';
+    }
+}
+
+// --- INICIALIZACIÓN ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Animaciones y funciones llamativas
+    enableParallaxBackground();
+    addScrollTopButton();
+    enableAvatarAnimation();
+    enableButtonWaves();
+    enableSectionTransitions();
+    addFloatingParticles();
+    setTimeout(enableCardEntryAnimation, 1200);
+    // Guardar en cookies
+    patchSaveButtons();
+    // Cargar desde cookies
+    applyCustomizationsFromCookies();
+
+    // --- FUNCIONES NUEVAS ---
+    addLiveClock();
+    enableFocusMode();
+    enableQuickGameMenu();
+    enableClickParticles();
+    setCustomCursor();
+    enableKonamiEasterEgg();
+    setupMusicPauseOnGame();
+    showGameStats();
+
+    // Ejemplo: desbloquear logro al visitar la página por primera vez
+    if (!localStorage.getItem('visitedOnce')) {
+        showAchievement('¡Bienvenido!', 'Has visitado la mejor página de juegos.');
+        localStorage.setItem('visitedOnce', '1');
+    }
+});
+</script>
