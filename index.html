@@ -20,18 +20,6 @@
         body: JSON.stringify({ id })
       });
       const data = await res.json();
-
-      if (data.banned) {
-        document.documentElement.innerHTML = `
-          <body style="margin:0; background-color:#111; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
-            <div>
-              <h1>🚫 Acceso Denegado</h1>
-              <p>Tu cuenta <strong>${id}</strong> ha sido baneada de la plataforma.</p>
-              <p>Si crees que esto es un error, contacta con el administrador.</p>
-            </div>
-          </body>
-        `;
-      }
     }
   })();
 </script>
@@ -3256,15 +3244,23 @@ opacity: 0.8;
             });
             const data = await res.json();
             if (data.banned) {
-                document.documentElement.innerHTML = `
-                    <body style="margin:0; background:#111; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
-                        <div>
-                            <h1>🚫 Acceso Denegado</h1>
-                            <p>Tu cuenta <strong>${id}</strong> ha sido baneada de AstralProton.</p>
-                            <p>Si crees que esto es un error, contacta con el administrador.</p>
+                // Limpia el body y aplica el diseño de la app
+                document.body.innerHTML = `
+                    <div class="space-background"><div class="stars" id="stars"></div></div>
+                    <div style="display:flex;justify-content:center;align-items:center;height:100vh;">
+                        <div class="welcome-container" style="max-width:420px;">
+                            <h1 class="welcome-message" style="font-size:2.2rem;">Acceso Denegado</h1>
+                            <div style="margin:1.5em 0;">
+                                <p style="font-size:1.1rem;">Tu cuenta <strong>${id}</strong> ha sido <span style="color:#ff3366;font-weight:bold;">baneada</span> de AstralProton.</p>
+                                <p style="font-size:1rem;opacity:0.8;">Si crees que esto es un error, contacta con el administrador.</p>
+                            </div>
                         </div>
-                    </body>
+                    </div>
+                    <audio id="ban-audio" src="baneado.mp3" autoplay loop></audio>
                 `;
+                // Opcional: desactiva scroll y otros elementos
+                document.body.style.overflow = "hidden";
+                document.title = "Acceso Denegado - AstralProton";
                 return;
             }
         } catch (e) {
