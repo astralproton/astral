@@ -8,6 +8,34 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  (async () => {
+    const API = 'https://astral-ban-api.onrender.com';
+    const id = localStorage.getItem('astralID');
+
+    if (id) {
+      const res = await fetch(`${API}/check-banned`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+
+      if (data.banned) {
+        document.documentElement.innerHTML = `
+          <body style="margin:0; background-color:#111; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
+            <div>
+              <h1>🚫 Acceso Denegado</h1>
+              <p>Tu cuenta <strong>${id}</strong> ha sido baneada de la plataforma.</p>
+              <p>Si crees que esto es un error, contacta con el administrador.</p>
+            </div>
+          </body>
+        `;
+      }
+    }
+  })();
+</script>
+</head>
 <style>
 /* Variables globales */
 :root {
@@ -3187,60 +3215,64 @@ opacity: 0.8;
 
 <script>
 
-  (async () => {
+(async () => {
     const API = 'https://astral-ban-api.onrender.com';
-
-    // ¿Ya está registrado?
     let id = localStorage.getItem('astralID');
     let nombre = localStorage.getItem('astralNombre');
 
+    // Si no hay ID, registrar usuario
     if (!id || !nombre) {
-      // Pedimos el nombre
-      nombre = prompt("¡Bienvenido a AstralProton! Por favor, escribe tu nombre para continuar. Use su nombre real, de lo contrario sera baneado permanentemente.");
-
-      if (!nombre || !nombre.trim()) {
-        alert("Debes ingresar un nombre para acceder.");
-        window.location.reload();
-        return;
-      }
-
-      // Pedimos un ID único
-      try {
-        const res = await fetch(`${API}/nuevo-usuario`);
-        const data = await res.json();
-        id = data.id;
-
-        // Guardamos en localStorage
-        localStorage.setItem('astralID', id);
-        localStorage.setItem('astralNombre', nombre);
-
-        // Registramos en la API
-        await fetch(`${API}/registrar-usuario`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, nombre })
-        });
-
-        alert(`¡Registro exitoso! Tu ID es: ${id}`);
-      } catch (err) {
-        alert("Hubo un error al registrarte. Intenta más tarde.");
-        console.error(err);
-      }
-    } else {
-      console.log(`Bienvenido de nuevo, ${nombre} (${id})`);
+        nombre = prompt("¡Bienvenido a AstralProton! Por favor, escribe tu nombre para continuar. Use su nombre real, de lo contrario sera baneado permanentemente.");
+        if (!nombre || !nombre.trim()) {
+            alert("Debes ingresar un nombre para acceder.");
+            window.location.reload();
+            return;
+        }
+        try {
+            const res = await fetch(`${API}/nuevo-usuario`);
+            const data = await res.json();
+            id = data.id;
+            localStorage.setItem('astralID', id);
+            localStorage.setItem('astralNombre', nombre);
+            await fetch(`${API}/registrar-usuario`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, nombre })
+            });
+            alert(`¡Registro exitoso! Tu ID es: ${id}`);
+        } catch (err) {
+            alert("Hubo un error al registrarte. Intenta más tarde.");
+            return;
+        }
     }
-  })();
 
-const API_URL = 'https://astral-ban-api.onrender.com';
-
-fetch('https://astral-ban-api.onrender.com/nuevo-usuario')
-  .then(res => res.json())
-  .then(data => {
-    const idAsignado = data.id;
-    console.log('Tu ID es:', idAsignado);
-    // Puedes guardarlo en localStorage o usarlo en tu lógica
-    localStorage.setItem('astralID', idAsignado);
-  });
+    // SIEMPRE comprobar si está baneado ANTES de mostrar la página
+    if (id) {
+        try {
+            const res = await fetch(`${API}/check-banned`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.banned) {
+                document.documentElement.innerHTML = `
+                    <body style="margin:0; background:#111; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
+                        <div>
+                            <h1>🚫 Acceso Denegado</h1>
+                            <p>Tu cuenta <strong>${id}</strong> ha sido baneada de AstralProton.</p>
+                            <p>Si crees que esto es un error, contacta con el administrador.</p>
+                        </div>
+                    </body>
+                `;
+                return;
+            }
+        } catch (e) {
+            alert("Error al comprobar baneo. Intenta más tarde.");
+            return;
+        }
+    }
+})();
 
  // --- BLOQUEO Y CONTRASEÑA ---
 // Código original restaurado (bloqueo simple con contraseña y pantalla de bloqueo)

@@ -1,41 +1,75 @@
-function filterGamesByCategory(category) {
-    const gamesGrid = document.getElementById('gamesGrid');
-    gamesGrid.innerHTML = '';
-    
-    let filteredGames = games;
-    
-    if (category !== 'all') {
-        if (category === 'favorites') {
-            const favoriteGames = folders.find(folder => folder.title === "Favoritos").games;
-            filteredGames = games.filter(game => favoriteGames.includes(game.id));
-        } else {
-            filteredGames = games.filter(game => game.categories.includes(category));
+<!--
+SOLUCIÓN: El problema principal es que tu página 1 (AstralProton) tiene varios scripts que intentan registrar usuarios y comprobar baneos, pero hay código duplicado y desordenado, lo que puede causar que la comprobación de baneos no funcione correctamente. Además, hay llamadas innecesarias a la API de nuevo usuario cada vez que cargas la página.
+
+RECOMENDACIÓN:
+- Solo debes registrar el usuario una vez (si no existe en localStorage).
+- Siempre que cargue la página, antes de mostrar nada, debes comprobar si el usuario está baneado y, si lo está, bloquear el acceso inmediatamente.
+- El código de comprobación de baneos debe ejecutarse lo antes posible y solo una vez.
+
+AQUÍ TIENES UN EJEMPLO LIMPIO Y FUNCIONAL para la parte de registro y comprobación de baneos (ponlo al principio del <body> o justo después del <head>):
+
+-->
+<script>
+(async () => {
+    const API = 'https://astral-ban-api.onrender.com';
+    let id = localStorage.getItem('astralID');
+    let nombre = localStorage.getItem('astralNombre');
+
+    // Si no hay ID, registrar usuario
+    if (!id || !nombre) {
+        nombre = prompt("¡Bienvenido a AstralProton! Por favor, escribe tu nombre para continuar. Use su nombre real, de lo contrario sera baneado permanentemente.");
+        if (!nombre || !nombre.trim()) {
+            alert("Debes ingresar un nombre para acceder.");
+            window.location.reload();
+            return;
+        }
+        try {
+            const res = await fetch(`${API}/nuevo-usuario`);
+            const data = await res.json();
+            id = data.id;
+            localStorage.setItem('astralID', id);
+            localStorage.setItem('astralNombre', nombre);
+            await fetch(`${API}/registrar-usuario`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, nombre })
+            });
+            alert(`¡Registro exitoso! Tu ID es: ${id}`);
+        } catch (err) {
+            alert("Hubo un error al registrarte. Intenta más tarde.");
+            return;
         }
     }
-    
-    filteredGames.forEach((game, index) => {
-        const gameCard = document.createElement('div');
-        gameCard.className = 'game-card';
-        gameCard.style.animationDelay = `${index * 0.1}s`;
-        
-        gameCard.innerHTML = `
-            <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
-            <div class="game-info">
-                <h3 class="game-title">${game.title}</h3>
-                <p class="game-artist">${game.artist}</p>
-            </div>
-            <div class="play-button">
-                <i class="fas fa-play"></i>
-            </div>
-        `;
-        
-        gameCard.addEventListener('click', () => {
-            openGame(game);
-        });
-        
-        gamesGrid.appendChild(gameCard);
-    });
 
-    // --- BLOQUEO DE JUEGOS HASTA REGISTRO ---
-    markGamesLockedIfNeeded();
-}
+    // SIEMPRE comprobar si está baneado ANTES de mostrar la página
+    if (id) {
+        try {
+            const res = await fetch(`${API}/check-banned`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.banned) {
+                document.documentElement.innerHTML = `
+                    <body style="margin:0; background:#111; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
+                        <div>
+                            <h1>🚫 Acceso Denegado</h1>
+                            <p>Tu cuenta <strong>${id}</strong> ha sido baneada de AstralProton.</p>
+                            <p>Si crees que esto es un error, contacta con el administrador.</p>
+                        </div>
+                    </body>
+                `;
+                return;
+            }
+        } catch (e) {
+            alert("Error al comprobar baneo. Intenta más tarde.");
+            return;
+        }
+    }
+})();
+</script>
+<!--
+El resto de tu HTML y scripts van después de este bloque.
+NO dupliques más la comprobación de baneos ni el registro de usuario en otros scripts.
+-->
