@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>AstralProton Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome y Montserrat para mantener el estilo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color, #fff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calc-container {
+            background: var(--card-bg, rgba(26,26,74,0.7));
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            padding: 2.5rem 2rem 2rem 2rem;
+            min-width: 320px;
+            max-width: 95vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid var(--accent-color, #4169e1);
+            animation: fadeIn 0.7s;
+        }
+        .calc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color, #4169e1);
+            margin-bottom: 1.2rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+        }
+        .calculator {
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+            box-shadow: 0 2px 10px #0003;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #display {
+            width: 100%;
+            font-size: 1.5rem;
+            padding: 0.7em 0.5em;
+            border-radius: 8px;
+            border: 2px solid var(--accent-color, #4169e1);
+            background: rgba(255,255,255,0.07);
+            color: var(--text-color, #fff);
+            margin-bottom: 1em;
+            text-align: right;
+            letter-spacing: 1px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 0.7em;
+            justify-content: center;
+        }
+        .calc-btn {
+            padding: 0.7em 0;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, var(--accent-color, #4169e1), var(--highlight-color, #ff3366));
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 10px #0002;
+            transition: background 0.2s, transform 0.2s;
+            outline: none;
+            user-select: none;
+        }
+        .calc-btn:active {
+            transform: scale(0.97);
+            background: linear-gradient(45deg, var(--highlight-color, #ff3366), var(--accent-color, #4169e1));
+        }
+        .calc-btn.clear {
+            background: linear-gradient(45deg, #ff3366, #ff0033);
+        }
+        .calc-btn.equal {
+            background: linear-gradient(45deg, #4caf50, #2196f3);
+        }
+        .calc-btn.op {
+            background: linear-gradient(45deg, #4169e1, #6a5acd);
+        }
+        @media (max-width: 480px) {
+            .calc-container { padding: 1.2rem 0.5rem 1rem 0.5rem; min-width: 0; }
+            .calculator { padding: 1rem 0.5rem 0.7rem 0.5rem; }
+            .calc-buttons { grid-template-columns: repeat(4, 48px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <div class="calc-container">
+        <div class="calc-title">
+            <i class="fas fa-calculator"></i> AstralProton Calculator
+        </div>
+        <div class="calculator">
+            <input type="text" id="display" disabled>
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+                <button class="calc-btn op" onclick="appendToDisplay('/')">÷</button>
+                <button class="calc-btn op" onclick="appendToDisplay('*')">×</button>
+                <button class="calc-btn op" onclick="appendToDisplay('-')">−</button>
+                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+                <button class="calc-btn op" onclick="appendToDisplay('+')">+</button>
+                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+                <button class="calc-btn" onclick="backspace()"><i class="fas fa-backspace"></i></button>
+                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+                <button class="calc-btn equal" onclick="calculateResult()">=</button>
+                <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+                <button class="calc-btn" style="grid-column: span 2;" onclick="window.location.href='https://astralproton.github.io/astral'"><i class="fas fa-home"></i> Menú</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function appendToDisplay(value) {
+            const display = document.getElementById('display');
+            // Evita operadores duplicados y errores básicos
+            if (/[+\-*/.]$/.test(display.value) && /[+\-*/.]/.test(value)) return;
+            display.value += value;
+        }
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+        function backspace() {
+            const display = document.getElementById('display');
+            display.value = display.value.slice(0, -1);
+        }
+        function calculateResult() {
+            const display = document.getElementById('display');
+            try {
+                // Solo permite números y operadores seguros
+                if (/^[0-9+\-*/.() ]+$/.test(display.value)) {
+                    // eslint-disable-next-line no-eval
+                    display.value = eval(display.value) ?? '';
+                } else {
+                    display.value = 'Error';
+                }
+            } catch {
+                display.value = 'Error';
+            }
+        }
+        // Permite usar Enter para calcular
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') calculateResult();
+            if (e.key === 'Escape') clearDisplay();
+            if (e.key === 'Backspace') backspace();
+        });
+    </script>
+</body>
+</html>

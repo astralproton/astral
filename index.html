@@ -8,20 +8,75 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>
-  (async () => {
-    const API = 'https://astral-ban-api.onrender.com';
-    const id = localStorage.getItem('astralID');
+<script type="module">
+(async () => {
+  const API = 'https://astral-ban-api.onrender.com';
+  let id = localStorage.getItem('astralID');
+  let nombre = localStorage.getItem('astralNombre');
 
-    if (id) {
-      const res = await fetch(`${API}/check-banned`, {
+  if (!id || !nombre) {
+    nombre = prompt("Bienvenido a AstralProton. ¿Cuál es tu nombre? Introduzca su nombre real, de lo contrario, sera baneado.");
+    if (!nombre || !nombre.trim()) {
+      alert("🚫 Tienes que poner un nombre para continuar.");
+      location.reload();
+      return;
+    }
+
+    let intentos = 0;
+    while (intentos < 5) {
+      id = prompt("✨ Elige tu ID único:");
+      if (!id || !id.trim()) {
+        alert("🚫 Debes escribir un ID.");
+        intentos++;
+        continue;
+      }
+
+      id = id.trim().toLowerCase();
+      try {
+        const check = await fetch(`${API}/existe-id`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const { existe } = await check.json();
+        if (existe) {
+          alert("⚠️ Ese ID ya está en uso. Intenta otro.");
+          intentos++;
+        } else {
+          break;
+        }
+      } catch (e) {
+        alert("❌ Error al verificar ID. Es normal, el servidor esta despertando. Espere un minuto e intente de nuevo.");
+        return;
+      }
+    }
+
+    if (intentos >= 5) {
+      alert("❌ Demasiados intentos. Recarga la página.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/registrar-usuario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ id, nombre })
       });
       const data = await res.json();
+      if (!data.success) {
+        alert("❌ No se pudo registrar.");
+        return;
+      }
+
+      localStorage.setItem('astralID', id);
+      localStorage.setItem('astralNombre', nombre);
+      alert(`✅ ¡Registrado exitosamente como ${nombre} (ID: ${id})!`);
+      location.reload();
+    } catch (err) {
+      alert("❌ Error al conectarse al servidor.");
     }
-  })();
+  }
+})();
 </script>
 </head>
 <style>
@@ -2520,8 +2575,100 @@ opacity: 0.8;
             box-shadow: 0 2px 12px #0008;
             pointer-events: none;
         }
+#transferOverlay {
+    position: fixed; z-index: 999999;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+}
+#transferMarquee {
+    width: 100vw;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ffd700;
+    background: #222;
+    padding: 0.7em 0;
+    margin-bottom: 2em;
+    box-shadow: 0 2px 12px #0008;
+}
+#transferMarquee span {
+    display: inline-block;
+    animation: transferMarqueeAnim 8s linear infinite;
+}
+@keyframes transferMarqueeAnim {
+    0% { transform: translateX(100vw);}
+    100% { transform: translateX(-100vw);}
+}
+#transferAnimBox {
+    background: rgba(26,26,74,0.93);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px #000a;
+    padding: 2.5em 2em 2em 2em;
+    min-width: 320px; max-width: 95vw;
+    display: flex; flex-direction: column; align-items: center;
+    border: 3px solid #4169e1;
+    color: #fffbe6;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+#transferAnimWii {
+    width: 220px; height: 120px;
+    margin-bottom: 1.5em;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/3/3e/Wii_U_logo.svg') no-repeat center/contain;
+    animation: transferWiiAnim 2s infinite alternate;
+    filter: drop-shadow(0 0 16px #4169e1cc);
+}
+@keyframes transferWiiAnim {
+    0% { transform: translateY(0);}
+    100% { transform: translateY(-18px);}
+}
+#transferProgressBar {
+    width: 320px; max-width: 80vw; height: 18px;
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.2em;
+    box-shadow: 0 2px 12px #4169e1aa;
+}
+#transferProgressBarInner {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4169e1, #ff3366 80%);
+    border-radius: 12px;
+    transition: width 0.3s cubic-bezier(.7,1.7,.5,1);
+    box-shadow: 0 0 16px #4169e1cc;
+}
+#transferAnimStars {
+    margin-bottom: 1.2em;
+    font-size: 2em;
+    color: gold;
+    animation: transferStarsAnim 1.2s infinite alternate;
+}
+@keyframes transferStarsAnim {
+    0% { filter: drop-shadow(0 0 8px #ffd700cc);}
+    100% { filter: drop-shadow(0 0 24px #fffbe6);}
+}
+#transferAnimText {
+    font-size: 1.1em;
+    color: #fffbe6;
+    margin-bottom: 1.2em;
+    text-align: center;
+}
+#transferAnimCancel {
+    padding: 0.7em 1.5em;
+    background: linear-gradient(45deg,#ff3366,#ff0033);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.08em;
+    cursor: pointer;
+    box-shadow: 0 2px 10px #ff336655;
+    margin-top: 1em;
+}
+#transferAnimAudio { display: none; }
 </style>
-<!-- Tu CSS original sigue aquí -->
 </head>
 <body>
 <!-- Pantalla de carga -->
@@ -3156,6 +3303,14 @@ opacity: 0.8;
                 </p>
             </div>
         </div>
+        <div id="appsSection" class="content-section">
+            <h1 class="section-title">
+                <i class="fas fa-th-large"></i> <span data-en="Apps" data-es="Apps">Apps</span>
+            </h1>
+            <div class="games-grid" id="appsGrid">
+                <!-- Las apps se cargarán dinámicamente aquí -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -3200,42 +3355,20 @@ opacity: 0.8;
   </div>
 </div>
 
-
 <script>
-
-(async () => {
+  (async () => {
     const API = 'https://astral-ban-api.onrender.com';
-    let id = localStorage.getItem('astralID');
-    let nombre = localStorage.getItem('astralNombre');
+    const id = localStorage.getItem('astralID');
 
-    // Si no hay ID, registrar usuario
-    if (!id || !nombre) {
-        nombre = prompt("¡Bienvenido a AstralProton! Por favor, escribe tu nombre para continuar. Use su nombre real, de lo contrario sera baneado permanentemente.");
-        if (!nombre || !nombre.trim()) {
-            alert("Debes ingresar un nombre para acceder.");
-            window.location.reload();
-            return;
-        }
-        try {
-            const res = await fetch(`${API}/nuevo-usuario`);
-            const data = await res.json();
-            id = data.id;
-            localStorage.setItem('astralID', id);
-            localStorage.setItem('astralNombre', nombre);
-            await fetch(`${API}/registrar-usuario`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, nombre })
-            });
-            alert(`¡Registro exitoso! Tu ID es: ${id}`);
-        } catch (err) {
-            alert("Hubo un error al registrarte. Intenta más tarde.");
-            return;
-        }
-    }
-
-    // SIEMPRE comprobar si está baneado ANTES de mostrar la página
     if (id) {
+      const res = await fetch(`${API}/check-banned`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+    }
+        if (id) {
         try {
             const res = await fetch(`${API}/check-banned`, {
                 method: 'POST',
@@ -3264,11 +3397,11 @@ opacity: 0.8;
                 return;
             }
         } catch (e) {
-            alert("Error al comprobar baneo. Intenta más tarde.");
+            alert("Error al comprobar baneo. Es normal, el servidor esta despertando. Espere un minuto e intente de nuevo.");
             return;
         }
     }
-})();
+  })();
 
  // --- BLOQUEO Y CONTRASEÑA ---
 // Código original restaurado (bloqueo simple con contraseña y pantalla de bloqueo)
@@ -3344,7 +3477,7 @@ function lockInit() {
             try {
                 profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
             } catch (e) {}
-            if (profileData.name === "Lenny" && profileData.surname === "AstralTeamCosmic") {
+            if (profileData.name === "Ricardo" && profileData.surname === "Garcia") {
                 showBetaTesterPanel();
             } else {
                 showBetaTesterError();
@@ -4395,6 +4528,22 @@ const games = [
             type: "info",
             message: "¿Cual es tu musica favorita de la pagina?",
             redirect: "musica.html"
+        }
+    },
+    {
+        id: 2.1,
+        title: "Roblox",
+        artist: "Roblox Corporation",
+        thumbnail: "imgjuegos/roblox.jpeg",
+        song: "titulonuevo.mp3",
+        url: "robloxad.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "Esto ya ni visible es en la pagina para que seguir poniendo frases?",
+            redirect: "robloxad.html"
         }
     },
     {

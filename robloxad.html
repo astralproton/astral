@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertencia Roblox - AstralProton</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2a0000;
+            --secondary-color: #4a0a0a;
+            --accent-color: #ff3333;
+            --text-color: #fff;
+            --card-bg: rgba(74,10,10,0.85);
+            --header-bg: #2a0000;
+            --highlight-color: #ff3333;
+            --transition-speed: 0.3s;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s;
+        }
+        .space-background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #2a0000 0%, #4a0a0a 100%);
+            z-index: -2;
+            overflow: hidden;
+        }
+        .stars {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%,100% { opacity: 0.5; }
+            50% { opacity: 0.2; }
+        }
+        header {
+            width: 100%;
+            background: var(--header-bg);
+            padding: 1.2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px #0006;
+            margin-bottom: 2rem;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+        .warning-container {
+            background: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            max-width: 420px;
+            padding: 2.5rem 2rem 2rem 2rem;
+            text-align: center;
+            border: 2px solid var(--accent-color);
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .warning-icon {
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 16px #ff333399;
+        }
+        .warning-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        .warning-message {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        .warning-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .warning-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #ff3333, #b71c1c);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px #ff333355;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .warning-btn:hover {
+            background: linear-gradient(45deg, #b71c1c, #ff3333);
+            transform: scale(1.04);
+        }
+        .discord-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6em;
+            margin-top: 1.2em;
+            font-size: 1.1em;
+            color: #fff;
+            background: linear-gradient(45deg, #7289da, #ff3333);
+            border-radius: 8px;
+            padding: 0.7em 1.5em;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+        .discord-link:hover {
+            background: linear-gradient(45deg, #ff3333, #7289da);
+            color: #fff;
+        }
+        @media (max-width: 600px) {
+            .warning-container { max-width: 98vw; padding: 1.2rem 0.5rem 1rem 0.5rem; }
+            header { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background">
+        <div class="stars" id="stars"></div>
+    </div>
+    <header>
+        <div class="logo">
+            <i class="fas fa-meteor"></i> AstralProton
+        </div>
+    </header>
+    <main>
+        <div class="warning-container">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="warning-title">
+                ¡Advertencia Importante sobre Roblox!
+            </div>
+            <div class="warning-message">
+                El uso de <b>Roblox</b> en AstralProton es posible, sin embargo, ademas de tener un rendimiento en base a las especificaciones de tu Chromebook, no nos hacemos responsables por el uso que se le de a esta plataforma. Roblox puede contener scripts o enlaces externos que no están controlados por AstralProton.<br><br>
+                Si decides continuar, hazlo bajo tu propia responsabilidad. El profesor puede en todo momento bloquear la pagina y interrumpir su partida. Como metodo de seguridad, tiene solo 30 minutos para jugar diariamente, para mayor rendimiento, utilice el modo directorio y ponga la pagina web en pantalla completa. Si tienes dudas, consulta con un administrador.<br>
+                <span style="color:#ffb3b3;display:block;margin-top:1em;">No le recomendamos utilizar su cuenta real en esta aplicacion, utiliza software de terceros que NO SON CONTROLADOS POR AstralProton!!!</span>
+            </div>
+            <div class="warning-actions">
+                <a href="Juegos/roblox.html">
+                    <i></i> Iniciar
+                </a>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Generar estrellas de fondo
+        (function(){
+            const starsContainer = document.getElementById('stars');
+            for(let i=0;i<120;i++){
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random()*2+1;
+                const posX = Math.random()*100;
+                const posY = Math.random()*100;
+                const duration = Math.random()*2+2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+                starsContainer.appendChild(star);
+            }
+        })();
+    </script>
+</body>
+</html>
