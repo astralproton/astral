@@ -252,7 +252,7 @@
                 <div style="margin:2rem 0;">
                     <h3 style="color:#ffd700; font-size:1.2rem; margin-bottom:0.7rem;">Información adicional</h3>
                     <ul style="text-align:left; max-width:700px; margin:0 auto; line-height:1.7; font-size:1.05rem;">
-                        <li><b>Versión actual:</b> <span style="color:#ffd700;">23.06.2025ae</span></li>
+                        <li><b>Versión actual:</b> <span style="color:#ffd700;">10.2.25a</span></li>
                         <li><b>Significado de letras finales:</b>
                             <ul>
                                 <li><b>a</b> = Actualización con nuevo contenido</li>
@@ -392,7 +392,7 @@
             </h1>
             <div class="welcome-container" style="max-width:500px;margin:0 auto;">
                 <p class="welcome-text" data-en="Enter a reward code to claim your prize! (Only once per code)" data-es="¡Ingresa un código de recompensa para obtener tu premio! (Solo una vez por código)">
-                    ¡Ingresa un código de recompensa para obtener tu premio! (Solo una vez por código)
+                    ¡Ingresa un código de recompensa para obtener tu premio! (Solo una vez por código, los códigos estarán escondidos en la página, otros estarán en el discord, así que únete.)
                 </p>
                 <form id="rewardCodeForm" style="display:flex;gap:1em;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:2em;">
                     <input type="text" id="rewardCodeInput" class="profile-input" placeholder="Código de recompensa" style="flex:1;min-width:180px;">
@@ -457,6 +457,14 @@
                     </div>
                 </form>
 
+                <!-- Bro Ricardini con Cristalini-->
+                <div class="profile-field">
+                    <label>Relaciones sociales</label>
+                    <div id="profileRelations"></div>
+                    <button class="background-button primary" id="addRelationBtn">
+                        <i class="fas fa-heart"></i> Agregar relación
+                    </button>
+                </div>
                 <!-- Sección de fondo personalizado -->
                 <h3 class="profile-section-title">Fondo Personalizado</h3>
                 <div class="background-options">
@@ -803,9 +811,9 @@
 <div class="audio-controls" id="audioToggle">
     <i class="fas fa-volume-up"></i>
 </div>
-    <div class="audio-controls" id="audioToggle">
-        <i class="fas fa-volume-up"></i> <p>APASS (AstralProton Advanced Security System)</p>
-    </div>
+<div class="audio-controls" id="audioToggle">
+    <i class="fas fa-volume-up"></i> <p>APASS (AstralProton Advanced Security System)</p>
+</div>
 
 <!-- Modal para mensaje de solicitud de amistad -->
 <div id="friendRequestModal" style="display:none;position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.92);align-items:center;justify-content:center;">
@@ -816,6 +824,25 @@
     <div style="display:flex;gap:1em;justify-content:flex-end;">
       <button id="sendFriendRequestModalBtn" class="background-button primary"><i class="fas fa-paper-plane"></i> Enviar</button>
       <button id="cancelFriendRequestModalBtn" class="background-button danger"><i class="fas fa-times"></i> Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="relationModal" style="display:none;position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.92);align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border-radius:18px;box-shadow:0 8px 32px #000a;padding:2.5rem 2rem;max-width:400px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;">
+    <h2 style="color:var(--accent-color);margin-bottom:1rem;"><i class="fas fa-heart"></i> Nueva relación</h2>
+    <select id="relationType" class="profile-input" style="margin-bottom:1em;">
+      <option value="romantica">En una relación romántica con...</option>
+      <option value="mejor_amigo">Mejor amigo de...</option>
+      <option value="hermano">Hermano/a de...</option>
+      <option value="enemigo">Enemigo jurado de...</option>
+      <option value="compañero">Compañero de aventuras de...</option>
+      <!-- Agrega más frases aquí -->
+    </select>
+    <input type="text" id="relationUserId" class="profile-input" placeholder="ID del otro usuario">
+    <div style="display:flex;gap:1em;justify-content:flex-end;margin-top:1.5em;">
+      <button id="sendRelationBtn" class="background-button primary"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
+      <button id="cancelRelationBtn" class="background-button danger"><i class="fas fa-times"></i> Cancelar</button>
     </div>
   </div>
 </div>

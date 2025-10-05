@@ -38,6 +38,66 @@ function setProfileAvatar(src) {
     }
 }
 
+async function checkIfBanned() {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    if (!user.id) return;
+    try {
+        const res = await fetch('https://astral-ban-api.onrender.com/check-banned', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: user.id })
+        });
+        const data = await res.json();
+        if (data.banned) {
+            document.body.innerHTML = `
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#1a1a1a;color:#ff3333;">
+                    <audio id="banMusic" src="baneado.mp3" autoplay loop></audio>
+                    <i class="fas fa-user-slash" style="font-size:5rem;margin-bottom:1rem;"></i>
+                    <h1 style="font-size:2.5rem;">Has sido baneado</h1>
+                    <p style="font-size:1.2rem;margin:1.5rem 0 0 0;">Tu cuenta ha sido suspendida de AstralProton.<br>Si crees que esto es un error, contacta a soporte en <a href="https://discord.gg/GEPrCZkWhs" style="color:#ffd700;">Discord</a>.</p>
+                </div>
+            `;
+            // Reproducir música de baneo (por si autoplay falla)
+            setTimeout(() => {
+                const audio = document.getElementById('banMusic');
+                if (audio) audio.play().catch(()=>{});
+            }, 500);
+            throw new Error('Usuario baneado');
+        }
+    } catch (e) {}
+}
+
+async function checkUserWarning() {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    if (!user.id) return;
+    try {
+        const res = await fetch(`${API}/usuarios/${user.id}`);
+        const data = await res.json();
+        if (data && data.advertencia) {
+            // Guarda el último mensaje aceptado
+            const lastAccepted = localStorage.getItem('warningAcceptedMsg_' + user.id);
+            if (lastAccepted !== data.advertencia) {
+                showAlert(
+                    'Advertencia de la administración',
+                    data.advertencia,
+                    [{
+                        text: 'Aceptar',
+                        action: async () => {
+                            // Marca como aceptada esta advertencia
+                            localStorage.setItem('warningAcceptedMsg_' + user.id, data.advertencia);
+                            await fetch(`${API}/usuarios/${user.id}/limpiar-advertencia`, { method: 'POST' });
+                        }
+                    }]
+                );
+            }
+        }
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', checkUserWarning);
+// Llama esto al cargar la app, después de verificar el token
+document.addEventListener('DOMContentLoaded', checkIfBanned);
+
 function initProfileAvatar() {
     const saved = localStorage.getItem('profileAvatar');
     setProfileAvatar(saved);
@@ -1626,6 +1686,38 @@ const games = [
         thumbnail: "imgjuegos/FN.jpeg",
         song: "titulonuevo.mp3",
         url: "Juegos/fruitninja/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.5,
+        title: "Piano",
+        artist: "Piano",
+        thumbnail: "imgjuegos/piano.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/magictiles/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.5,
+        title: "Madalin Stunt Cars 3",
+        artist: "Madalin",
+        thumbnail: "imgjuegos/madalin3.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/madalin-stunt-cars-3/index.html",
         categories: ["all"],
         isNew: true,
         isUpdate: false,
@@ -6602,35 +6694,93 @@ async function fetchAllUsers() {
     }
 }
 
-function renderCommunity(users) {
+async function renderCommunity(users) {
     const grid = document.getElementById('communityGrid');
     if (!grid) return;
     grid.innerHTML = '';
     const myId = getCurrentUserId();
+
+    // Obtener todas las relaciones aceptadas de todos los usuarios
+    let relacionesPorUsuario = {};
+    try {
+        const res = await fetch(`${API}/relaciones/todas`);
+        const relaciones = await res.json();
+        relaciones.forEach(rel => {
+            if (rel.estado !== "aceptada") return;
+            [rel.de, rel.para].forEach(uid => {
+                if (!relacionesPorUsuario[uid]) relacionesPorUsuario[uid] = [];
+                relacionesPorUsuario[uid].push(rel);
+            });
+        });
+    } catch (e) {
+        relacionesPorUsuario = {};
+    }
+
     users.forEach(user => {
         if (user.id === myId) return;
+        const isBanned = user.baneado === true;
+        const motivo = user.motivo_ban || '';
+        const rol = (user.rol || '').toLowerCase();
+        let nameColor = '';
+        let rolLabel = '';
+        let nameClass = '';
+        if (rol === 'owner') {
+            nameColor = '#d1002f';
+            rolLabel = '<span style="color:#d1002f;font-weight:bold;margin-left:0.5em;">(Dueño)</span>';
+            nameClass = 'owner';
+        } else if (rol === 'admin_senior') {
+            nameColor = '#0d47a1';
+            rolLabel = '<span style="color:#0d47a1;font-weight:bold;margin-left:0.5em;">(Admin Senior)</span>';
+            nameClass = 'admin-senior';
+        } else if (rol === 'admin') {
+            nameColor = '#2196f3';
+            rolLabel = '<span style="color:#2196f3;font-weight:bold;margin-left:0.5em;">(Admin)</span>';
+            nameClass = 'admin';
+        } else if (rol === 'candidate') {
+            nameColor = '#b400ff';
+            rolLabel = '<span style="color:#b400ff;font-weight:bold;margin-left:0.5em;">(Candidato a Admin)</span>';
+            nameClass = 'candidate';
+        }
+
+        // Mostrar relaciones sociales de este usuario
+        let relacionesHtml = '';
+        const relaciones = relacionesPorUsuario[user.id] || [];
+        relaciones.forEach(rel => {
+            let otro = rel.de === user.id ? rel.para : rel.de;
+            let frase = '';
+            if (rel.tipo === 'romantica') frase = `En una relación romántica con <b>@${otro}</b>`;
+            if (rel.tipo === 'mejor_amigo') frase = `Mejor amigo de <b>@${otro}</b>`;
+            if (rel.tipo === 'hermano') frase = `Hermano/a de <b>@${otro}</b>`;
+            if (rel.tipo === 'enemigo') frase = `Enemigo jurado de <b>@${otro}</b>`;
+            if (rel.tipo === 'compañero') frase = `Compañero de aventuras de <b>@${otro}</b>`;
+            relacionesHtml += `<div style="margin-bottom:0.3em;font-size:0.98em;opacity:0.85;">${frase}</div>`;
+        });
+
         const card = document.createElement('div');
-        card.className = 'community-card';
+        card.className = 'community-card' + (isBanned ? ' banned-user' : '');
         card.innerHTML = `
             <div class="community-avatar" style="margin-bottom:0.7em;">
                 ${user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent-color);background:#222;">` : `<i class="fas fa-user"></i>`}
             </div>
-            <div class="user-name" style="font-weight:700;font-size:1.2em;">${user.nombre || user.id}</div>
+            <div class="user-name ${nameClass}" style="font-weight:700;font-size:1.2em;${isBanned ? 'color:#ff3333;' : nameColor ? `color:${nameColor};` : ''}">
+                ${user.nombre || user.id}
+                ${isBanned ? '<span style="color:#ff3333;font-weight:bold;margin-left:0.5em;">(BANEADO)</span>' : rolLabel}
+            </div>
             <div class="user-id" style="opacity:0.7;">@${user.id}</div>
             ${user.edad ? `<div class="user-age" style="margin-top:0.2em;"><i class="fas fa-birthday-cake"></i> ${user.edad} años</div>` : ''}
             ${user.genero ? `<div class="user-gender" style="margin-top:0.2em;"><i class="fas fa-${user.genero === 'male' ? 'mars' : 'venus'}"></i> ${user.genero === 'male' ? 'Masculino' : 'Femenino'}</div>` : ''}
             ${user.bio ? `<div class="community-bio" style="margin-top:0.5em;opacity:0.85;">${user.bio}</div>` : ''}
-            <button class="friend-btn add" data-userid="${user.id}" data-username="${user.nombre || ''}"><i class="fas fa-user-plus"></i> Agregar amigo</button>
+            ${relacionesHtml ? `<div class="community-relations" style="margin-top:0.7em;">${relacionesHtml}</div>` : ''}
+            ${isBanned && motivo ? `<div class="community-ban-reason"><b>Motivo:</b> ${motivo}</div>` : ''}
+            <button class="friend-btn add" data-userid="${user.id}" data-username="${user.nombre || ''}" ${isBanned ? 'disabled style="opacity:0.5;pointer-events:none;"' : ''}><i class="fas fa-user-plus"></i> Agregar amigo</button>
         `;
-        // Al hacer click en la tarjeta, abre el modal de perfil público
         card.onclick = (e) => {
-            if (e.target.classList.contains('friend-btn')) return; // No abrir modal si es el botón
+            if (e.target.classList.contains('friend-btn')) return;
             openUserProfileModal(user.id);
         };
         grid.appendChild(card);
     });
 
-    // Botón de agregar amigo
     grid.querySelectorAll('.friend-btn.add').forEach(btn => {
         btn.onclick = function(e) {
             e.stopPropagation();
@@ -6640,6 +6790,64 @@ function renderCommunity(users) {
         };
     });
 }
+
+// --- PERFIL COMPLETO (MODAL): Mostrar relaciones sociales ---
+window.openUserProfileModal = async function(userId) {
+    const modal = document.getElementById('userProfileModal');
+    const content = document.getElementById('userProfileModalContent');
+    content.innerHTML = '<div style="text-align:center;padding:2em 0;">Cargando perfil...</div>';
+    modal.style.display = 'flex';
+
+    try {
+        // Trae los datos del usuario desde la API
+        const resUser = await fetch(`${API}/usuarios/${userId}`);
+        const user = await resUser.json();
+
+        // Trae las relaciones aceptadas de ese usuario
+        let relacionesHtml = '';
+        try {
+            const resRel = await fetch(`${API}/relaciones/${userId}`);
+            const relaciones = await resRel.json();
+            relaciones.forEach(rel => {
+                if (rel.estado !== "aceptada") return;
+                let otro = rel.de === userId ? rel.para : rel.de;
+                let frase = '';
+                if (rel.tipo === 'romantica') frase = `En una relación romántica con <b>@${otro}</b>`;
+                if (rel.tipo === 'mejor_amigo') frase = `Mejor amigo de <b>@${otro}</b>`;
+                if (rel.tipo === 'hermano') frase = `Hermano/a de <b>@${otro}</b>`;
+                if (rel.tipo === 'enemigo') frase = `Enemigo jurado de <b>@${otro}</b>`;
+                if (rel.tipo === 'compañero') frase = `Compañero de aventuras de <b>@${otro}</b>`;
+                relacionesHtml += `<div style="margin-bottom:0.3em;font-size:1em;opacity:0.85;">${frase}</div>`;
+            });
+        } catch (e) {}
+
+        // Renderiza el perfil completo
+        content.innerHTML = `
+            <div class="profile-modal-avatar" style="text-align:center;margin-bottom:1.2em;">
+                ${user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-color);background:#222;">` : `<i class="fas fa-user" style="font-size:5em;"></i>`}
+            </div>
+            <div class="profile-modal-name" style="font-weight:700;font-size:1.6em;text-align:center;">
+                ${user.nombre || user.id}
+                ${(user.rol === 'owner') ? '<span style="color:#d1002f;font-weight:bold;margin-left:0.5em;">(Dueño)</span>' : ''}
+                ${(user.rol === 'admin_senior') ? '<span style="color:#0d47a1;font-weight:bold;margin-left:0.5em;">(Admin Senior)</span>' : ''}
+                ${(user.rol === 'admin') ? '<span style="color:#2196f3;font-weight:bold;margin-left:0.5em;">(Admin)</span>' : ''}
+                ${(user.rol === 'candidate') ? '<span style="color:#b400ff;font-weight:bold;margin-left:0.5em;">(Candidato a Admin)</span>' : ''}
+                ${user.baneado ? '<span style="color:#ff3333;font-weight:bold;margin-left:0.5em;">(BANEADO)</span>' : ''}
+            </div>
+            <div class="profile-modal-id" style="opacity:0.7;text-align:center;">@${user.id}</div>
+            ${user.genero ? `<div class="profile-modal-gender" style="margin-top:0.2em;text-align:center;"><i class="fas fa-${user.genero === 'male' ? 'mars' : 'venus'}"></i> ${user.genero === 'male' ? 'Masculino' : 'Femenino'}</div>` : ''}
+            ${user.edad ? `<div class="profile-modal-age" style="margin-top:0.2em;text-align:center;"><i class="fas fa-birthday-cake"></i> ${user.edad} años</div>` : ''}
+            ${user.bio ? `<div class="profile-modal-bio" style="margin-top:0.7em;opacity:0.85;text-align:center;">${user.bio}</div>` : ''}
+            ${relacionesHtml ? `<div class="profile-modal-relations" style="margin-top:1em;text-align:center;">${relacionesHtml}</div>` : ''}
+            ${user.baneado && user.motivo_ban ? `<div class="profile-modal-ban-reason" style="color:#ff3333;margin-top:1em;text-align:center;"><b>Motivo de baneo:</b> ${user.motivo_ban}</div>` : ''}
+            <div style="text-align:center;margin-top:1.5em;">
+                <button class="background-button" onclick="closeUserProfileModal()">Cerrar</button>
+            </div>
+        `;
+    } catch (e) {
+        content.innerHTML = '<div style="color:#ff3333;text-align:center;padding:2em 0;">Error al cargar el perfil.</div>';
+    }
+};
 
 // Mostrar comunidad al entrar en la sección
 document.addEventListener('DOMContentLoaded', () => {
@@ -6750,37 +6958,6 @@ document.getElementById('sendFriendRequestModalBtn').onclick = async function() 
 // Cancelar
 document.getElementById('cancelFriendRequestModalBtn').onclick = closeFriendRequestModal;
 
-// Modifica renderCommunity para usar el modal
-function renderCommunity(users) {
-    const grid = document.getElementById('communityGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    const myId = getCurrentUserId();
-    users.forEach(user => {
-        if (user.id === myId) return;
-        const card = document.createElement('div');
-        card.className = 'community-card';
-        card.innerHTML = `
-            <div class="community-avatar">
-                ${user.avatar ? `<img src="${user.avatar}" alt="Avatar">` : `<i class="fas fa-user"></i>`}
-            </div>
-            <div class="user-name">${user.nombre || user.id}</div>
-            <div class="user-id">@${user.id}</div>
-            <div class="community-bio">${user.bio ? user.bio : ''}</div>
-            <button class="friend-btn add" data-userid="${user.id}" data-username="${user.nombre || ''}"><i class="fas fa-user-plus"></i> Agregar amigo</button>
-        `;
-        grid.appendChild(card);
-    });
-
-    // Botón de agregar amigo
-    grid.querySelectorAll('.friend-btn.add').forEach(btn => {
-        btn.onclick = function() {
-            const paraId = btn.getAttribute('data-userid');
-            const paraName = btn.getAttribute('data-username');
-            openFriendRequestModal(paraId, paraName);
-        };
-    });
-}
 
 async function enviarSolicitudAmistad(paraId, mensaje = "") {
     const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
@@ -7049,8 +7226,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const REWARD_CODES = {
         "ASTRALDISCORD2146": { type: "points", amount: 100, msg: "¡Has recibido 100 estrellas!" },
         "ESTRELLA": { type: "badge", badge: "badge_star", msg: "¡Insignia especial desbloqueada!" },
-        "FIRMWAREPRO": { type: "theme", theme: "gold", msg: "¡Tema dorado desbloqueado!" }
-        // Agrega más códigos aquí
+        "FIRMWAREPRO": { type: "theme", theme: "gold", msg: "¡Tema dorado desbloqueado!" },
+        "Ejemplo": { type: "points", amount: 10, msg: "¡Has recibido 10 estrellas!" }
     };
 
     // Códigos ya canjeados (por usuario)
@@ -7111,6 +7288,18 @@ document.addEventListener('DOMContentLoaded', () => {
 (function() {
     // Lista de anuncios (puedes editar aquí)
     const ANNOUNCEMENTS = [
+        {
+            id: "4",
+            title: "¿Relaciones interpersonales en AstralProton?",
+            content: "¿Relaciones Interpersonales? ¡¿QUE LE PASA A GALAVDEV?! Esto ya parece Facebook... Bueno, ya en serio, he añadido un sistema de relaciones interpersonales por aburrimiento. ¡Disfrutenlo!",
+            date: "10/03/2025"
+        },
+        {
+            id: "3",
+            title: "Actualizacion 10.2.25 ha llegado!",
+            content: "Hmmm... Ya hay sistema de baneo... Cuidadito... Tambien hay nuevos juegos :D",
+            date: "10/03/2025"
+        },
         {
             id: "2",
             title: "COOKIE CLICKER ELIMINADO...",
@@ -7253,6 +7442,110 @@ document.head.appendChild(styleLockStars);
         applySidebarPosition(saved);
     });
 })();
+
+document.getElementById('addRelationBtn').onclick = function() {
+    document.getElementById('relationModal').style.display = 'flex';
+};
+document.getElementById('cancelRelationBtn').onclick = function() {
+    document.getElementById('relationModal').style.display = 'none';
+};
+document.getElementById('sendRelationBtn').onclick = async function() {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    const tipo = document.getElementById('relationType').value;
+    const para = document.getElementById('relationUserId').value.trim();
+    if (!para) return alert('Debes poner el ID del otro usuario');
+    const res = await fetch(`${API}/relaciones/solicitar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ de: user.id, para, tipo })
+    });
+    const data = await res.json();
+    if (data.success) {
+        alert('Solicitud enviada. El otro usuario debe aceptar.');
+        document.getElementById('relationModal').style.display = 'none';
+    } else {
+        alert(data.error || 'Error al enviar solicitud');
+    }
+};
+
+async function renderProfileRelations() {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    const res = await fetch(`${API}/relaciones/${user.id}`);
+    const relaciones = await res.json();
+    const container = document.getElementById('profileRelations');
+    container.innerHTML = '';
+    if (!relaciones.length) {
+        container.innerHTML = '<span style="opacity:0.7;">No tienes relaciones sociales aún.</span>';
+        return;
+    }
+    relaciones.forEach(rel => {
+        let frase = '';
+        if (rel.tipo === 'romantica') frase = `En una relación romántica con <b>@${rel.de === user.id ? rel.para : rel.de}</b>`;
+        if (rel.tipo === 'mejor_amigo') frase = `Mejor amigo de <b>@${rel.de === user.id ? rel.para : rel.de}</b>`;
+        if (rel.tipo === 'hermano') frase = `Hermano/a de <b>@${rel.de === user.id ? rel.para : rel.de}</b>`;
+        if (rel.tipo === 'enemigo') frase = `Enemigo jurado de <b>@${rel.de === user.id ? rel.para : rel.de}</b>`;
+        if (rel.tipo === 'compañero') frase = `Compañero de aventuras de <b>@${rel.de === user.id ? rel.para : rel.de}</b>`;
+        // ...más frases...
+        container.innerHTML += `<div style="margin-bottom:0.5em;">${frase}</div>`;
+    });
+}
+
+// Mostrar solicitudes de relaciones recibidas
+async function mostrarSolicitudesRelaciones() {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    if (!user.id) return;
+    try {
+        const res = await fetch(`${API}/relaciones/solicitudes/${user.id}`);
+        const solicitudes = await res.json();
+        if (!solicitudes.length) return;
+
+        solicitudes.forEach(sol => {
+            let frase = '';
+            if (sol.tipo === 'romantica') frase = `@${sol.de} quiere ser tu pareja.`;
+            if (sol.tipo === 'mejor_amigo') frase = `@${sol.de} quiere ser tu mejor amigo.`;
+            if (sol.tipo === 'hermano') frase = `@${sol.de} quiere ser tu hermano/a.`;
+            if (sol.tipo === 'enemigo') frase = `@${sol.de} quiere ser tu enemigo jurado.`;
+            if (sol.tipo === 'compañero') frase = `@${sol.de} quiere ser tu compañero de aventuras.`;
+            // ...más frases si tienes más tipos...
+
+            showAlert(
+                'Solicitud de relación',
+                frase,
+                [
+                    {
+                        text: 'Rechazar',
+                        type: 'secondary',
+                        action: async () => {
+                            await fetch(`${API}/relaciones/responder`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: sol.id, aceptar: false })
+                            });
+                            mostrarSolicitudesRelaciones(); // Por si hay más
+                        }
+                    },
+                    {
+                        text: 'Aceptar',
+                        action: async () => {
+                            await fetch(`${API}/relaciones/responder`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: sol.id, aceptar: true })
+                            });
+                            mostrarSolicitudesRelaciones(); // Por si hay más
+                            renderProfileRelations && renderProfileRelations();
+                        }
+                    }
+                ]
+            );
+        });
+    } catch (e) {}
+}
+
+// Llama a esta función al cargar la app:
+document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
+
+document.addEventListener('DOMContentLoaded', renderProfileRelations);
 // Mostrar el panel al hacer click en el botón
 document.getElementById('friendsBtn').onclick = showFriendsPanel;
 initApp();

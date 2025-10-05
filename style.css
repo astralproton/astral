@@ -3380,3 +3380,41 @@ header .logo img {
     80% { transform: scale(1.08); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
 }
+/* Oculta el control de audio sin eliminarlo del DOM */
+#audioToggle {
+    display: none !important;
+}
+
+.community-card.banned-user {
+    border: 2.5px solid #ff3333 !important;
+    background: #2a0000 !important;
+    color: #ff3333 !important;
+    opacity: 0.85;
+}
+
+.community-ban-reason {
+    color: #ff3333;
+    font-size: 1em;
+    margin-top: 0.7em;
+    font-weight: 600;
+    text-align: center;
+}
+
+.community-card .user-name.owner {
+    color: #d1002f !important;
+}
+.community-card .user-name.admin {
+    color: #2196f3 !important;
+}
+.community-card .user-name.owner {
+    color: #d1002f !important;
+}
+.community-card .user-name.admin-senior {
+    color: #0d47a1 !important;
+}
+.community-card .user-name.admin {
+    color: #2196f3 !important;
+}
+.community-card .user-name.candidate {
+    color: #b400ff !important;
+}
