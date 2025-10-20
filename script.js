@@ -38,34 +38,167 @@ function setProfileAvatar(src) {
     }
 }
 
+// ...existing code...
+// Reemplazo/definición segura de checkIfBanned para mostrar motivo y permitir apelación
 async function checkIfBanned() {
+  try {
     const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
-    if (!user.id) return;
+    if (!user || !user.id) return false;
+
+    // Consultar estado al backend (si tienes /check-banned y /usuarios/:id)
+    let banned = false;
+    let motivo = null;
+    let ban_until = null;
+
     try {
-        const res = await fetch('https://astral-ban-api.onrender.com/check-banned', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: user.id })
-        });
+      // request a tu API para obtener datos del usuario (fallback si no existe usa localStorage)
+      const token = localStorage.getItem('astralToken');
+      const res = await fetch(`${API}/usuarios/${encodeURIComponent(user.id)}`);
+      if (res.ok) {
         const data = await res.json();
-        if (data.banned) {
-            document.body.innerHTML = `
-                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#1a1a1a;color:#ff3333;">
-                    <audio id="banMusic" src="baneado.mp3" autoplay loop></audio>
-                    <i class="fas fa-user-slash" style="font-size:5rem;margin-bottom:1rem;"></i>
-                    <h1 style="font-size:2.5rem;">Has sido baneado</h1>
-                    <p style="font-size:1.2rem;margin:1.5rem 0 0 0;">Tu cuenta ha sido suspendida de AstralProton.<br>Si crees que esto es un error, contacta a soporte en <a href="https://discord.gg/GEPrCZkWhs" style="color:#ffd700;">Discord</a>.</p>
-                </div>
-            `;
-            // Reproducir música de baneo (por si autoplay falla)
-            setTimeout(() => {
-                const audio = document.getElementById('banMusic');
-                if (audio) audio.play().catch(()=>{});
-            }, 500);
-            throw new Error('Usuario baneado');
+        banned = !!data.baneado;
+        motivo = data.motivo_ban ?? null;
+        ban_until = data.ban_until ?? null;
+      } else {
+        // fallback: intenta endpoint check-banned (solo booleano)
+        const res2 = await fetch(`${API}/check-banned`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: user.id })
+        });
+        if (res2.ok) {
+          const d2 = await res2.json();
+          banned = !!d2.banned;
         }
-    } catch (e) {}
+      }
+    } catch (e) {
+      // si falla la llamada, intenta leer propiedades locales (si existen)
+      banned = !!user.baneado;
+      motivo = user.motivo_ban ?? motivo;
+      ban_until = user.ban_until ?? ban_until;
+    }
+
+    if (!banned) {
+      // si hay ban expirado, tu backend puede limpiar; aquí ocultamos la pantalla si estaba visible
+      const banScreen = document.getElementById('banScreen');
+      if (banScreen) {
+        banScreen.style.display = 'none';
+        banScreen.setAttribute('aria-hidden', 'true');
+      }
+      return false;
+    }
+
+    // Mostrar pantalla de baneo
+    const banScreen = document.getElementById('banScreen');
+    if (!banScreen) return true; // si no existe, no bloquear
+    const reasonEl = document.getElementById('banReasonText');
+    const untilEl = document.getElementById('banUntilText');
+    const countdownText = document.getElementById('splashCountdownText'); // no tocar si no existe
+
+    reasonEl.textContent = motivo || 'No hay motivo establecido';
+
+    // Mostrar tiempo restante si ban_until disponible
+    if (ban_until) {
+      const untilDate = new Date(ban_until);
+      if (!isNaN(untilDate.getTime())) {
+        const remainingMs = Math.max(0, untilDate - new Date());
+        const days = Math.floor(remainingMs / (1000*60*60*24));
+        const hours = Math.floor((remainingMs % (1000*60*60*24)) / (1000*60*60));
+        const mins = Math.floor((remainingMs % (1000*60*60)) / (1000*60));
+        untilEl.textContent = `${days}d ${hours}h ${mins}m`;
+      } else {
+        untilEl.textContent = 'Indefinido';
+      }
+    } else {
+      untilEl.textContent = 'Indefinido / permanente';
+    }
+
+    // bloquea UI
+    banScreen.style.display = 'flex';
+    banScreen.setAttribute('aria-hidden', 'false');
+
+    // Oculta la app principal (no modifica la lógica, solo visual)
+    try { document.querySelector('.main-container') && (document.querySelector('.main-container').style.display = 'none'); } catch(e){}
+
+    // Appeal flow
+    const appealBtn = document.getElementById('appealBtn');
+    const appealForm = document.getElementById('appealForm');
+    const appealSubmit = document.getElementById('appealSubmit');
+    const appealCancel = document.getElementById('appealCancel');
+    const appealTextarea = document.getElementById('appealTextarea');
+    const appealMessage = document.getElementById('appealMessage');
+    const joinDiscordBtn = document.getElementById('joinDiscordBtn');
+
+    if (joinDiscordBtn) {
+      joinDiscordBtn.onclick = () => {
+        // abrir discord en nueva pestaña
+        window.open('https://discord.gg/GEPrCZkWhs', '_blank', 'noopener');
+      };
+    }
+
+    if (appealBtn && appealForm) {
+      appealBtn.onclick = () => {
+        appealForm.style.display = 'block';
+        appealTextarea.focus();
+      };
+    }
+    if (appealCancel) {
+      appealCancel.onclick = () => {
+        appealForm.style.display = 'none';
+        appealMessage.textContent = '';
+      };
+    }
+
+    if (appealSubmit) {
+      appealSubmit.onclick = async () => {
+        appealMessage.style.color = '#ffd700';
+        appealMessage.textContent = 'Enviando apelación...';
+
+        const payload = {
+          id: user.id,
+          appeal: (appealTextarea.value || '').trim()
+        };
+
+        // intenta enviar a endpoint /appeal — si no existe informa al usuario
+        try {
+          const token = localStorage.getItem('astralToken');
+          const res = await fetch(`${API}/appeal`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            appealMessage.style.color = '#7fffbf';
+            appealMessage.textContent = 'Apelación enviada. Responderemos lo antes posible.';
+          } else if (res.status === 404) {
+            appealMessage.style.color = '#ffd700';
+            appealMessage.innerHTML = 'No hay endpoint de apelaciones en la API. Por favor únete al Discord para apelar (más rápido).';
+          } else {
+            const data = await res.json().catch(()=> ({}));
+            appealMessage.style.color = '#ffcccb';
+            appealMessage.textContent = data.error || 'Error al enviar la apelación. Únete al Discord para ayuda.';
+          }
+        } catch (err) {
+          appealMessage.style.color = '#ffcccb';
+          appealMessage.textContent = 'No se pudo conectar con la API. Únete al Discord para apelar (más rápido).';
+        }
+      };
+    }
+
+    return true;
+  } catch (err) {
+    console.error('checkIfBanned error', err);
+    return false;
+  }
 }
+
+// Asegura que chequeo se llame al cargar y después de verificar token
+document.addEventListener('DOMContentLoaded', () => {
+  // comprobación inicial
+  checkIfBanned();
+  // re-check cada minuto por si cambia el estado desde backend
+  setInterval(checkIfBanned, 60 * 1000);
+});
 
 async function checkUserWarning() {
     const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
@@ -1696,38 +1829,6 @@ const games = [
         }
     },
     {
-        id: 1.5,
-        title: "Piano",
-        artist: "Piano",
-        thumbnail: "imgjuegos/piano.jpeg",
-        song: "titulonuevo.mp3",
-        url: "Juegos/magictiles/index.html",
-        categories: ["all"],
-        isNew: true,
-        isUpdate: false,
-        alert: {
-            type: "info",
-            message: "¿Te sirvio la pagina?",
-            redirect: "tube.html"
-        }
-    },
-    {
-        id: 1.5,
-        title: "Madalin Stunt Cars 3",
-        artist: "Madalin",
-        thumbnail: "imgjuegos/madalin3.jpeg",
-        song: "titulonuevo.mp3",
-        url: "Juegos/madalin-stunt-cars-3/index.html",
-        categories: ["all"],
-        isNew: true,
-        isUpdate: false,
-        alert: {
-            type: "info",
-            message: "¿Te sirvio la pagina?",
-            redirect: "tube.html"
-        }
-    },
-    {
         id: 2,
         title: "Plantas Vs Zombies",
         artist: "EA",
@@ -2830,17 +2931,28 @@ const folders = [
     }
 ];
 
-// Función para mostrar alerta
-// Función mejorada para mostrar alertas con múltiples botones
+// Función para mostrar alerta con animación y sonido
 function showAlert(title, message, buttons = null) {
     const alertTitle = document.getElementById('alertTitle');
     const alertMessage = document.getElementById('alertMessage');
     const alert = document.getElementById('alert');
     const overlay = document.getElementById('overlay');
-    
+
+    // SONIDO: reproducir alert.mp3 cada vez que aparece la alerta
+    let alertSound = document.getElementById('alertSound');
+    if (!alertSound) {
+        alertSound = document.createElement('audio');
+        alertSound.id = 'alertSound';
+        alertSound.src = 'alert.mp3';
+        alertSound.preload = 'auto';
+        document.body.appendChild(alertSound);
+    }
+    alertSound.currentTime = 0;
+    alertSound.play().catch(() => {});
+
     alertTitle.textContent = title;
     alertMessage.textContent = message;
-    
+
     // Limpiar botones existentes
     let buttonsContainer = alert.querySelector('.alert-buttons');
     if (!buttonsContainer) {
@@ -2849,12 +2961,12 @@ function showAlert(title, message, buttons = null) {
         alert.appendChild(buttonsContainer);
     }
     buttonsContainer.innerHTML = '';
-    
+
     // Si no se especifican botones, usar el botón por defecto
     if (!buttons) {
         buttons = [{ text: 'Aceptar', action: closeAlert }];
     }
-    
+
     // Crear botones
     buttons.forEach(button => {
         const btn = document.createElement('button');
@@ -2866,9 +2978,27 @@ function showAlert(title, message, buttons = null) {
         };
         buttonsContainer.appendChild(btn);
     });
-    
-    alert.classList.add('show');
+
+    // Mostrar alerta y overlay con animación de entrada
+    alert.style.display = 'block';
     overlay.classList.add('show');
+    // Forzar reflow para reiniciar animación si se muestra varias veces seguidas
+    void alert.offsetWidth;
+    alert.classList.add('show');
+}
+
+// Función para cerrar alerta con animación de salida
+function closeAlert() {
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    if (!alert) return;
+
+    alert.classList.remove('show');
+    overlay.classList.remove('show');
+    // Espera a que termine la animación de salida antes de ocultar el modal
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 400);
 }
 
 // Función para confirmaciones
@@ -2900,15 +3030,6 @@ function showDestructiveConfirm(title, message, onConfirm, onCancel = null) {
             action: onConfirm 
         }
     ]);
-}
-
-// Función para cerrar alerta
-function closeAlert() {
-    const alert = document.getElementById('alert');
-    const overlay = document.getElementById('overlay');
-    
-    alert.classList.remove('show');
-    overlay.classList.remove('show');
 }
 
 // Función para cambiar de sección
@@ -4315,44 +4436,307 @@ observer.observe(document.body, { childList: true, subtree: true });
             window.openGame = openGame;
             window.closeGame = closeGame;
         });
-// --- Sistema de puntos ---
-// Guardar y mostrar puntos del usuario al jugar juegos
 
-// Inicializar puntos si no existen
-function getUserPoints() {
-    return parseInt(localStorage.getItem('userPoints') || '0', 10);
+// ...existing code...
+
+/* ---------- SISTEMA DE PUNTOS Y TIENDA (DB) - FRONTEND ---------- */
+
+async function getUserPoints() {
+  try {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    const userId = user.id;
+    if (!userId) return 0;
+    const res = await fetch(`${API}/api/user/coins?userId=${encodeURIComponent(userId)}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('API coins fetch failed');
+    const json = await res.json();
+    const coins = Number(json.coins || 0);
+    localStorage.setItem('astral_coins_fallback', String(coins));
+    return coins;
+  } catch (err) {
+    const fallback = Number(localStorage.getItem('astral_coins_fallback') || 0);
+    return fallback;
+  }
 }
-function setUserPoints(points) {
-    localStorage.setItem('userPoints', points);
+
+async function addUserPoints(amount) {
+  if (!Number.isFinite(amount) || amount === 0) return null;
+  const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+  if (!user.id) return null;
+  const token = localStorage.getItem('astralToken') || '';
+  try {
+    const res = await fetch(`${API}/api/user/coins/adjust`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ userId: user.id, delta: Number(amount) })
+    });
+    if (!res.ok) throw new Error('No autorizado o error en server');
+    const json = await res.json();
+    const newCoins = Number(json.coins || await getUserPoints());
+    localStorage.setItem('astral_coins_fallback', String(newCoins));
+    try { document.getElementById('coinSound')?.play(); } catch(e){}
+    try { if (typeof showCoinNotification === 'function') showCoinNotification(amount); } catch(e){}
+    await updatePointsDisplay();
+    updateShopPointsDisplay && updateShopPointsDisplay();
+    return newCoins;
+  } catch (err) {
+    console.warn('addUserPoints error, applying fallback local', err);
+    const cur = Number(localStorage.getItem('astral_coins_fallback') || 0);
+    const newVal = Math.max(0, cur + Number(amount));
+    localStorage.setItem('astral_coins_fallback', String(newVal));
+    try { document.getElementById('coinSound')?.play(); } catch(e){}
+    try { if (typeof showCoinNotification === 'function') showCoinNotification(amount); } catch(e){}
     updatePointsDisplay();
-}
-function addUserPoints(amount) {
-    const current = getUserPoints();
-    setUserPoints(current + amount);
+    updateShopPointsDisplay && updateShopPointsDisplay();
+    return newVal;
+  }
 }
 
-// Mostrar puntos en la interfaz
-function updatePointsDisplay() {
-    let pointsBar = document.getElementById('pointsBar');
-    if (!pointsBar) {
-        // Crear barra de puntos en el header si no existe
-        const header = document.querySelector('header .user-profile');
-        pointsBar = document.createElement('div');
-        pointsBar.id = 'pointsBar';
-        pointsBar.style.marginLeft = '1rem';
-        pointsBar.style.background = 'var(--accent-color)';
-        pointsBar.style.color = 'white';
-        pointsBar.style.borderRadius = '20px';
-        pointsBar.style.padding = '0.3rem 1rem';
-        pointsBar.style.fontWeight = '700';
-        pointsBar.style.fontSize = '1rem';
-        pointsBar.style.display = 'flex';
-        pointsBar.style.alignItems = 'center';
-        pointsBar.innerHTML = `<i class="fas fa-star" style="margin-right:6px;"></i> <span id="pointsValue">0</span> pts`;
-        header.appendChild(pointsBar);
-    }
-    document.getElementById('pointsValue').textContent = getUserPoints();
+async function setUserPoints(points) {
+  if (!Number.isFinite(points) || points < 0) return null;
+  const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+  if (!user.id) return null;
+  const token = localStorage.getItem('astralToken') || '';
+  try {
+    const res = await fetch(`${API}/api/user/coins`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ userId: user.id, coins: Number(points) })
+    });
+    if (!res.ok) throw new Error('Error actualizando desde admin endpoint');
+    const json = await res.json();
+    localStorage.setItem('astral_coins_fallback', String(json.coins || points));
+    await updatePointsDisplay();
+    updateShopPointsDisplay && updateShopPointsDisplay();
+    return json.coins;
+  } catch (err) {
+    console.warn('setUserPoints error, fallback local', err);
+    localStorage.setItem('astral_coins_fallback', String(points));
+    await updatePointsDisplay();
+    updateShopPointsDisplay && updateShopPointsDisplay();
+    return points;
+  }
 }
+
+async function updatePointsDisplay() {
+  const points = await getUserPoints();
+  // Header bar
+  let pointsBar = document.getElementById('pointsBar');
+  const header = document.querySelector('header .user-profile');
+  if (!pointsBar && header) {
+    pointsBar = document.createElement('div');
+    pointsBar.id = 'pointsBar';
+    pointsBar.setAttribute('title', 'Estrellas (clic para ir a Tienda)');
+    pointsBar.style.marginLeft = '12px';
+    pointsBar.style.background = 'linear-gradient(90deg,var(--accent-color),var(--highlight-color))';
+    pointsBar.style.color = '#fff';
+    pointsBar.style.borderRadius = '20px';
+    pointsBar.style.padding = '6px 12px';
+    pointsBar.style.fontWeight = '700';
+    pointsBar.style.fontSize = '0.95rem';
+    pointsBar.style.display = 'inline-flex';
+    pointsBar.style.alignItems = 'center';
+    pointsBar.style.gap = '8px';
+    pointsBar.style.cursor = 'pointer';
+    pointsBar.innerHTML = `<i class="fas fa-star" style="color:gold;font-size:1.0rem;"></i><span id="pointsValue">${points}</span>`;
+    pointsBar.addEventListener('click', () => changeSection('shop'));
+    header.appendChild(pointsBar);
+  } else {
+    const valEl = document.getElementById('pointsValue');
+    if (valEl) valEl.textContent = String(points);
+  }
+
+  // Shop display
+  const shopEl = document.getElementById('shopPointsValue');
+  if (shopEl) shopEl.textContent = String(points);
+}
+
+async function updateShopPointsDisplay() {
+  return updatePointsDisplay();
+}
+
+/* ---------- TIENDA: lectura y compra ---------- */
+
+async function getUserShopData() {
+  try {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    const userId = user.id;
+    if (!userId) return {};
+    const res = await fetch(`${API}/api/user/shop?userId=${encodeURIComponent(userId)}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('No se pudo leer datos de tienda');
+    const json = await res.json();
+    return json.shopData || {};
+  } catch (err) {
+    console.warn('getUserShopData fallback', err);
+    // fallback a localStorage
+    try {
+      const raw = localStorage.getItem('astral_shop_data');
+      return raw ? JSON.parse(raw) : {};
+    } catch(e) { return {}; }
+  }
+}
+
+async function purchaseShopItem(type, itemId, price) {
+  const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+  if (!user.id) return alert('Debes iniciar sesión para comprar.');
+  if (!confirm(`¿Comprar este elemento por ${price} estrellas?`)) return;
+  const token = localStorage.getItem('astralToken') || '';
+  try {
+    const res = await fetch(`${API}/api/user/shop/purchase`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ userId: user.id, type, itemId, price: Number(price) })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      const msg = json?.error || 'Error comprando item';
+      return alert('Compra fallida: ' + msg);
+    }
+    // éxito: actualizar UI
+    localStorage.setItem('astral_coins_fallback', String(json.coins || 0));
+    // actualizar shopData cache local
+    localStorage.setItem('astral_shop_data', JSON.stringify(json.shopData || {}));
+    await updatePointsDisplay();
+    await renderShopAll(); // re-render tienda para mostrar "Adquirido"
+    try { showCoinNotification && showCoinNotification(-price); } catch(e){}
+    alert('Compra realizada con éxito!');
+    return json;
+  } catch (err) {
+    console.error('purchaseShopItem error', err);
+    alert('Error en la compra, intenta de nuevo.');
+  }
+}
+
+/* Render básico para las 3 pestañas de tienda */
+async function renderShopThemes() {
+  const grid = document.getElementById('shopThemesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const shopData = await getUserShopData();
+  const owned = new Set((shopData.themes || []).map(String));
+  SHOP_THEMES.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'shop-item-card';
+    card.innerHTML = `
+      <div class="shop-item-thumb"><i class="fas fa-paint-brush" style="font-size:28px;color:var(--accent-color)"></i></div>
+      <div class="shop-item-title">${t.title}</div>
+      <div class="shop-item-desc">${t.desc}</div>
+      <div class="shop-item-price">${t.price > 0 ? '★ ' + t.price : 'Gratis'}</div>
+    `;
+    const btn = document.createElement('button');
+    btn.className = 'shop-item-btn';
+    if (owned.has(String(t.id))) {
+      btn.textContent = 'Adquirido';
+      btn.disabled = true;
+      const apply = document.createElement('button');
+      apply.className = 'shop-item-btn';
+      apply.style.marginTop = '8px';
+      apply.textContent = 'Aplicar';
+      apply.onclick = () => { try { t.apply && t.apply(); alert('Tema aplicado.'); } catch(e){} };
+      card.appendChild(apply);
+    } else {
+      btn.textContent = 'Comprar';
+      btn.onclick = () => purchaseShopItem('themes', t.id, t.price);
+    }
+    card.appendChild(btn);
+    grid.appendChild(card);
+  });
+}
+
+async function renderShopBadges() {
+  const grid = document.getElementById('shopBadgesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const shopData = await getUserShopData();
+  const owned = new Set((shopData.badges || []).map(String));
+  SHOP_BADGES.forEach(b => {
+    const card = document.createElement('div');
+    card.className = 'shop-item-card';
+    card.innerHTML = `
+      <div class="shop-item-badge"><i class="fas ${b.icon}"></i></div>
+      <div class="shop-item-title">${b.title}</div>
+      <div class="shop-item-desc">${b.desc}</div>
+      <div class="shop-item-price">★ ${b.price}</div>
+    `;
+    const btn = document.createElement('button');
+    btn.className = 'shop-item-btn';
+    if (owned.has(String(b.id))) {
+      btn.textContent = 'Adquirido';
+      btn.disabled = true;
+      const apply = document.createElement('button');
+      apply.className = 'shop-item-btn';
+      apply.style.marginTop = '8px';
+      apply.textContent = 'Aplicar';
+      apply.onclick = () => { setUserProfileBadge(b.id); alert('Insignia aplicada.'); };
+      card.appendChild(apply);
+    } else {
+      btn.textContent = 'Comprar';
+      btn.onclick = () => purchaseShopItem('badges', b.id, b.price);
+    }
+    card.appendChild(btn);
+    grid.appendChild(card);
+  });
+}
+
+async function renderShopGames() {
+  const grid = document.getElementById('shopGamesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const shopData = await getUserShopData();
+  const owned = new Set((shopData.games || []).map(String));
+  SHOP_GAMES.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'shop-item-card';
+    card.innerHTML = `
+      <div class="shop-item-thumb"><img src="${g.thumbnail}" style="width:64px;height:64px;border-radius:8px;object-fit:cover"></div>
+      <div class="shop-item-title">${g.title}</div>
+      <div class="shop-item-desc">${g.desc}</div>
+      <div class="shop-item-price">★ ${g.price}</div>
+    `;
+    const btn = document.createElement('button');
+    btn.className = 'shop-item-btn';
+    if (owned.has(String(g.id))) {
+      btn.textContent = 'Adquirido';
+      btn.disabled = false;
+      btn.onclick = () => openShopGameInIframe(g);
+    } else {
+      btn.textContent = 'Comprar';
+      btn.onclick = () => purchaseShopItem('games', g.id, g.price);
+    }
+    card.appendChild(btn);
+    grid.appendChild(card);
+  });
+}
+
+async function renderShopAll() {
+  await renderShopThemes();
+  await renderShopBadges();
+  await renderShopGames();
+}
+
+// inicializar tienda y puntos al load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(async () => {
+    await updatePointsDisplay();
+    await renderShopAll();
+  }, 500);
+});
+
+// Exponer para uso global si otros bloques usan estas funciones
+window.getUserPoints = getUserPoints;
+window.addUserPoints = addUserPoints;
+window.setUserPoints = setUserPoints;
+window.updatePointsDisplay = updatePointsDisplay;
+window.renderShopAll = renderShopAll;
+window.purchaseShopItem = purchaseShopItem;
 
 // Sumar puntos al abrir un juego
 function openGameWithPoints(game) {
@@ -5885,40 +6269,6 @@ function updateShopPointsDisplay() {
     if (el) el.textContent = getUserPointsShop();
 }
 
-function renderShopThemes() {
-    const grid = document.getElementById('shopThemesGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    SHOP_THEMES.forEach(theme => {
-        const owned = isShopOwned('themes', theme.id) || theme.price === 0;
-        const card = document.createElement('div');
-        card.className = 'shop-item-card';
-        card.innerHTML = `
-            <div class="shop-item-thumb"><i class="fas fa-paint-brush" style="font-size:2.2rem;color:var(--accent-color);"></i></div>
-            <div class="shop-item-title">${theme.title}</div>
-            <div class="shop-item-desc">${theme.desc}</div>
-            ${theme.price > 0 ? `<div class="shop-item-price"><i class="fas fa-star"></i> ${theme.price}</div>` : ''}
-            ${owned ? `<div class="shop-item-owned">Adquirido</div>` : ''}
-            <button class="shop-item-btn" ${theme.price > 0 && !owned && getUserPointsShop() < theme.price ? 'disabled' : ''}>${owned ? 'Aplicar' : 'Comprar'}</button>
-        `;
-        card.querySelector('.shop-item-btn').onclick = function() {
-            if (owned) {
-                theme.apply();
-                setCookie('theme', theme.id); // Guardar tema aplicado en cookie
-                showAlert('Tema aplicado', '¡El tema se ha aplicado correctamente!');
-            } else if (getUserPointsShop() >= theme.price) {
-                setUserPointsShop(getUserPointsShop() - theme.price);
-                addShopOwned('themes', theme.id);
-                theme.apply();
-                setCookie('theme', theme.id);
-                showAlert('¡Tema comprado!', 'Ahora puedes aplicarlo cuando quieras.');
-                renderShopThemes();
-                updateShopPointsDisplay();
-            }
-        };
-        grid.appendChild(card);
-    });
-}
 
 function setUserProfileBadge(badgeId) {
     localStorage.setItem('profileBadge', badgeId);
@@ -7289,16 +7639,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lista de anuncios (puedes editar aquí)
     const ANNOUNCEMENTS = [
         {
+            id: "7",
+            title: "Activa APASS por favor...",
+            content: "Hemos notado que muchos usuarios no han activado APASS (AstralProton Anti Securly System). Por favor, activa APASS en tu perfil para mejorar la estabilidad de la pagina y evitar posibles bloqueos. ¡Gracias por tu cooperación!",
+            date: "19/10/2025"
+        },
+        {
+            id: "6",
+            title: "Llego la actualizacion 10.19.25!",
+            content: "Tus monedas ahora se guardan en la nube, ¡Asi es! ya no tienes que preocuparte por ellas, hay nueva pantalla de titulo, optimizaciones, más funciones (Ahora puedes donar estrellas) y más cosas!",
+            date: "19/10/2025"
+        },
+        {
+            id: "5",
+            title: "Aviso de Inactividad",
+            content: "A partir del 1 de Noviembre de 2025, los usuarios inactivos por más de 2 meses serán eliminados para mantener la comunidad activa. ¡Asegúrate de iniciar sesión regularmente, y de almacenar tus datos para evitar multicuentas!",
+            date: "13/10/2025"
+        },
+        {
             id: "4",
             title: "¿Relaciones interpersonales en AstralProton?",
-            content: "¿Relaciones Interpersonales? ¡¿QUE LE PASA A GALAVDEV?! Esto ya parece Facebook... Bueno, ya en serio, he añadido un sistema de relaciones interpersonales por aburrimiento. ¡Disfrutenlo!",
-            date: "10/03/2025"
+            content: "¿Relaciones Interpersonales? ¡¿QUE LE PASA A GALAVDEV?! Esto ya parece Facebook... Bueno, ya en serio, he añadido un sistema de relaciones interpersonales opcionales. ¡Disfrutenlo!",
+            date: "03/10/2025"
         },
         {
             id: "3",
             title: "Actualizacion 10.2.25 ha llegado!",
             content: "Hmmm... Ya hay sistema de baneo... Cuidadito... Tambien hay nuevos juegos :D",
-            date: "10/03/2025"
+            date: "03/10/2025"
         },
         {
             id: "2",
@@ -7541,6 +7909,403 @@ async function mostrarSolicitudesRelaciones() {
         });
     } catch (e) {}
 }
+
+/* APASS v4 - seguro y restaurable
+   - Persiste estado en localStorage 'apass_enabled_v4'
+   - Crea contenedor/iframe propio (#apassContainer_v2 / #apassIframe_v2)
+   - Cuando se activa sustituye window.openGame por wrapper; al desactivar restaura la función original
+*/
+(function(){
+  const STORAGE_KEY = 'apass_enabled_v4';
+  const TOGGLE_ID = 'apassToggle';
+  const APASS_CONTAINER_ID = 'apassContainer_v2';
+  const APASS_IFRAME_ID = 'apassIframe_v2';
+
+  function isEnabled() { return localStorage.getItem(STORAGE_KEY) === '1'; }
+  function setEnabled(v) { localStorage.setItem(STORAGE_KEY, v ? '1' : '0'); }
+
+  // Crear contenedor/iframe aislado (IDs únicos para no chocar)
+  function createContainer() {
+    if (document.getElementById(APASS_CONTAINER_ID)) return;
+    const c = document.createElement('div');
+    c.id = APASS_CONTAINER_ID;
+    c.className = 'game-iframe-container';
+    c.style.display = 'none';
+    c.style.zIndex = 2200;
+    c.innerHTML = `
+      <iframe id="${APASS_IFRAME_ID}" class="game-iframe" src="about:blank" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+      <div class="game-controls" style="margin-top:12px;">
+        <button class="game-control-button fullscreen-button" id="apass_fullscreen_btn"><i class="fas fa-expand"></i> Pantalla completa</button>
+        <button class="game-control-button back-button" id="apass_back_btn"><i class="fas fa-arrow-left"></i> Volver</button>
+      </div>`;
+    document.body.appendChild(c);
+    document.getElementById('apass_back_btn').addEventListener('click', closeApass);
+    document.getElementById('apass_fullscreen_btn').addEventListener('click', () => {
+      const cont = document.getElementById(APASS_CONTAINER_ID);
+      cont && cont.classList.toggle('fullscreen');
+    });
+  }
+
+  const APASS_REWARD_IMMEDIATE = 10; // estrellas a otorgar
+  const APASS_COOLDOWN_MS = 90 * 1000; // 90s cooldown por usuario+url (ajusta si quieres)
+
+  function _apassRewardKey(userId, url) {
+    try { return 'apass_reward_' + userId + '_' + btoa(url).slice(0,32); }
+    catch (e) { return 'apass_reward_' + userId + '_' + encodeURIComponent(url).slice(0,32); }
+  }
+
+  async function _grantApassReward(url) {
+    try {
+      const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+      if (!user || !user.id) return false;
+      const key = _apassRewardKey(user.id, url || 'unknown');
+      const last = parseInt(sessionStorage.getItem(key) || '0', 10);
+      if (Date.now() - last < APASS_COOLDOWN_MS) return false; // cooldown
+      sessionStorage.setItem(key, String(Date.now()));
+
+      // Intentar vía servidor si addUserPoints existe
+      if (typeof addUserPoints === 'function') {
+        await addUserPoints(Number(APASS_REWARD_IMMEDIATE));
+      } else {
+        // fallback local
+        const cur = Number(localStorage.getItem('astral_coins_fallback') || 0);
+        localStorage.setItem('astral_coins_fallback', String(cur + APASS_REWARD_IMMEDIATE));
+      }
+
+      // Mostrar notificación visual y sonido si existen
+      try { if (typeof showCoinNotification === 'function') showCoinNotification(APASS_REWARD_IMMEDIATE); } catch(e){}
+      try { document.getElementById('coinSound')?.play?.(); } catch(e){}
+
+      return true;
+    } catch (err) {
+      console.warn('APASS grant reward error', err);
+      return false;
+    }
+  }
+
+  // Reemplaza openApassUrl para mostrar alerta/pop-up como en el popup normal y dar recompensa
+  function openApassUrl(url) {
+    if (!url) return false;
+    createContainer();
+    const iframe = document.getElementById(APASS_IFRAME_ID);
+    const cont = document.getElementById(APASS_CONTAINER_ID);
+    try { document.getElementById('backgroundMusic')?.pause(); } catch(e){}
+    // Mostrar mensaje/modal antes de abrir (usa tu sistema de alertas)
+    try {
+      if (typeof showAlert === 'function') {
+        showAlert('Abriendo juego', 'Se va a abrir el juego en modo APASS. ¡Gracias por jugar! +10 estrellas otorgadas.', [
+          { text: 'Continuar', action: () => { /* cierra alerta con el botón por defecto */ } }
+        ]);
+      } else {
+        // fallback simple
+        alert('Se va a abrir el juego en modo APASS. +10 estrellas otorgadas.');
+      }
+    } catch(e){ console.warn('APASS showAlert failed', e); }
+
+    // abrir iframe
+    if (iframe) iframe.src = url;
+    if (cont) cont.style.display = 'flex';
+    setTimeout(()=>{ try{ iframe.contentWindow && iframe.contentWindow.focus(); }catch(e){} }, 120);
+
+    // otorgar recompensa (no bloqueante)
+    _grantApassReward(url).catch(()=>{});
+
+    return true;
+  }
+
+  // Reemplaza closeApass para limpiar timers y volver a estado normal
+  function closeApass() {
+    const iframe = document.getElementById(APASS_IFRAME_ID);
+    const cont = document.getElementById(APASS_CONTAINER_ID);
+    if (iframe) iframe.src = 'about:blank';
+    if (cont) { cont.style.display = 'none'; cont.classList.remove('fullscreen'); }
+    try { document.getElementById('backgroundMusic')?.play().catch(()=>{}); } catch(e){}
+  }
+
+
+  function resolveGameUrl(game) {
+    if (!game) return null;
+    if (typeof game === 'string') {
+      if (/^https?:\/\//.test(game) || game.endsWith('.html') || game.startsWith('/')) return game;
+      const byId = (window.games || []).find(g => String(g.id) === String(game));
+      if (byId) return byId.url;
+      const byTitle = (window.games || []).find(g => String(g.title) === String(game));
+      if (byTitle) return byTitle.url;
+      return game;
+    }
+    if (typeof game === 'object') return game.url || game.redirect || game.href || null;
+    return null;
+  }
+
+  // Guardar referencia original (puede venir de otras partes del script)
+  let _original = window.openGame || window._originalOpenGame || null;
+  // Wrapper que usará APASS cuando esté activo, o delegará al original cuando no
+  let _wrapper = function(game) {
+    if (isEnabled()) {
+      const url = resolveGameUrl(game);
+      if (url) return openApassUrl(url);
+      // fallback a original si no podemos resolver
+    }
+    if (typeof _original === 'function') return _original(game);
+    // nada que hacer
+  };
+
+  // Activar: sustituye window.openGame por el wrapper
+  function enable() {
+    if (window._apass_active) return;
+    // actualiza referencia original por si otro script la cambió previamente
+    _original = window.openGame && window.openGame !== _wrapper ? window.openGame : _original;
+    window.openGame = _wrapper;
+    window._apass_active = true;
+  }
+  // Desactivar: restaura la función original (si existe)
+  function disable() {
+    if (!window._apass_active) return;
+    if (typeof _original === 'function') {
+      window.openGame = _original;
+    } else {
+      try { delete window.openGame; } catch(e) { window.openGame = undefined; }
+    }
+    closeApass();
+    window._apass_active = false;
+  }
+
+  // UI toggle wiring y persistencia
+  function initToggle() {
+    createContainer();
+    const t = document.getElementById(TOGGLE_ID);
+    if (!t) return;
+    t.checked = isEnabled();
+    if (isEnabled()) enable();
+    t.addEventListener('change', (e) => {
+      const on = !!e.target.checked;
+      setEnabled(on);
+      if (on) enable(); else disable();
+    });
+  }
+
+  // Exponer API mínima
+  window.APASS = window.APASS || {};
+  window.APASS.enable = () => { setEnabled(true); enable(); };
+  window.APASS.disable = () => { setEnabled(false); disable(); };
+  window.APASS.isEnabled = () => isEnabled();
+  window.APASS.openInIframe = (g) => openApassUrl(resolveGameUrl(g) || g);
+  window.APASS.closeIframe = closeApass;
+
+  document.addEventListener('DOMContentLoaded', initToggle);
+  // Si guardado habilitado, asegurar wrapper activo (se hace en initToggle)
+})();
+
+// ...existing code...
+/* Splash enhanced: 10s corner timer, non-invasive, uses profile font if set */
+(function(){
+  const DURATION = 10000; // 10 seconds
+  function getPreferredFont() {
+    // try keys used in your app (customFontFamily / profileFont / customFontUrl fallback)
+    const custom = localStorage.getItem('customFontFamily') || localStorage.getItem('profileFont') || null;
+    return custom || "Montserrat, sans-serif";
+  }
+
+  function initSplash() {
+    const splash = document.getElementById('splashScreen');
+    const startBtn = document.getElementById('startButton');
+    const ring = document.getElementById('splashProgressRing');
+    const text = document.getElementById('splashCountdownText');
+    if (!splash || !startBtn || !ring || !text) return;
+
+    // apply font from profile without removing existing CSS
+    const fontToUse = getPreferredFont();
+    document.documentElement.style.setProperty('--app-font', fontToUse);
+
+    // ensure disabled to avoid interfering with existing listeners
+    startBtn.disabled = true;
+    startBtn.setAttribute('aria-disabled','true');
+
+    const R = 28;
+    const CIRC = 2 * Math.PI * R;
+    ring.style.strokeDasharray = String(CIRC);
+    ring.style.strokeDashoffset = String(CIRC);
+
+    let start = performance.now();
+    let raf;
+
+    function tick(now) {
+      const elapsed = Math.min(now - start, DURATION);
+      const progress = elapsed / DURATION;
+      const remaining = Math.ceil((DURATION - elapsed) / 1000);
+      const offset = CIRC * (1 - progress);
+      ring.style.strokeDashoffset = String(offset);
+      text.textContent = remaining > 0 ? `${remaining}s` : '0s';
+
+      if (elapsed < DURATION) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        // done: enable button, add ready class for subtle style changes
+        try {
+          startBtn.disabled = false;
+          startBtn.removeAttribute('aria-disabled');
+          splash.classList.add('ready');
+        } catch(e){}
+        if (raf) cancelAnimationFrame(raf);
+      }
+    }
+
+    // start after next paint
+    requestAnimationFrame((t) => {
+      start = performance.now();
+      raf = requestAnimationFrame(tick);
+    });
+
+    // keyboard accessibility: let Enter/Space trigger (do not override existing behavior)
+    startBtn.addEventListener('keyup', (ev) => {
+      if ((ev.key === 'Enter' || ev.key === ' ') && !startBtn.disabled) startBtn.click();
+    });
+
+    // safety: if splash removed or hidden, cancel RAF
+    const obs = new MutationObserver(() => {
+      if (!document.body.contains(splash) || getComputedStyle(splash).display === 'none') {
+        if (raf) cancelAnimationFrame(raf);
+        obs.disconnect();
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSplash);
+  } else {
+    setTimeout(initSplash, 30);
+  }
+})();
+
+// Abrir/cerrar modal de donación
+function openDonateModal() {
+  document.getElementById('donateError').textContent = '';
+  document.getElementById('donateRecipient').value = '';
+  document.getElementById('donateAmount').value = '';
+  document.getElementById('donatePassword').value = '';
+  document.getElementById('donateModal').style.display = 'flex';
+}
+function closeDonateModal() {
+  document.getElementById('donateModal').style.display = 'none';
+}
+
+// Comprobar contraseña local (usa hash() definido en script.js)
+function verifyLocalPasswordCleartext(clear) {
+  try {
+    const stored = localStorage.getItem('astral_lock_hash') || '';
+    if (!stored) return false;
+    return String(hash(clear)) === String(stored);
+  } catch (e) {
+    return false;
+  }
+}
+
+// Ejecutar la donación (verifica contraseña local antes de llamar al servidor)
+async function submitDonation() {
+  const recipient = (document.getElementById('donateRecipient') || {}).value?.trim();
+  const amount = parseInt((document.getElementById('donateAmount') || {}).value, 10);
+  const pwd = (document.getElementById('donatePassword') || {}).value || '';
+  const errorEl = document.getElementById('donateError');
+
+  if (!recipient) { errorEl.textContent = 'Introduce el ID del receptor.'; return; }
+  if (!Number.isInteger(amount) || amount <= 0) { errorEl.textContent = 'Cantidad inválida.'; return; }
+  // verificar contraseña local
+  if (!verifyLocalPasswordCleartext(pwd)) { errorEl.textContent = 'Contraseña local incorrecta.'; return; }
+
+  // solicitar confirmación
+  if (!confirm(`Vas a donar ${amount} estrellas a ${recipient}. ¿Confirmar?`)) return;
+
+  const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+  if (!user.id) { errorEl.textContent = 'Debes iniciar sesión.'; return; }
+  const token = localStorage.getItem('astralToken') || '';
+
+  try {
+    const res = await fetch(`${API}/api/user/coins/transfer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ fromUserId: user.id, toUserId: recipient, amount })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = json?.error || 'Error al realizar la donación.';
+      return;
+    }
+
+    // animación y feedback
+    try { document.getElementById('coinSound')?.play(); } catch(e){}
+    // Mostrar overlay de transferencia ya presente en CSS
+    const ov = document.getElementById('transferOverlay');
+    if (ov) {
+      document.getElementById('transferMarquee')?.querySelector('span')?.remove?.();
+      document.getElementById('transferMarquee')?.appendChild(document.createElement('span'));
+    }
+    alert('Donación realizada. ¡Gracias!');
+
+    // actualizar UI: balance y tienda
+    localStorage.setItem('astral_coins_fallback', String(json.coins || await getUserPoints()));
+    await updatePointsDisplay();
+    updateShopPointsDisplay && updateShopPointsDisplay();
+
+    closeDonateModal();
+  } catch (err) {
+    console.error('submitDonation error', err);
+    errorEl.textContent = 'Error de red. Intenta de nuevo.';
+  }
+}
+
+// Mostrar notificaciones en UI (alert pequeña o panel)
+async function fetchAndRenderNotifications() {
+  try {
+    const user = JSON.parse(localStorage.getItem('astralUser') || '{}');
+    if (!user.id) return;
+    const token = localStorage.getItem('astralToken') || '';
+    const res = await fetch(`${API}/api/notifications/${encodeURIComponent(user.id)}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) return;
+    const json = await res.json();
+    const notes = json.notifications || [];
+    // mostrar toast para las no leídas de tipo donation
+    for (const n of notes) {
+      if (!n.read && n.type === 'donation') {
+        try {
+          if (typeof showCoinNotification === 'function') showCoinNotification(Number(n.amount) || 0);
+        } catch(e){}
+        // pequeña alerta contextual
+        showAlert('Has recibido una donación', `${n.from_user} te ha donado ${n.amount} estrellas.`, [
+          { text: 'Cerrar' }
+        ]);
+        // marcar como leída
+        fetch(`${API}/api/notifications/mark-read`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ id: n.id, userId: user.id })
+        }).catch(()=>{});
+      }
+    }
+  } catch (e) {
+    console.warn('fetchAndRenderNotifications', e);
+  }
+}
+
+// Enlazar eventos al DOM
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('openDonateBtn');
+  if (btn) btn.addEventListener('click', openDonateModal);
+  const cancel = document.getElementById('donateCancelBtn');
+  if (cancel) cancel.addEventListener('click', closeDonateModal);
+  const submit = document.getElementById('donateSubmitBtn');
+  if (submit) submit.addEventListener('click', submitDonation);
+
+  // comprobar notificaciones al cargar y cada 20s
+  fetchAndRenderNotifications();
+  setInterval(fetchAndRenderNotifications, 20000);
+});
+
 
 // Llama a esta función al cargar la app:
 document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
