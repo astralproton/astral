@@ -7401,82 +7401,260 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- Custom Firmware ASPCF AVANZADO ---
-(function() {
-    const installBtn = document.getElementById('installFirmwareBtn');
-    const fileInput = document.getElementById('firmwareFileInput');
-    const status = document.getElementById('firmwareStatus');
+// ...existing code...
 
-    if (installBtn && fileInput) {
-        installBtn.onclick = () => fileInput.click();
+// --- Custom Firmware ASPCF AVANZADO (instalar / aplicar / eliminar) ---
+(function(){
 
-        fileInput.onchange = async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (!file.name.endsWith('.aspcf')) {
-                status.textContent = "Archivo inválido. Debe ser .aspcf";
-                status.style.color = "#ff3366";
-                return;
-            }
-            try {
-                const text = await file.text();
-                const config = JSON.parse(text);
+  const FW_STORAGE_KEY = 'customFirmware_aspcf_v1';
+  const firmwareInput = document.getElementById('firmwareFileInput');
+  const installBtn = document.getElementById('installFirmwareBtn');
+  const firmwareStatusEl = document.getElementById('firmwareStatus');
 
-                // --- Colores ---
-                if (config.sidebarColor) localStorage.setItem('sidebarColor', config.sidebarColor);
-                if (config.headerColor) localStorage.setItem('headerColor', config.headerColor);
-                if (config.accentColor) localStorage.setItem('accentColor', config.accentColor);
-                if (config.textColor) localStorage.setItem('textColor', config.textColor);
-                if (config.backgroundColor) localStorage.setItem('backgroundColor', config.backgroundColor);
+  // Crea botón de desinstalar junto al existente (si no está en HTML)
+  function ensureUninstallButton() {
+    if (document.getElementById('uninstallFirmwareBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'uninstallFirmwareBtn';
+    btn.className = 'background-button danger';
+    btn.style.marginLeft = '0.6rem';
+    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar Firmware';
+    installBtn.insertAdjacentElement('afterend', btn);
+    btn.addEventListener('click', uninstallFirmware);
+  }
 
-                // --- Fondo personalizado ---
-                if (config.customBackground) localStorage.setItem('customBackground', config.customBackground);
+  // Valid keys and basic schema check (whitelist)
+  const ALLOWED_KEYS = new Set([
+    'meta','settings','profile','shop','points'
+  ]);
 
-                // --- Fuente ---
-                if (config.profileFont) localStorage.setItem('profileFont', config.profileFont);
-
-                // --- Tamaño de fuente ---
-                if (config.fontSize) localStorage.setItem('fontSize', config.fontSize);
-
-                // --- Nombre custom (solo local) ---
-                if (config.customName) {
-                    let user = JSON.parse(localStorage.getItem('astralUser') || '{}');
-                    user.nombre = config.customName;
-                    localStorage.setItem('astralUser', JSON.stringify(user));
-                }
-
-                // --- Posición de sidebar ---
-                if (config.sidebarPosition) localStorage.setItem('sidebarPosition', config.sidebarPosition);
-
-                // --- Música personalizada ---
-                if (config.customMusic) localStorage.setItem('customMusic', config.customMusic);
-
-                // --- Insignias ---
-                if (Array.isArray(config.badges)) {
-                    localStorage.setItem('profileBadges', JSON.stringify(config.badges));
-                }
-
-                // --- Tema ---
-                if (config.theme) localStorage.setItem('theme', config.theme);
-
-                // --- Idioma ---
-                if (config.language) localStorage.setItem('language', config.language);
-
-                // --- Reduce Motion ---
-                if (typeof config.reduceMotion === "boolean") localStorage.setItem('reduceMotion', config.reduceMotion ? "true" : "false");
-
-                // --- Cursor personalizado ---
-                if (config.customCursor) localStorage.setItem('customCursor', config.customCursor);
-
-                status.textContent = "Firmware instalado correctamente. Recargando...";
-                status.style.color = "#4caf50";
-                setTimeout(() => location.reload(), 1200);
-            } catch (err) {
-                status.textContent = "Error al instalar el firmware.";
-                status.style.color = "#ff3366";
-            }
-        };
+  function validateFirmware(obj) {
+    if (!obj || typeof obj !== 'object') throw new Error('Firmware inválido');
+    Object.keys(obj).forEach(k => { if (!ALLOWED_KEYS.has(k)) console.warn('Clave inesperada en firmware:', k); });
+    // basic structure
+    if (!obj.settings && !obj.profile && !obj.shop) {
+      // still allow firmware that contains at least one known section
     }
+    return true;
+  }
+
+  // Aplica firmware (separado de la lectura)
+  async function applyFirmware(fw) {
+    try {
+      const s = fw.settings || {};
+
+      // Colors
+      if (s.colors) {
+        const { header, sidebar, accent } = s.colors;
+        if (header) { document.documentElement.style.setProperty('--header-bg', header); localStorage.setItem('headerColor', header); }
+        if (sidebar) { document.documentElement.style.setProperty('--sidebar-bg', sidebar); localStorage.setItem('sidebarColor', sidebar); }
+        if (accent)  { document.documentElement.style.setProperty('--accent-color', accent); localStorage.setItem('accentColor', accent); }
+        // update UI previews if exist
+        try { document.getElementById('headerColorPreview').style.backgroundColor = s.colors.header; } catch(e){}
+        try { document.getElementById('sidebarColorPreview').style.backgroundColor = s.colors.sidebar; } catch(e){}
+        try { document.getElementById('accentColorPreview').style.backgroundColor = s.colors.accent; } catch(e){}
+      }
+
+      // Background (image) and custom background application
+      if (s.backgroundUrl) {
+        localStorage.setItem('customBackground', s.backgroundUrl);
+        if (typeof applyCustomBackground === 'function') {
+          applyCustomBackground(s.backgroundUrl);
+        } else {
+          // fallback: create #customBackground
+          let el = document.getElementById('customBackground');
+          if (!el) {
+            el = document.createElement('div'); el.id = 'customBackground'; el.className = 'custom-background';
+            document.body.appendChild(el);
+          }
+          el.style.backgroundImage = `url(${s.backgroundUrl})`;
+          document.querySelector('.space-background').style.display = 'none';
+        }
+        try { document.getElementById('backgroundPreview').style.backgroundImage = `url(${s.backgroundUrl})`; document.getElementById('backgroundPreview').classList.add('has-image'); } catch(e){}
+      }
+
+      // YouTube background (URL)
+      if (s.youtubeBgUrl) {
+        localStorage.setItem('youtubeBgUrl', s.youtubeBgUrl);
+        if (typeof setYoutubeBackground === 'function') {
+          setYoutubeBackground(s.youtubeBgUrl);
+        } else {
+          // fallback: inject iframe
+          setYoutubeBackground(s.youtubeBgUrl);
+        }
+      }
+
+      // Custom music (url or base64 data url)
+      if (s.customMusic) {
+        localStorage.setItem('customMusic', s.customMusic);
+        // update UI info
+        try { document.getElementById('customMusicInfo').textContent = 'Música personalizada aplicada desde firmware'; } catch(e){}
+        if (typeof updateBackgroundMusicSource === 'function') updateBackgroundMusicSource(s.customMusic);
+      }
+
+      // Cursor
+      if (s.cursorUrl) {
+        const cursorVal = `url("${s.cursorUrl}") 16 16, auto`;
+        document.documentElement.style.setProperty('--custom-cursor', cursorVal);
+        localStorage.setItem('customCursor', s.cursorUrl);
+        try { document.getElementById('customCursorInfo').textContent = 'Cursor aplicado desde firmware'; } catch(e){}
+      }
+
+      // Font (Google Fonts URL or CSS URL)
+      if (s.fontUrl) {
+        let existing = document.getElementById('aspcf_custom_font');
+        if (existing) existing.href = s.fontUrl;
+        else {
+          const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = s.fontUrl; l.id = 'aspcf_custom_font';
+          document.head.appendChild(l);
+        }
+        localStorage.setItem('customFontUrl', s.fontUrl);
+        try { document.getElementById('customFontUrlInfo').textContent = 'Fuente aplicada desde firmware'; } catch(e){}
+      }
+
+      // Profile override (merge)
+      if (fw.profile) {
+        let profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+        profileData = Object.assign({}, profileData, fw.profile);
+        localStorage.setItem('profileData', JSON.stringify(profileData));
+        // try to update UI functions if exist
+        if (typeof renderProfileBadges === 'function') renderProfileBadges();
+      }
+
+      // Shop and points
+      if (fw.shop) {
+        try {
+          if (typeof saveShopData === 'function') saveShopData(fw.shop);
+          else localStorage.setItem('shopData', JSON.stringify(fw.shop));
+        } catch(e){}
+      }
+      if (typeof fw.points !== 'undefined') {
+        localStorage.setItem('userPoints', String(fw.points));
+        if (typeof updatePointsDisplay === 'function') updatePointsDisplay();
+        if (typeof updateShopPointsDisplay === 'function') updateShopPointsDisplay();
+      }
+
+      // Save whole firmware for later uninstall/inspection
+      localStorage.setItem(FW_STORAGE_KEY, JSON.stringify(fw));
+      firmwareStatusEl.textContent = 'Firmware instalado y aplicado correctamente.';
+      firmwareStatusEl.style.color = '#a8ff8a';
+      ensureUninstallButton();
+
+    } catch (err) {
+      console.error('Error aplicando firmware:', err);
+      firmwareStatusEl.textContent = 'Error aplicando firmware: ' + (err.message || err);
+      firmwareStatusEl.style.color = '#ff9a9a';
+      throw err;
+    }
+  }
+
+  // Leer archivo .aspcf (JSON)
+  function installFirmwareFromFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      try {
+        const text = e.target.result;
+        const obj = JSON.parse(text);
+        validateFirmware(obj);
+        await applyFirmware(obj);
+      } catch (err) {
+        firmwareStatusEl.textContent = 'Archivo inválido: ' + (err.message || err);
+        firmwareStatusEl.style.color = '#ff9a9a';
+      }
+    };
+    reader.onerror = function() {
+      firmwareStatusEl.textContent = 'Error leyendo el archivo.';
+      firmwareStatusEl.style.color = '#ff9a9a';
+    };
+    reader.readAsText(file);
+  }
+
+  // Uninstall firmware: revert sensible keys and remove items
+  function uninstallFirmware() {
+    if (!confirm('¿Eliminar Custom Firmware instalado y restaurar configuraciones aplicadas?')) return;
+    try {
+      localStorage.removeItem(FW_STORAGE_KEY);
+
+      // remove youtube bg
+      const yb = document.getElementById('youtubeBackground');
+      if (yb) yb.remove();
+      localStorage.removeItem('youtubeBgUrl');
+
+      // remove custom background
+      localStorage.removeItem('customBackground');
+      const cb = document.getElementById('customBackground');
+      if (cb) cb.remove();
+      document.querySelector('.space-background').style.display = 'block';
+
+      // remove colors & reset to defaults (simple reset)
+      localStorage.removeItem('headerColor');
+      localStorage.removeItem('sidebarColor');
+      localStorage.removeItem('accentColor');
+      document.documentElement.style.removeProperty('--header-bg');
+      document.documentElement.style.removeProperty('--sidebar-bg');
+      document.documentElement.style.removeProperty('--accent-color');
+
+      // cursor
+      localStorage.removeItem('customCursor');
+      document.documentElement.style.setProperty('--custom-cursor', 'auto');
+
+      // font
+      const fontLink = document.getElementById('aspcf_custom_font');
+      if (fontLink) fontLink.remove();
+      localStorage.removeItem('customFontUrl');
+
+      // music
+      localStorage.removeItem('customMusic');
+      try { document.getElementById('customMusicInfo').textContent = 'No hay música personalizada seleccionada'; } catch(e){}
+
+      firmwareStatusEl.textContent = 'Firmware eliminado. Algunas configuraciones pueden requerir recargar la página.';
+      firmwareStatusEl.style.color = '#ffd27a';
+
+      // update UI helpers if present
+      if (typeof updatePointsDisplay === 'function') updatePointsDisplay();
+      if (typeof updateShopPointsDisplay === 'function') updateShopPointsDisplay();
+      if (typeof renderProfileBadges === 'function') renderProfileBadges();
+    } catch (err) {
+      console.error('Error al eliminar firmware:', err);
+      firmwareStatusEl.textContent = 'Error eliminando firmware: ' + (err.message || err);
+      firmwareStatusEl.style.color = '#ff9a9a';
+    }
+  }
+
+  // Hook UI
+  if (installBtn && firmwareInput) {
+    installBtn.addEventListener('click', () => firmwareInput.click());
+    firmwareInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) installFirmwareFromFile(f);
+      // clear input so same file can be selected again if needed
+      firmwareInput.value = '';
+    });
+  }
+
+  // If firmware already installed on load, apply it
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      const existing = localStorage.getItem(FW_STORAGE_KEY);
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        applyFirmware(parsed).catch(()=>{});
+        ensureUninstallButton();
+        firmwareStatusEl.textContent = 'Firmware previamente instalado (aplicado).';
+        firmwareStatusEl.style.color = '#a8ff8a';
+      }
+    } catch (e) { console.warn('No firmware to auto-apply.'); }
+  });
+
+  // expose for debugging
+  window.installFirmwareFromFile = installFirmwareFromFile;
+  window.uninstallFirmware = uninstallFirmware;
+  window.getInstalledFirmware = () => JSON.parse(localStorage.getItem(FW_STORAGE_KEY) || 'null');
+
 })();
+
+// ...existing code...
 
 // --- CURSOR PERSONALIZADO AVANZADO ---
 (function() {
@@ -7989,7 +8167,15 @@ async function mostrarSolicitudesRelaciones() {
     createContainer();
     const iframe = document.getElementById(APASS_IFRAME_ID);
     const cont = document.getElementById(APASS_CONTAINER_ID);
-    try { document.getElementById('backgroundMusic')?.pause(); } catch(e){}
+
+    // PAUSA: pide pausar el fondo de YouTube (si existe) y la música HTML
+    try {
+      if (typeof window.pauseYoutubeBackground === 'function') window.pauseYoutubeBackground();
+      try { document.getElementById('backgroundMusic')?.pause(); } catch(e){}
+      // marca que la pausa fue por el juego (para que solo se reanude si fue por esto)
+      window._youtubeBgPausedByGame = true;
+    } catch (e) { console.warn('openApassUrl pause error', e); }
+
     // Mostrar mensaje/modal antes de abrir (usa tu sistema de alertas)
     try {
       if (typeof showAlert === 'function') {
@@ -8019,9 +8205,22 @@ async function mostrarSolicitudesRelaciones() {
     const cont = document.getElementById(APASS_CONTAINER_ID);
     if (iframe) iframe.src = 'about:blank';
     if (cont) { cont.style.display = 'none'; cont.classList.remove('fullscreen'); }
-    try { document.getElementById('backgroundMusic')?.play().catch(()=>{}); } catch(e){}
-  }
 
+    // REANUDA: reanudar YouTube background solo si la pausa fue originada por el juego/APASS
+    try {
+      if (typeof window.playYoutubeBackground === 'function') {
+        // playYoutubeBackground() ya comprueba window._youtubeBgPausedByGame
+        window.playYoutubeBackground(false);
+      } else {
+        // fallback: intenta reanudar el audio HTML
+        try { document.getElementById('backgroundMusic')?.play().catch(()=>{}); } catch(e){}
+      }
+      // limpiar marca de pausa por juego
+      window._youtubeBgPausedByGame = false;
+    } catch (e) {
+      console.warn('closeApass resume error', e);
+    }
+  }
 
   function resolveGameUrl(game) {
     if (!game) return null;
@@ -8306,7 +8505,415 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(fetchAndRenderNotifications, 20000);
 });
 
+// ...existing code...
 
+/* ---------- YouTube background: control fiable pause/play al abrir/cerrar juegos ---------- */
+(function(){
+
+  const IFRAME_WRAPPER_ID = 'youtubeBackground';
+  const IFRAME_ID = 'youtubeBackgroundIframe';
+  window._youtubeBgPausedByGame = false; // marca si la pausa la hizo la apertura del juego
+
+  // Extrae ID de video (soporta youtu.be, watch, embed, shorts)
+  function extractYouTubeId(url) {
+    if (!url) return null;
+    const patterns = [
+      /(?:youtu\.be\/)([\w-]{11})/,
+      /[?&]v=([\w-]{11})/,
+      /embed\/([\w-]{11})/,
+      /\/v\/([\w-]{11})/,
+      /shorts\/([\w-]{11})/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m && m[1]) return m[1];
+    }
+    return null;
+  }
+
+  // Asegura enablejsapi=1 y origin en el src del iframe (y lo reasigna si falta)
+  function ensureEnableJSAPIOnIframe(iframe) {
+    if (!iframe || !iframe.src) return;
+    try {
+      const srcUrl = new URL(iframe.src, window.location.href);
+      let changed = false;
+      if (srcUrl.searchParams.get('enablejsapi') !== '1') { srcUrl.searchParams.set('enablejsapi', '1'); changed = true; }
+      if (!srcUrl.searchParams.get('origin')) { srcUrl.searchParams.set('origin', window.location.origin); changed = true; }
+      if (changed) iframe.src = srcUrl.toString();
+    } catch (err) {
+      // fallback: append params if parsing falla
+      if (iframe.src.indexOf('enablejsapi=1') === -1) {
+        iframe.src = iframe.src + (iframe.src.includes('?') ? '&' : '?') + 'enablejsapi=1&origin=' + encodeURIComponent(window.location.origin);
+      }
+    }
+  }
+
+  // Envía comando al player via postMessage
+  function postToPlayer(func, args = []) {
+    try {
+      const iframe = document.getElementById(IFRAME_ID);
+      if (!iframe || !iframe.contentWindow) return false;
+      const msg = JSON.stringify({ event: 'command', func, args });
+      iframe.contentWindow.postMessage(msg, '*');
+      return true;
+    } catch (e) {
+      console.warn('postToPlayer error', e);
+      return false;
+    }
+  }
+
+  // Crea/actualiza iframe de YouTube para fondo (reemplaza setYoutubeBackground ligero)
+  window.setYoutubeBackground = function(url) {
+    // eliminar previo
+    const prev = document.getElementById(IFRAME_WRAPPER_ID);
+    if (prev) prev.remove();
+    document.body.classList.remove('has-youtube-bg');
+
+    if (!url) {
+      localStorage.removeItem('youtubeBgUrl');
+      // dejar fondo espacial visible
+      const sb = document.querySelector('.space-background');
+      if (sb) sb.style.display = 'block';
+      return;
+    }
+
+    const videoId = extractYouTubeId(url);
+    if (!videoId) {
+      console.warn('YouTube ID no encontrado para:', url);
+      return;
+    }
+
+    // crear wrapper + iframe con enablejsapi=1 y origin
+    const wrapper = document.createElement('div');
+    wrapper.id = IFRAME_WRAPPER_ID;
+    wrapper.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-4;pointer-events:none;opacity:0.45;';
+    const params = [
+      'autoplay=1',
+      'mute=0',
+      'controls=0',
+      'loop=1',
+      `playlist=${videoId}`,
+      'modestbranding=1',
+      'rel=0',
+      'iv_load_policy=3',
+      'disablekb=1',
+      'enablejsapi=1',
+      'origin=' + encodeURIComponent(window.location.origin)
+    ].join('&');
+    wrapper.innerHTML = `<iframe id="${IFRAME_ID}" src="https://www.youtube.com/embed/${videoId}?${params}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100vw;height:100vh;pointer-events:none;border:none;"></iframe>`;
+    document.body.appendChild(wrapper);
+    document.body.classList.add('has-youtube-bg');
+    localStorage.setItem('youtubeBgUrl', url);
+
+    // asegurar enablejsapi tras short delay
+    setTimeout(() => {
+      const iframe = document.getElementById(IFRAME_ID);
+      ensureEnableJSAPIOnIframe(iframe);
+    }, 200);
+  };
+
+  // Pausa el video de fondo (marcando que fue por apertura de juego)
+  window.pauseYoutubeBackground = function() {
+    try {
+      const ok = postToPlayer('pauseVideo', []);
+      // pausar tag audio fallback
+      try { document.getElementById('backgroundMusic')?.pause(); } catch(e){}
+      if (ok) window._youtubeBgPausedByGame = true;
+      return ok;
+    } catch (e) {
+      console.warn('pauseYoutubeBackground', e);
+      return false;
+    }
+  };
+
+  // Reanuda video solo si fue pausado por la apertura del juego (no sobreescribe pausa del usuario)
+  window.playYoutubeBackground = function(force = false) {
+    try {
+      if (!force && !window._youtubeBgPausedByGame) return false;
+      const ok = postToPlayer('playVideo', []);
+      try { 
+        const bg = document.getElementById('backgroundMusic');
+        if (bg && bg.src && !bg.src.includes('about:blank')) bg.play().catch(()=>{}); 
+      } catch(e){}
+      if (ok) window._youtubeBgPausedByGame = false;
+      return ok;
+    } catch (e) {
+      console.warn('playYoutubeBackground', e);
+      return false;
+    }
+  };
+
+  // Hook principal: wrap openGame / closeGame para pausar antes y reanudar después.
+  function wrapOpenCloseGame() {
+    // wrap openGame
+    if (typeof window.openGame === 'function' && !window.openGame._ytHooked) {
+      const realOpen = window.openGame;
+      window.openGame = function(...args) {
+        try { window.pauseYoutubeBackground(); } catch(e){ console.warn(e); }
+        return realOpen.apply(this, args);
+      };
+      window.openGame._ytHooked = true;
+    }
+    // wrap closeGame
+    if (typeof window.closeGame === 'function' && !window.closeGame._ytHooked) {
+      const realClose = window.closeGame;
+      window.closeGame = function(...args) {
+        const res = realClose.apply(this, args);
+        try { window.playYoutubeBackground(); } catch(e){ console.warn(e); }
+        return res;
+      };
+      window.closeGame._ytHooked = true;
+    }
+  }
+
+  // Si openGame/closeGame no existen aún, crear wrappers que intentan delegar posteriormente
+  if (!window.openGame) {
+    window.openGame = function(...args){
+      // pausa si hay video, y store that pause was done
+      try { window.pauseYoutubeBackground(); } catch(e){}
+      console.warn('openGame called but no original implementation present yet.');
+    };
+  }
+  if (!window.closeGame) {
+    window.closeGame = function(...args){
+      try { window.playYoutubeBackground(); } catch(e){}
+      console.warn('closeGame called but no original implementation present yet.');
+    };
+  }
+
+  // Reaplicar hooks periódicamente por si APASS u otro módulo sobrescribe las funciones
+  const reapInterval = setInterval(wrapOpenCloseGame, 750);
+
+  // Cleanup on unload
+  window.addEventListener('beforeunload', () => clearInterval(reapInterval));
+
+  // Si ya hay youtubeBg guardado al iniciar, restaurar (no tocar estado de reproducción)
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('youtubeBgUrl');
+    if (saved) setYoutubeBackground(saved);
+    // intentar hookear de inmediato
+    setTimeout(wrapOpenCloseGame, 300);
+  });
+
+})();
+
+// ...existing code...
+(function(){
+  // Usa las funciones existentes si están; si no, definimos no-op seguros
+  const pauseFn = window.pauseYoutubeBackground || function(){ 
+    console.warn('pauseYoutubeBackground no definida'); return false; 
+  };
+  const playFn  = window.playYoutubeBackground  || function(force){ 
+    console.warn('playYoutubeBackground no definida'); return false; 
+  };
+
+  // Estado interno
+  window._youtubeBgPausedByGame = window._youtubeBgPausedByGame || false;
+  let _apassOpen = false;
+  let _gameOpen = false;
+  let _debounceResume = null;
+
+  // Helper: marcar pausa antes de abrir juego
+  function onGameOpenDetected(source) {
+    // Pausar solo si hay iframe youtube
+    try {
+      pauseFn();
+      window._youtubeBgPausedByGame = true;
+      _gameOpen = true;
+      console.debug('YouTube bg paused due to game open (source):', source);
+    } catch(e){ console.warn(e); }
+  }
+
+  // Helper: reanudar solo si la pausa fue por el juego
+  function onGameCloseDetected(source) {
+    // debounce para evitar flaps (si se abre otro juego inmediatamente)
+    if (_debounceResume) clearTimeout(_debounceResume);
+    _debounceResume = setTimeout(() => {
+      try {
+        if (window._youtubeBgPausedByGame) {
+          playFn(false);
+          window._youtubeBgPausedByGame = false;
+          console.debug('YouTube bg resumed after game close (source):', source);
+        } else {
+          console.debug('No resume: youtubeBg was not paused by game');
+        }
+      } catch(e){ console.warn(e); }
+      _gameOpen = false;
+      _apassOpen = false;
+    }, 250); // pequeño delay para estabilidad
+  }
+
+  // Observa añadidos/eliminados del DOM para detectar APASS iframe/container
+  const bodyObserver = new MutationObserver(mutations => {
+    for (const m of mutations) {
+      // añadidos
+      for (const n of m.addedNodes) {
+        if (!(n instanceof Element)) continue;
+        // detectores comunes de APASS (id / class / data attr)
+        if (n.id === 'apassIframe_v2' || n.id === 'apassContainer_v2' || n.classList.contains('apass-iframe') || n.querySelector && (n.querySelector('#apassIframe_v2') || n.querySelector('.apass-iframe'))) {
+          _apassOpen = true;
+          onGameOpenDetected('APASS-DOM-ADD');
+        }
+        // también si gameIframe se añade con src distinto
+        if (n.id === 'gameIframe' || n.querySelector && n.querySelector('#gameIframe')) {
+          const iframe = document.getElementById('gameIframe');
+          if (iframe && iframe.src && !iframe.src.endsWith('about:blank')) {
+            onGameOpenDetected('GAMEIFRAME-ADDED');
+          }
+        }
+      }
+      // eliminados
+      for (const n of m.removedNodes) {
+        if (!(n instanceof Element)) continue;
+        if (n.id === 'apassIframe_v2' || n.id === 'apassContainer_v2' || n.classList.contains('apass-iframe') || (n.querySelector && (n.querySelector('#apassIframe_v2') || n.querySelector('.apass-iframe')))) {
+          // APASS iframe removido -> posible cierre
+          _apassOpen = false;
+          // si no hay otro juego abierto, reanuda
+          onGameCloseDetected('APASS-DOM-REMOVE');
+        }
+        if (n.id === 'gameIframe' || (n.querySelector && n.querySelector('#gameIframe'))) {
+          onGameCloseDetected('GAMEIFRAME-REMOVED');
+        }
+      }
+    }
+  });
+  bodyObserver.observe(document.body, { childList: true, subtree: true });
+
+  // Observa cambios en el iframe principal (#gameIframe) attributes (src)
+  const gameIframe = () => document.getElementById('gameIframe');
+  if (gameIframe()) {
+    const iframeAttrObserver = new MutationObserver(muts => {
+      for (const m of muts) {
+        if (m.attributeName === 'src') {
+          const src = gameIframe().getAttribute('src') || '';
+          if (src && !src.includes('about:blank')) {
+            onGameOpenDetected('GAMEIFRAME-SRC-CHANGE');
+          } else {
+            onGameCloseDetected('GAMEIFRAME-SRC-CHANGE-TO-blank');
+          }
+        }
+      }
+    });
+    iframeAttrObserver.observe(gameIframe(), { attributes: true, attributeFilter: ['src'] });
+  } else {
+    // si el iframe se crea después, detectamos su creación arriba y rearmamos observer
+    const lateFrameWatcher = new MutationObserver(muts => {
+      if (gameIframe()) {
+        lateFrameWatcher.disconnect();
+        // small timeout para permitir attachment
+        setTimeout(() => {
+          if (gameIframe()) {
+            const iframeAttrObserver = new MutationObserver(muts2 => {
+              for (const m of muts2) {
+                if (m.attributeName === 'src') {
+                  const src = gameIframe().getAttribute('src') || '';
+                  if (src && !src.includes('about:blank')) onGameOpenDetected('GAMEIFRAME-LATE-SRC-CHANGE');
+                  else onGameCloseDetected('GAMEIFRAME-LATE-SRC-TO-blank');
+                }
+              }
+            });
+            iframeAttrObserver.observe(gameIframe(), { attributes: true, attributeFilter: ['src'] });
+          }
+        }, 200);
+      }
+    });
+    lateFrameWatcher.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // Observa visibilidad del contenedor del iframe (#gameIframeContainer)
+  const container = document.getElementById('gameIframeContainer');
+  if (container) {
+    const contObs = new MutationObserver(() => {
+      const disp = window.getComputedStyle(container).display;
+      if (disp === 'none') {
+        onGameCloseDetected('GAMEIFRAMECONTAINER-HIDDEN');
+      } else {
+        // mostrarse significa posible apertura (verificamos src también)
+        const f = gameIframe();
+        if (f && f.src && !f.src.includes('about:blank')) onGameOpenDetected('GAMEIFRAMECONTAINER-SHOW');
+      }
+    });
+    contObs.observe(container, { attributes: true, attributeFilter: ['style', 'class'] });
+  }
+
+  // Escuchar mensajes postMessage (APASS o módulos pueden enviar)
+  window.addEventListener('message', ev => {
+    try {
+      const d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data;
+      if (!d) return;
+      // APASS podría enviar { type: 'apass:opened' } / { type: 'apass:closed' }
+      if (d.type === 'apass:opened' || d.type === 'apass-open' || d.event === 'apass:open') {
+        _apassOpen = true;
+        onGameOpenDetected('APASS-MESSAGE');
+      } else if (d.type === 'apass:closed' || d.type === 'apass-close' || d.event === 'apass:close') {
+        _apassOpen = false;
+        onGameCloseDetected('APASS-MESSAGE');
+      }
+      // si algún módulo notifica apertura/cierre de juegos
+      else if (d.type === 'game:opened') {
+        onGameOpenDetected('MODULE-MESSAGE');
+      } else if (d.type === 'game:closed') {
+        onGameCloseDetected('MODULE-MESSAGE');
+      }
+    } catch(e){ /* ignora datos no JSON */ }
+  });
+
+  // Si APASS define hooks / wrappers rearmarlos para emitir events
+  // intentamos envolver posibles funciones comunes que APASS use (si existen)
+  const toWrap = ['openAPASSGame','apassOpen','apassStart','openGameAPASS'];
+  toWrap.forEach(name => {
+    if (window[name] && !window[name]._ytWrapped) {
+      const real = window[name];
+      window[name] = function(...a){
+        try { onGameOpenDetected('WRAP:'+name); } catch(e){}
+        return real.apply(this, a);
+      };
+      window[name]._ytWrapped = true;
+    }
+  });
+
+  // También envolver window.openGame / closeGame (si no está ya)
+  if (window.openGame && !window.openGame._ytWrapped) {
+    const realOpen = window.openGame;
+    window.openGame = function(...a){
+      try { onGameOpenDetected('openGame-wrap'); } catch(e){}
+      return realOpen.apply(this, a);
+    };
+    window.openGame._ytWrapped = true;
+  }
+  if (window.closeGame && !window.closeGame._ytWrapped) {
+    const realClose = window.closeGame;
+    window.closeGame = function(...a){
+      const res = realClose.apply(this, a);
+      try { onGameCloseDetected('closeGame-wrap'); } catch(e){}
+      return res;
+    };
+    window.closeGame._ytWrapped = true;
+  }
+
+  // Seguridad: si al inicio ya existe APASS iframe o game iframe abierto, aplicar pausa
+  document.addEventListener('DOMContentLoaded', () => {
+    // APASS
+    if (document.getElementById('apassIframe_v2') || document.querySelector('.apass-iframe') || document.getElementById('apassContainer_v2')) {
+      _apassOpen = true;
+      onGameOpenDetected('INIT-APASS-DETECT');
+    }
+    const f = gameIframe();
+    if (f && f.src && !f.src.includes('about:blank')) {
+      _gameOpen = true;
+      onGameOpenDetected('INIT-GAMEIFRAME-DETECT');
+    }
+  });
+
+  // Exponer para depuración
+  window._apassInspector = {
+    isAPASSOpen: () => _apassOpen,
+    isGameOpen:  () => _gameOpen,
+    pausedByGame: () => !!window._youtubeBgPausedByGame
+  };
+
+})();
+ // ...existing code...
 // Llama a esta función al cargar la app:
 document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
 
