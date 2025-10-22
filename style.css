@@ -3697,3 +3697,4 @@ header .logo img {
 /* Asegura inputs y botones dentro del modal ocupen el ancho correcto */
 .modal-overlay .profile-input { width: 100%; box-sizing: border-box; margin-top:6px; }
 .modal-overlay .background-button { min-width: 110px; }
+.lock-logo
