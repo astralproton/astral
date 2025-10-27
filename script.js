@@ -1810,9 +1810,120 @@ window.addEventListener('DOMContentLoaded', function() {
 // --- FIN BLOQUEO ---
 
 // Datos de juegos
-// Datos de juegos
 const games = [
     {
+        id: 1.000001,
+        title: "There is no game",
+        artist: "Ahi esta en el juego",
+        thumbnail: "imgjuegos/ting.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/there-is-no-game/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.00001,
+        title: "Stack",
+        artist: "Vamos a apilar",
+        thumbnail: "imgjuegos/stack.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/stack/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.0001,
+        title: "Hacker typer",
+        artist: "Vamos a hackear",
+        thumbnail: "imgjuegos/hacker.png",
+        song: "titulonuevo.mp3",
+        url: "Juegos/hackertype/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.002,
+        title: "FNF fixed",
+        artist: "ninjamuffin99",
+        thumbnail: "imgjuegos/fnfviejo.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/fnffixed/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.001,
+        title: "FNF: vs Sonic.exe",
+        artist: "No sabemos quien hizo el port...",
+        thumbnail: "imgjuegos/fnfsonicexe.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/fnfsonic-exe/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.01,
+        title: "FNF: vs Among Us",
+        artist: "No sabemos quien hizo el port...",
+        thumbnail: "imgjuegos/fnfsus.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/fnfsus/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+    {
+        id: 1.02,
+        title: "FNF: vs Doki Doki Literature Club",
+        artist: "No sabemos quien hizo el port...",
+        thumbnail: "imgjuegos/fnfdoki.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/fnfdoki/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
+        {
         id: 1,
         title: "Fruit Ninja",
         artist: "HalfBrick Studios",
@@ -1860,7 +1971,7 @@ const games = [
             redirect: "robloxad.html"
         }
     },
-        {
+    {
         id: 2.2,
         title: "Mario VS Luigi ONLINE",
         artist: "ipodtouch",
@@ -7401,7 +7512,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- Custom Firmware ASPCF AVANZADO ---
-// ...existing code...
+
 
 // --- Custom Firmware ASPCF AVANZADO (instalar / aplicar / eliminar) ---
 (function(){
@@ -7654,7 +7765,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })();
 
-// ...lol code...
+// ...existing code...
 
 // --- CURSOR PERSONALIZADO AVANZADO ---
 (function() {
@@ -8913,7 +9024,122 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
 })();
- // ...existing code...
+
+// ...existing code...
+
+(function() {
+    // Mostrar alerta máxima APASS solo la primera vez
+    if (!localStorage.getItem('apass_alert_ack')) {
+        // Crear el modal
+        const modal = document.createElement('div');
+        modal.id = 'apassMaxAlertModal';
+        modal.style = `
+            position:fixed;z-index:999999;top:0;left:0;width:100vw;height:100vh;
+            background:rgba(10,10,42,0.98);display:flex;align-items:center;justify-content:center;
+        `;
+        modal.innerHTML = `
+            <div style="
+                background: linear-gradient(135deg,#222 60%,#ffd700 100%);
+                border-radius: 22px;
+                box-shadow: 0 8px 32px #000a;
+                padding: 2.5rem 2rem 2rem 2rem;
+                min-width:320px;max-width:95vw;
+                display:flex;flex-direction:column;align-items:center;
+                border: 3px solid #ffd700;
+                color:#fffbe6;
+                max-height: 90vh;
+                overflow-y: auto;
+                text-align:center;
+            ">
+                <div style="font-size:2.1rem;font-weight:900;
+                    background: linear-gradient(90deg,#ffd700,#fffbe6 80%);
+                    -webkit-background-clip:text;background-clip:text;color:transparent;
+                    text-shadow:0 2px 12px #ffd70099,0 0 2px #fff;
+                    margin-bottom:1.2rem;letter-spacing:1px;">
+                    ¡ALERTA MÁXIMA DE SEGURIDAD!
+                </div>
+                <div style="font-size:1.15rem;margin-bottom:1.2rem;">
+                    <b>Debes activar la opción <span style="color:#ffd700;">APASS</span> (AstralProton Anti Securly System) en tu perfil para evitar que la página sea bloqueada por extensiones o políticas escolares.<br><br>
+                    <b>(Si ya lo hiciste ignora este mensaje, estas fuera de peligro.)<br><br>
+                    <span style="color:#ff3366;">Si no lo haces, podrías ser baneado y perder acceso a tus juegos y recompensas.</span></b>
+                </div>
+                <div style="margin-bottom:1.2rem;">
+                    <label style="font-size:1.1rem;display:flex;align-items:center;gap:0.7em;">
+                        <input type="checkbox" id="apassMaxAlertCheck" style="width:22px;height:22px;">
+                        <span>He leído y lo haré</span>
+                    </label>
+                </div>
+                <button id="apassMaxAlertAcceptBtn" class="background-button primary" style="font-size:1.2rem;padding:1rem 2.5rem;" disabled>
+                    <i class="fas fa-check"></i> Aceptar y continuar
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Habilitar botón solo si se marca la casilla
+        const check = modal.querySelector('#apassMaxAlertCheck');
+        const btn = modal.querySelector('#apassMaxAlertAcceptBtn');
+        check.addEventListener('change', () => {
+            btn.disabled = !check.checked;
+        });
+        btn.addEventListener('click', () => {
+            localStorage.setItem('apass_alert_ack', 'true');
+            document.body.removeChild(modal);
+        });
+    }
+})();
+
+// ...existing code...
+
+// --- Buscador de juegos ---
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('gameSearchInput');
+    const clearBtn = document.getElementById('gameSearchClearBtn');
+    let lastCategory = 'all';
+
+    // Guarda la última categoría seleccionada
+    const categories = document.querySelectorAll('.category');
+    categories.forEach(cat => {
+        cat.addEventListener('click', () => {
+            lastCategory = cat.getAttribute('data-category') || 'all';
+            applyGameSearch();
+        });
+    });
+
+    function applyGameSearch() {
+        const query = (searchInput.value || '').toLowerCase().trim();
+        let filtered = games;
+
+        // Filtra por categoría si no es "all"
+        if (lastCategory !== 'all' && lastCategory !== 'favorites') {
+            filtered = filtered.filter(g => (g.categories || []).includes(lastCategory));
+        }
+        // Filtra favoritos si corresponde
+        if (lastCategory === 'favorites') {
+            // Aquí puedes ajustar según tu sistema de favoritos
+            filtered = filtered.filter(g => g.isFavorite);
+        }
+        // Filtra por texto de búsqueda
+        if (query) {
+            filtered = filtered.filter(g =>
+                g.title.toLowerCase().includes(query) ||
+                (g.artist && g.artist.toLowerCase().includes(query))
+            );
+        }
+        renderGamesGrid(filtered);
+    }
+
+    searchInput.addEventListener('input', applyGameSearch);
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        applyGameSearch();
+    });
+
+    // Inicializa el filtro al cargar
+    applyGameSearch();
+});
+
+// ...existing code...
 // Llama a esta función al cargar la app:
 document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
 

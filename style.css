@@ -3697,4 +3697,45 @@ header .logo img {
 /* Asegura inputs y botones dentro del modal ocupen el ancho correcto */
 .modal-overlay .profile-input { width: 100%; box-sizing: border-box; margin-top:6px; }
 .modal-overlay .background-button { min-width: 110px; }
-.lock-logo
+
+#videoControlBtn {
+    position: fixed;
+    bottom: 28px;
+    right: 32px;
+    z-index: 99999;
+    background: linear-gradient(90deg,#4169e1 60%,#ffd700 100%);
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.15rem;
+    border: none;
+    border-radius: 18px;
+    padding: 1rem 2.2rem;
+    box-shadow: 0 4px 18px #4169e1cc;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+#videoControlBtn:hover {
+    background: linear-gradient(90deg,#ffd700 60%,#4169e1 100%);
+    transform: scale(1.04);
+}
+@media (max-width: 600px) {
+    #videoControlBtn {
+        bottom: 12px;
+        right: 12px;
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
+}
+
+/* Oculta los controles de juego duplicados fuera del iframe */
+body > .game-controls {
+    display: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 3px;
+}

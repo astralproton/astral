@@ -262,16 +262,40 @@
                 </div>
             </div>
 
-            <!-- Botón de juego aleatorio -->
 
-            <!-- Grid de juegos -->
-             <!-- Botón de juego aleatorio -->
+<!-- Modal para crear carpeta -->
+<div id="createFolderModal" style="display:none;position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.92);align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border-radius:18px;box-shadow:0 8px 32px #000a;padding:2.5rem 2rem;max-width:400px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;">
+    <h2 style="color:var(--accent-color);margin-bottom:1rem;"><i class="fas fa-folder-plus"></i> Nueva carpeta</h2>
+    <input type="text" id="folderNameInput" class="profile-input" placeholder="Nombre de la carpeta" style="margin-bottom:1em;">
+    <label for="folderColorInput" style="margin-bottom:0.5em;">Color:</label>
+    <input type="color" id="folderColorInput" value="#4169e1" style="width:100%;height:40px;margin-bottom:1em;">
+    <div style="display:flex;gap:1em;justify-content:flex-end;">
+      <button class="background-button primary" id="saveFolderBtn"><i class="fas fa-save"></i> Guardar</button>
+      <button class="background-button danger" id="cancelFolderBtn"><i class="fas fa-times"></i> Cancelar</button>
+    </div>
+    <div id="folderModalError" style="color:#ff3366;margin-top:0.7em;min-height:1.2em;"></div>
+  </div>
+</div>
+
+
+
+<!-- Grid de juegos -->
+            <div style="width:100%;display:flex;justify-content:center;">
+                <div style="margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;max-width:420px;width:100%;">
+                    <input type="text" id="gameSearchInput" class="profile-input" placeholder="Buscar juego por nombre..." style="flex:1;">
+                    <button class="background-button primary" id="gameSearchClearBtn" style="padding:0.7rem 1.2rem;">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+                </div>
+            </div>
             <button class="random-game-button" onclick="openRandomGameModal()">
                 <i class="fas fa-dice"></i> Juego aleatorio
             </button>
             <div class="games-grid" id="gamesGrid">
                 <!-- Los juegos se cargarán dinámicamente aquí -->
             </div>
+
         </div>
 
         <!-- Sección de tutoriales -->
@@ -360,8 +384,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <!-- Opción de lol de fuente -->
-
+                    
                     <!-- Opción de tamaño de fuente -->
                     <div class="settings-option">
                         <div>
@@ -930,7 +953,18 @@
   <button id="closeGameOverlayBtn" style="margin-top:2rem;padding:1rem 2rem;font-size:1.2rem;background:linear-gradient(45deg,#4169e1,#ff3366);color:#fff;border:none;border-radius:12px;cursor:pointer;font-weight:bold;">Cerrar</button>
 </div>
 
-
+<div id="inviteFriendModal" style="display:none;position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.92);align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border-radius:18px;box-shadow:0 8px 32px #000a;padding:2.5rem 2rem;max-width:400px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;">
+    <h2 style="color:var(--accent-color);margin-bottom:1rem;"><i class="fas fa-user-plus"></i> Invitar amigo a jugar</h2>
+    <input type="text" id="inviteFriendUserId" class="profile-input" placeholder="ID de tu amigo">
+    <div style="display:flex;gap:1em;justify-content:flex-end;margin-top:1.5em;">
+      <button id="sendInviteFriendBtn" class="background-button primary"><i class="fas fa-paper-plane"></i> Enviar invitación</button>
+      <button id="cancelInviteFriendBtn" class="background-button danger"><i class="fas fa-times"></i> Cancelar</button>
+    </div>
+    <div id="inviteFriendError" style="color:#ff3366;margin-top:0.7em;min-height:1.2em;"></div>
+  </div>
+</div>
+ 
 <div class="audio-controls" id="audioToggle">
     <i class="fas fa-volume-up"></i>
 </div>
