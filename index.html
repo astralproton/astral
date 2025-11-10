@@ -23,7 +23,7 @@
         <input type="text" id="authName" autocomplete="name">
       </div>
       <div class="auth-field">
-        <label for="authUsername">(NOTA: TODOS LOS USUARIOS DEBEN VOLVER A REGISTRARSE, Este ID es único y no se puede cambiar sin necesidad de algun administrador)<br/>ID de usuario:</label>
+        <label for="authUsername">ID de usuario:</label>
         <input type="text" id="authUsername" required autocomplete="username">
       </div>
       <div class="auth-field">
@@ -33,7 +33,7 @@
       <div class="auth-actions">
         <button type="submit" id="authSubmitBtn">Iniciar Sesión</button>
         <button type="button" id="authSwitchBtn">¿No tienes cuenta? Regístrate</button>
-        <a href="manual.html" id="manual">Manual de instrucciones (IMPORTANTE)</a>
+        <label for="authUsername">Nota: Este ID es unico y un usuario normal no lo puede cambiar, solo algún admin o el propio owner pueden.</label>
       </div>
       <div class="auth-error" id="authError"></div>
     </form>
@@ -114,7 +114,11 @@
     <source src="money.mp3" type="audio/mpeg">
     Tu navegador no soporta el elemento de audio.
 </audio>
-
+<audio id="maintenanceMusic" loop>
+    <source src="mantenimiento.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
+ 
 <!-- Pantalla de título (mejorada, usa mismos ids) -->
 <div class="splash-screen splash-enhanced" id="splashScreen" role="dialog" aria-label="Pantalla de inicio AstralProton" aria-hidden="false">
   <div class="splash-bg-visual" aria-hidden="true">
@@ -547,7 +551,7 @@
                     </div>
                 </form>
                 <div class="profile-field" style="margin-top:1rem;">
-                    <label for="apassToggle">APASS (AstralProton Anti Securly System)</label>
+                    <label for="apassToggle">APASS (AstralProton Advanced Security System)</label>
                     <div style="display:flex;align-items:center;gap:1rem;margin-top:0.5rem;">
                         <label class="toggle-switch" style="margin:0;">
                             <input type="checkbox" id="apassToggle">
@@ -556,7 +560,7 @@
                         <br/>
                     </div>
                     <p style="font-size:0.95rem;color:var(--text-color);opacity:0.9;">
-                        Si está activado, la pagina utilizara el sistema de proteccion APASS para abrir los juegos dentro de la aplicacion sin sitios web externos, evitando bloqueos por parte de extensiones o politicas. <b>Recomendado</b>.
+                        Si está activado, la pagina utilizara el sistema de proteccion APASS para abrir los juegos dentro de la aplicacion sin sitios web externos, evitando bloqueos por parte de extensiones o politicas. <b>Activado de manera obligatoria.</b>.
                     </p>
                 </div>
                 <br/>
@@ -858,6 +862,68 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="bugReportModal" class="modal" style="display:none;">
+  <div class="modal-content bug-report">
+    <h2>Reportar Bug</h2>
+    <form id="bugReportForm">
+      <div class="form-group">
+        <label for="bugCategory">Categoría:</label>
+        <select id="bugCategory" required>
+          <option value="gameplay">Jugabilidad</option>
+          <option value="graphics">Gráficos</option>
+          <option value="sound">Sonido</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="bugDescription">Descripción:</label>
+        <textarea id="bugDescription" rows="4" required 
+          placeholder="Describe el bug. ¿Qué esperabas que pasara? ¿Qué pasó en su lugar?"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="bugScreenshot">Screenshot (opcional):</label>
+        <input type="file" id="bugScreenshot" accept="image/*">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Enviar Reporte</button>
+        <button type="button" class="btn-secondary" onclick="closeBugReport()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+
+<!-- Pantalla de mantenimiento (diferente a la de baneo) -->
+<div id="maintenanceScreen" aria-hidden="true" style="display:none;position:fixed;inset:0;z-index:30000;align-items:center;justify-content:center;">
+  <div class="maintenance-overlay" style="position:absolute;inset:0;background:rgba(4,6,15,0.92);backdrop-filter:blur(6px);"></div>
+
+  <div class="maintenance-card" style="position:relative;z-index:2;max-width:900px;width:90%;padding:2rem;border-radius:18px;background:linear-gradient(180deg,#0d0b16,#161226);box-shadow:0 12px 48px rgba(0,0,0,0.7);color:#fff;">
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="" style="width:84px;height:auto;border-radius:12px;filter:drop-shadow(0 6px 18px rgba(65,105,225,0.18));">
+      <div>
+        <h2 class="maintenance-title" style="color:#ffd700;font-size:1.8rem;margin:0 0 0.25rem;">Mantenimiento en curso</h2>
+        <p class="maintenance-sub" style="margin:0;color:rgba(255,255,255,0.85);">Estamos realizando tareas de mantenimiento para mejorar AstralProton.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:10px;">
+      <p class="maintenance-message" style="margin:0;color:rgba(255,255,255,0.9);">Mensaje: OK</p>
+      <p style="margin:0.6rem 0 0 0;color:rgba(255,255,255,0.85);"><strong>Tiempo estimado:</strong> <span class="maintenance-until" style="font-weight:700;">—</span></p>
+    </div>
+
+    <div style="display:flex;gap:0.8rem;align-items:center;margin-top:1rem;">
+      <a href="https://discord.gg/GEPrCZkWhs" class="background-button primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem;">
+        <i class="fab fa-discord"></i> Soporte en Discord
+      </a>
+      <button id="maintenanceCloseBtn" class="background-button" style="margin-left:auto;display:none;">Cerrar</button>
+    </div>
+
+    <p style="margin-top:1rem;font-size:0.95rem;opacity:0.9;">
+      Si necesitas información urgente, únete al Discord. Esta pantalla reemplaza la interfaz hasta que termine el mantenimiento.
+    </p>
+  </div>
 </div>
 
 <!-- Modal de perfil de usuario -->

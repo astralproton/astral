@@ -39,6 +39,138 @@ function setProfileAvatar(src) {
 }
 
 // ...existing code...
+(function enforceMandatoryAPASS() {
+  const KEY = 'apass_enabled_v4';
+
+  function enableAPASS() {
+    try {
+      localStorage.setItem(KEY, '1');
+      document.cookie = `${KEY}=1;path=/;max-age=${60*60*24*365};SameSite=Lax`;
+      // UI toggle
+      const t = document.getElementById('apassToggle');
+      if (t) { t.checked = true; t.disabled = true; t.setAttribute('aria-disabled', 'true'); t.style.opacity = '0.8'; }
+      // If there is a toggle container, give user hint (do not remove DOM to avoid breakages)
+      const toggleField = t && t.closest && t.closest('.profile-field');
+      if (toggleField) toggleField.style.pointerEvents = 'none';
+    } catch (e) {
+      console.error('enableAPASS error', e);
+    }
+  }
+
+  // Force enable immediately
+  enableAPASS();
+
+  // Re-apply every 1s (recovers from manual tampering quickly)
+  setInterval(() => {
+    try {
+      if (localStorage.getItem(KEY) !== '1') enableAPASS();
+      const t = document.getElementById('apassToggle');
+      if (t && (!t.checked || !t.disabled)) enableAPASS();
+    } catch (e) {}
+  }, 1000);
+
+  // Listen storage events from other tabs
+  window.addEventListener('storage', (e) => {
+    if (e.key === KEY && e.newValue !== '1') enableAPASS();
+  });
+
+  // MutationObserver to re-disable dynamically created toggles
+  const mo = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        try {
+          if (!(node instanceof HTMLElement)) continue;
+          const found = node.matches && node.matches('#apassToggle') ? [node] : Array.from(node.querySelectorAll ? node.querySelectorAll('#apassToggle') : []);
+          found.forEach(n => { n.checked = true; n.disabled = true; n.setAttribute('aria-disabled', 'true'); });
+        } catch (e) {}
+      }
+    }
+  });
+  mo.observe(document.documentElement || document.body, { childList: true, subtree: true });
+
+  // Robust wrapper for window.openGame:
+  // - intercepts any assignment to window.openGame
+  // - wraps the assigned function so that it first checks APASS
+  // - stores the real assigned function in window.__apass_wrapped_original
+  if (!Object.getOwnPropertyDescriptor(window, '__apass_guard_installed')) {
+    Object.defineProperty(window, '__apass_guard_installed', { value: true, configurable: false });
+
+    // internal callable that ensures apass and delegates
+    let wrappedImpl = function (game) {
+      try {
+        if (localStorage.getItem(KEY) !== '1') {
+          // Use app alert system if available
+          if (typeof showAlert === 'function') {
+            showAlert('APASS obligatorio', 'APASS está forzado por la aplicación y no se puede desactivar. Se ha activado automáticamente.');
+            enableAPASS();
+            return;
+          }
+          // fallback native
+          alert('APASS obligatorio. Se ha activado automáticamente.');
+          enableAPASS();
+        }
+        // If an original implementation exists call it
+        if (typeof window.__apass_wrapped_original === 'function') {
+          return window.__apass_wrapped_original.call(this, game);
+        }
+        // fallback: if original not set, try to navigate to url
+        if (game && game.url) {
+          window.location.href = game.url;
+        }
+      } catch (err) {
+        console.error('APASS wrapper error', err);
+      }
+    };
+
+    // define reactive property
+    Object.defineProperty(window, 'openGame', {
+      configurable: true,
+      enumerable: true,
+      get() { return wrappedImpl; },
+      set(fn) {
+        // store the raw function so we can call it from wrapper
+        if (typeof fn === 'function') {
+          window.__apass_wrapped_original = fn;
+          // recreate wrappedImpl to always call latest original
+          wrappedImpl = function (game) {
+            try {
+              if (localStorage.getItem(KEY) !== '1') {
+                if (typeof showAlert === 'function') {
+                  showAlert('APASS obligatorio', 'APASS está forzado por la aplicación y no se puede desactivar. Se ha activado automáticamente.');
+                  enableAPASS();
+                  return;
+                }
+                alert('APASS obligatorio. Se ha activado automáticamente.');
+                enableAPASS();
+              }
+              return window.__apass_wrapped_original.call(this, game);
+            } catch (err) {
+              console.error('APASS wrapper (call original) error', err);
+            }
+          };
+        } else {
+          // if non-function assigned, ignore but keep wrapper safe
+          console.warn('openGame assigned non-function, ignoring assignment for APASS safety.');
+        }
+      }
+    });
+
+    // If there was an existing direct function (already present), wrap it now
+    try {
+      const existing = window.openGame;
+      if (typeof existing === 'function') {
+        // trigger setter by reassigning same function (ensures __apass_wrapped_original set)
+        window.openGame = existing;
+      } else {
+        // ensure wrapper present even if nothing assigned
+        window.__apass_wrapped_original = null;
+      }
+    } catch (e) {}
+  }
+})();
+// ...existing code...
+
+// ...existing code...
 // Reemplazo/definición segura de checkIfBanned para mostrar motivo y permitir apelación
 async function checkIfBanned() {
   try {
@@ -7930,7 +8062,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: "7",
             title: "Activa APASS por favor...",
-            content: "Hemos notado que muchos usuarios no han activado APASS (AstralProton Anti Securly System). Por favor, activa APASS en tu perfil para mejorar la estabilidad de la pagina y evitar posibles bloqueos. ¡Gracias por tu cooperación!",
+            content: "Hemos notado que muchos usuarios no han activado APASS (AstralProton Advanced Security System). Por favor, activa APASS en tu perfil para mejorar la estabilidad de la pagina y evitar posibles bloqueos. ¡Gracias por tu cooperación!",
             date: "19/10/2025"
         },
         {
@@ -9056,17 +9188,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     -webkit-background-clip:text;background-clip:text;color:transparent;
                     text-shadow:0 2px 12px #ffd70099,0 0 2px #fff;
                     margin-bottom:1.2rem;letter-spacing:1px;">
-                    ¡ALERTA MÁXIMA DE SEGURIDAD!
+                    Antes de comenzar...
                 </div>
                 <div style="font-size:1.15rem;margin-bottom:1.2rem;">
-                    <b>Debes activar la opción <span style="color:#ffd700;">APASS</span> (AstralProton Anti Securly System) en tu perfil para evitar que la página sea bloqueada por extensiones o políticas escolares.<br><br>
-                    <b>(Si ya lo hiciste ignora este mensaje, estas fuera de peligro.)<br><br>
-                    <span style="color:#ff3366;">Si no lo haces, podrías ser baneado y perder acceso a tus juegos y recompensas.</span></b>
+                    <b>La opción <span style="color:#ffd700;">APASS</span> (AstralProton Advanced Security System) ha sido activada de manera obligatoria y no deberia de desactivarse.<br><br>
+                    <span style="color:#ff3366;">Si tratas de retirarlo, podrías ser baneado y perder acceso a tus juegos y recompensas.</span></b>
                 </div>
                 <div style="margin-bottom:1.2rem;">
                     <label style="font-size:1.1rem;display:flex;align-items:center;gap:0.7em;">
                         <input type="checkbox" id="apassMaxAlertCheck" style="width:22px;height:22px;">
-                        <span>He leído y lo haré</span>
+                        <span>De acuerdo</span>
                     </label>
                 </div>
                 <button id="apassMaxAlertAcceptBtn" class="background-button primary" style="font-size:1.2rem;padding:1rem 2.5rem;" disabled>
@@ -9140,10 +9271,180 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ...existing code...
+(function installAPASSOpenGameGuard() {
+  const KEY = 'apass_enabled_v4';
+  if (window.__APASS_OPEN_GAME_GUARD) return;
+  window.__APASS_OPEN_GAME_GUARD = true;
+
+  function isEnabled() {
+    try {
+      if (localStorage.getItem(KEY) === '1') return true;
+      return document.cookie.split(';').some(c => c.trim().startsWith(KEY + '=1'));
+    } catch (e) { return false; }
+  }
+
+  function enableAPASS() {
+    try {
+      localStorage.setItem(KEY, '1');
+      document.cookie = `${KEY}=1;path=/;max-age=${60*60*24*365};SameSite=Lax`;
+    } catch (e) {}
+  }
+
+  function defaultOpenGameFallback(game) {
+    try {
+      if (game && game.url) window.location.href = game.url;
+    } catch (e) {}
+  }
+
+  function apassWrap(fn) {
+    const original = typeof fn === 'function' ? fn : defaultOpenGameFallback;
+    return function(game) {
+      try {
+        if (isEnabled()) return original.call(this, game);
+
+        // usar el sistema de alertas si existe
+        if (typeof showAlert === 'function') {
+          showAlert('APASS requerido', 'Debes activar APASS para entrar a los juegos.', [
+            {
+              text: 'Activar APASS',
+              action: () => {
+                enableAPASS();
+                // cerrar alerta si existe closeAlert
+                if (typeof closeAlert === 'function') closeAlert();
+                setTimeout(() => original.call(window, game), 150);
+              }
+            },
+            {
+              text: 'Cancelar',
+              type: 'secondary',
+              action: () => { if (typeof closeAlert === 'function') closeAlert(); }
+            }
+          ]);
+          return;
+        }
+
+        // fallback nativo
+        if (confirm('Debes activar APASS para entrar a los juegos. ¿Activarlo ahora?')) {
+          enableAPASS();
+          return original.call(this, game);
+        }
+      } catch (err) {
+        console.error('APASS guard error:', err);
+        return original.call(this, game);
+      }
+    };
+  }
+
+  // guarda la implementación interna que devolvemos
+  let internalOpenGame = apassWrap(window.openGame);
+
+  // expone el wrapper y envuelve cualquier futura asignación a window.openGame
+  Object.defineProperty(window, 'openGame', {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return internalOpenGame;
+    },
+    set(fn) {
+      internalOpenGame = apassWrap(fn);
+    }
+  });
+
+  // Si había una función previa accesible como window._apass_prevOpenGame, mantenla
+  window._apass_prevOpenGame = window._apass_prevOpenGame || internalOpenGame;
+})();
+
+// ...existing code...
+
+// Comprueba el estado de mantenimiento en la API y muestra una pantalla propia (NO la de baneo)
+async function checkMaintenanceAndShow() {
+  try {
+    const res = await fetch(`${API}/maintenance`);
+    if (!res || res.status >= 400) return false;
+    const data = await res.json();
+    const maintenanceScreen = document.getElementById('maintenanceScreen');
+    const maintenanceAudio = document.getElementById('maintenanceMusic');
+
+    if (data && data.maintenance) {
+      // Rellenar texto
+      if (maintenanceScreen) {
+        const msgEl = maintenanceScreen.querySelector('.maintenance-message');
+        const untilEl = maintenanceScreen.querySelector('.maintenance-until');
+        maintenanceScreen.style.display = 'flex';
+        maintenanceScreen.setAttribute('aria-hidden', 'false');
+        if (msgEl) msgEl.textContent = data.message || 'Estamos realizando tareas de mantenimiento. Volveremos pronto.';
+        if (untilEl) untilEl.textContent = data.until ? new Date(data.until).toLocaleString() : '—';
+      }
+
+      // Ocultar UI principal (header, sidebar y main) para simular reemplazo visual
+      const header = document.querySelector('header');
+      const sidebar = document.querySelector('.sidebar');
+      const main = document.querySelector('.main-container');
+      const splash = document.getElementById('splashScreen');
+      if (header) header.style.display = 'none';
+      if (sidebar) sidebar.style.display = 'none';
+      if (main) main.style.display = 'none';
+      if (splash) splash.style.display = 'none';
+      document.body.style.overflow = 'hidden';
+
+      // Reproducir música de mantenimiento (intento; puede requerir interacción)
+      if (maintenanceAudio) {
+        maintenanceAudio.volume = 0.9;
+        maintenanceAudio.loop = true;
+        maintenanceAudio.play().catch(() => { /* autoplay puede ser bloqueado */ });
+      }
+
+      return true;
+    } else {
+      // Ocultar pantalla de mantenimiento y restaurar UI
+      if (maintenanceScreen) {
+        maintenanceScreen.style.display = 'none';
+        maintenanceScreen.setAttribute('aria-hidden', 'true');
+      }
+      const header = document.querySelector('header');
+      const sidebar = document.querySelector('.sidebar');
+      const main = document.querySelector('.main-container');
+      const splash = document.getElementById('splashScreen');
+      if (header) header.style.display = '';
+      if (sidebar) sidebar.style.display = '';
+      if (main) main.style.display = '';
+      if (splash) splash.style.display = '';
+      document.body.style.overflow = '';
+
+      // Parar música si estaba sonando
+      if (maintenanceAudio && !maintenanceAudio.paused) {
+        try { maintenanceAudio.pause(); maintenanceAudio.currentTime = 0; } catch (e) {}
+      }
+      return false;
+    }
+  } catch (err) {
+    console.error('Error comprobando mantenimiento:', err);
+    return false;
+  }
+}
+
+// Llamadas iniciales y periódicas
+document.addEventListener('DOMContentLoaded', () => {
+  // comprobar al inicio
+  checkMaintenanceAndShow();
+  // re-comprobar cada 30s
+  setInterval(checkMaintenanceAndShow, 30 * 1000);
+});
+
+// ...existing code...
+
+// Llama al cargar y periódicamente
+document.addEventListener('DOMContentLoaded', () => {
+  checkMaintenanceAndShow();
+  // volver a chequear cada 30s (ajusta si quieres)
+  setInterval(checkMaintenanceAndShow, 30 * 1000);
+});
+
 // Llama a esta función al cargar la app:
 document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
 
 document.addEventListener('DOMContentLoaded', renderProfileRelations);
 // Mostrar el panel al hacer click en el botón
 document.getElementById('friendsBtn').onclick = showFriendsPanel;
+
 initApp();
