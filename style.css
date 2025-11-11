@@ -3739,3 +3739,13 @@ body > .game-controls {
   background: rgba(255,255,255,0.3);
   border-radius: 3px;
 }
+
+/* Ocultar scrollbar pero mantener scroll funcional */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;     /* Firefox */
+}

@@ -38,18 +38,26 @@ function setProfileAvatar(src) {
     }
 }
 
-// ...existing code...
 (function enforceMandatoryAPASS() {
   const KEY = 'apass_enabled_v4';
+  let checkInterval = null; // ✅ Guardar referencia para limpiar
+  let mutationObserver = null; // ✅ Guardar referencia para limpiar
 
   function enableAPASS() {
     try {
       localStorage.setItem(KEY, '1');
       document.cookie = `${KEY}=1;path=/;max-age=${60*60*24*365};SameSite=Lax`;
+      
       // UI toggle
       const t = document.getElementById('apassToggle');
-      if (t) { t.checked = true; t.disabled = true; t.setAttribute('aria-disabled', 'true'); t.style.opacity = '0.8'; }
-      // If there is a toggle container, give user hint (do not remove DOM to avoid breakages)
+      if (t) { 
+        t.checked = true; 
+        t.disabled = true; 
+        t.setAttribute('aria-disabled', 'true'); 
+        t.style.opacity = '0.8'; 
+      }
+      
+      // Desabilitar contenedor si existe
       const toggleField = t && t.closest && t.closest('.profile-field');
       if (toggleField) toggleField.style.pointerEvents = 'none';
     } catch (e) {
@@ -60,60 +68,71 @@ function setProfileAvatar(src) {
   // Force enable immediately
   enableAPASS();
 
-  // Re-apply every 1s (recovers from manual tampering quickly)
-  setInterval(() => {
+  // ✅ MODIFICADO: Usar checkInterval controlado
+  checkInterval = setInterval(() => {
     try {
       if (localStorage.getItem(KEY) !== '1') enableAPASS();
       const t = document.getElementById('apassToggle');
       if (t && (!t.checked || !t.disabled)) enableAPASS();
     } catch (e) {}
-  }, 1000);
+  }, 5000); // ✅ Aumentado de 1s a 5s para menos sobrecarga
 
   // Listen storage events from other tabs
   window.addEventListener('storage', (e) => {
     if (e.key === KEY && e.newValue !== '1') enableAPASS();
   });
 
-  // MutationObserver to re-disable dynamically created toggles
-  const mo = new MutationObserver((mutations) => {
+  // ✅ MODIFICADO: MutationObserver con control
+  mutationObserver = new MutationObserver((mutations) => {
     for (const m of mutations) {
       for (const node of m.addedNodes) {
         try {
           if (!(node instanceof HTMLElement)) continue;
-          const found = node.matches && node.matches('#apassToggle') ? [node] : Array.from(node.querySelectorAll ? node.querySelectorAll('#apassToggle') : []);
-          found.forEach(n => { n.checked = true; n.disabled = true; n.setAttribute('aria-disabled', 'true'); });
+          const found = node.matches && node.matches('#apassToggle') ? [node] : 
+                        (node.querySelectorAll ? Array.from(node.querySelectorAll('#apassToggle')) : []);
+          found.forEach(n => { 
+            n.checked = true; 
+            n.disabled = true; 
+            n.setAttribute('aria-disabled', 'true'); 
+          });
         } catch (e) {}
       }
     }
   });
-  mo.observe(document.documentElement || document.body, { childList: true, subtree: true });
+  
+  mutationObserver.observe(document.documentElement || document.body, { 
+    childList: true, 
+    subtree: true 
+  });
 
-  // Robust wrapper for window.openGame:
-  // - intercepts any assignment to window.openGame
-  // - wraps the assigned function so that it first checks APASS
-  // - stores the real assigned function in window.__apass_wrapped_original
+  // ✅ LIMPIAR AL DESCARGAR
+  window.addEventListener('beforeunload', () => {
+    if (checkInterval) clearInterval(checkInterval);
+    if (mutationObserver) mutationObserver.disconnect();
+    checkInterval = null;
+    mutationObserver = null;
+  });
+
+  // Robust wrapper for window.openGame
   if (!Object.getOwnPropertyDescriptor(window, '__apass_guard_installed')) {
     Object.defineProperty(window, '__apass_guard_installed', { value: true, configurable: false });
 
-    // internal callable that ensures apass and delegates
     let wrappedImpl = function (game) {
       try {
         if (localStorage.getItem(KEY) !== '1') {
-          // Use app alert system if available
           if (typeof showAlert === 'function') {
             showAlert('APASS obligatorio', 'APASS está forzado por la aplicación y no se puede desactivar. Se ha activado automáticamente.');
             enableAPASS();
             return;
           }
-          // fallback native
           alert('APASS obligatorio. Se ha activado automáticamente.');
           enableAPASS();
         }
-        // If an original implementation exists call it
+        
         if (typeof window.__apass_wrapped_original === 'function') {
           return window.__apass_wrapped_original.call(this, game);
         }
-        // fallback: if original not set, try to navigate to url
+        
         if (game && game.url) {
           window.location.href = game.url;
         }
@@ -122,16 +141,13 @@ function setProfileAvatar(src) {
       }
     };
 
-    // define reactive property
     Object.defineProperty(window, 'openGame', {
       configurable: true,
       enumerable: true,
       get() { return wrappedImpl; },
       set(fn) {
-        // store the raw function so we can call it from wrapper
         if (typeof fn === 'function') {
           window.__apass_wrapped_original = fn;
-          // recreate wrappedImpl to always call latest original
           wrappedImpl = function (game) {
             try {
               if (localStorage.getItem(KEY) !== '1') {
@@ -149,28 +165,22 @@ function setProfileAvatar(src) {
             }
           };
         } else {
-          // if non-function assigned, ignore but keep wrapper safe
           console.warn('openGame assigned non-function, ignoring assignment for APASS safety.');
         }
       }
     });
 
-    // If there was an existing direct function (already present), wrap it now
     try {
       const existing = window.openGame;
       if (typeof existing === 'function') {
-        // trigger setter by reassigning same function (ensures __apass_wrapped_original set)
         window.openGame = existing;
       } else {
-        // ensure wrapper present even if nothing assigned
         window.__apass_wrapped_original = null;
       }
     } catch (e) {}
   }
 })();
-// ...existing code...
 
-// ...existing code...
 // Reemplazo/definición segura de checkIfBanned para mostrar motivo y permitir apelación
 async function checkIfBanned() {
   try {
@@ -4240,12 +4250,26 @@ function initApp() {
     document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
     document.getElementById('openDirectoryButton').addEventListener('click', openGameInNewTab);
     
-    // Event listener para botón de inicio
+    // DESPUÉS - Reemplaza con:
     document.getElementById('startButton').addEventListener('click', () => {
-        document.getElementById('splashScreen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('splashScreen').style.display = 'none';
-        }, 1000);
+        const splashScreen = document.getElementById('splashScreen');
+        
+        // Reproducir música
+        if (typeof playBackgroundMusic === 'function') {
+            playBackgroundMusic();
+        }
+        
+        // Ocultar y REMOVER del flujo del DOM
+        if (splashScreen) {
+            splashScreen.style.opacity = '0';
+            splashScreen.style.pointerEvents = 'none';  // ← CRUCIAL
+            splashScreen.style.visibility = 'hidden';   // ← IMPORTANTE
+            
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                splashScreen.setAttribute('aria-hidden', 'true');
+            }, 400);
+        }
     });
     
     // Event listeners para configuraciones
@@ -4569,13 +4593,46 @@ window.closeGame = function() {
 };
 
 // --- SONIDO DE HOVER EN ELEMENTOS INTERACTIVOS ---
+let hoverSoundObserver = null;
+
 function addHoverSoundToElements() {
-    const interactiveElements = document.querySelectorAll('.sidebar-item, .game-card, .category, button, .settings-option, .toggle-switch, .radio-option');
+    const interactiveElements = document.querySelectorAll(
+        '.sidebar-item, .game-card, .category, button, .settings-option, .toggle-switch, .radio-option'
+    );
+    
     interactiveElements.forEach(element => {
-        element.removeEventListener('mouseenter', playHoverSound);
-        element.addEventListener('mouseenter', playHoverSound);
+        // Evitar agregar el listener múltiples veces
+        if (!element.dataset.hoverSoundAttached) {
+            element.addEventListener('mouseenter', playHoverSound);
+            element.dataset.hoverSoundAttached = 'true';
+        }
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    addHoverSoundToElements();
+    
+    // Crear observador SOLO UNA VEZ
+    if (!hoverSoundObserver) {
+        hoverSoundObserver = new MutationObserver(() => {
+            addHoverSoundToElements();
+        });
+        
+        hoverSoundObserver.observe(document.body, { 
+            childList: true, 
+            subtree: true 
+        });
+    }
+});
+
+// Limpiar al descargar
+window.addEventListener('beforeunload', () => {
+    if (hoverSoundObserver) {
+        hoverSoundObserver.disconnect();
+        hoverSoundObserver = null;
+    }
+});
+
 document.addEventListener('DOMContentLoaded', addHoverSoundToElements);
 // Observar DOM para elementos dinámicos
 const observer = new MutationObserver(addHoverSoundToElements);
