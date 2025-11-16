@@ -10,7 +10,7 @@
     --card-bg: rgba(26, 26, 74, 0.7);
     --card-hover: rgba(65, 105, 225, 0.3);
     --sidebar-bg: rgba(10, 10, 42, 0.95);
-    --header-bg: rgba(10, 10, 42, 0.95);
+    --header-bg: rgba(0, 0, 0, 0.95);
     --transition-speed: 0.3s;
     --font-size-base: 16px;
     --font-size-small: 14px;
@@ -85,7 +85,7 @@ body.reduced-motion * {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+    background: linear-gradient(135deg, #51820d 0%, #000000 100%);
     z-index: -2;
     overflow: hidden;
     transition: background 0.5s ease;
@@ -329,17 +329,6 @@ header {
     width: 200px;
 }
 
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 1rem;
-    color: var(--text-color);
-    text-decoration: none;
-    transition: all var(--transition-speed);
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-}
 
 .sidebar-item i {
     font-size: 1.5rem;
@@ -544,7 +533,7 @@ header {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    width: 60px;
+    width: 0px;
     height: 60px;
     border-radius: 50%;
     background-color: var(--highlight-color);
@@ -1284,19 +1273,7 @@ input:checked + .toggle-slider:before {
     }
 }
 
-/* Estilos para el perfil */
-.profile-container {
-max-width: 800px;
-margin: 0 auto;
-padding: 2rem;
-background-color: var(--card-bg);
-border-radius: 15px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-position: relative;
-overflow: hidden;
-animation: slideUp 0.8s ease forwards;
-transition: background-color 0.5s ease, box-shadow 0.5s ease;
-}
+
 
 .profile-header {
 display: flex;
@@ -1307,6 +1284,7 @@ margin-bottom: 2rem;
 
 .profile-avatar-container {
 display: flex;
+margin-right: 1rem; /* Espacio entre la foto y el nombre */
 flex-direction: column;
 align-items: center;
 gap: 1rem;
@@ -3265,44 +3243,7 @@ header .logo img {
     margin-right: 0.7em;
     vertical-align: middle;
 }
-#announcementsBtn {
-    position: fixed;
-    top: 80px;
-    right: 30px;
-    z-index: 3001;
-    background: linear-gradient(45deg, #ff3366, #4169e1);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 54px;
-    height: 54px;
-    box-shadow: 0 2px 12px #ff3366;
-    font-size: 2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: box-shadow .2s, background .2s;
-}
-#announcementsBtn:hover {
-    box-shadow: 0 4px 24px #4169e1;
-    background: linear-gradient(45deg, #4169e1, #ff3366);
-}
-#announcementsAlertDot {
-    display: none;
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 14px;
-    height: 14px;
-    background: #ff3366;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #ff3366cc;
-    border: 2px solid #fff;
-}
-@media (max-width: 600px) {
-    #announcementsBtn { right: 5vw; top: 70px; }
-}
+
 /* Rediseño pantalla de bloqueo AstralProton */
 .lock-screen {
     position: fixed;
@@ -3748,4 +3689,553 @@ body > .game-controls {
 html {
   -ms-overflow-style: none;  /* IE y Edge */
   scrollbar-width: none;     /* Firefox */
+}
+
+/* ...existing code... */
+
+/* ===========================
+   FLOATING HEADER & SIDEBAR
+   - Usa variables existentes (--accent-color, --header-bg, --sidebar-bg)
+   - Borde blanco visible y "ring" exterior con color de acento
+   - Conserva comportamiento en sidebar-top / sidebar-bottom / sidebar-right
+   - Colocado al final para tener prioridad (no tocar JS / HTML)
+   =========================== */
+
+html body header {
+    /* floating, centro y responsivo */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1200px, calc(100% - 48px));
+    max-width: 1200px;
+    border-radius: 14px;
+    padding: 0.9rem 1.6rem;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1200;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+    /* borde blanco visible (para contraste) y ring con color de acento */
+    border: 1.4px solid rgba(255,255,255,0.92);
+    outline: 2px solid var(--accent-color);
+    outline-offset: 6px;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.35s ease;
+    pointer-events: auto;
+    box-sizing: border-box;
+}
+
+html body .sidebar .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.6rem 0.6rem;
+    margin: 0.35rem 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Icono: mantener tamaño y centrado */
+html body .sidebar .sidebar-item i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    min-width: 40px;
+    height: 40px;
+    line-height: 1;
+    text-align: center;
+}
+
+/* Texto: oculto cuando la barra está colapsada, aparecer al hover */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:not(:hover) .sidebar-item span {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-speed), width var(--transition-speed), margin var(--transition-speed);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover .sidebar-item span {
+    opacity: 1;
+    width: auto;
+    margin-left: 0;
+    pointer-events: auto;
+    transition: opacity var(--transition-speed), width var(--transition-speed), margin var(--transition-speed);
+}
+
+/* Cuando la sidebar está expandida, alinear texto a la izquierda para legibilidad */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover .sidebar-item {
+    justify-content: flex-start;
+    padding-left: 0.9rem;
+}
+
+/* Ajuste para items activos / hover, mantener contraste y padding */
+html body .sidebar .sidebar-item:hover,
+html body .sidebar .sidebar-item.active {
+    padding-left: 0.9rem;
+    padding-right: 0.8rem;
+}
+
+/* Si la sidebar se muestra en fila (top/bottom) mantener el comportamiento original */
+body.sidebar-top .sidebar .sidebar-item,
+body.sidebar-bottom .sidebar .sidebar-item {
+    justify-content: center;
+    padding: 0.5rem 1rem;
+}
+
+/* Forzar que la sidebar mantenga su centrado vertical y no deje espacio vacío innecesario */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    align-items: center;
+    padding: 1rem 0.6rem;
+}
+
+/* Corregir ancho en breakpoints pequeños */
+@media (max-width: 768px) {
+    html body .sidebar .sidebar-item { gap: 0.6rem; }
+    html body .sidebar .sidebar-item i { min-width: 36px; height:36px; font-size:1.4rem; }
+}
+
+header #announcementsBtn {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin-left: 0.6rem !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 0.7rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    background: linear-gradient(45deg, var(--highlight-color), var(--accent-color)) !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+}
+header #announcementsBtn:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color)) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 0 4px 18px var(--accent-color, #4169e1) !important;
+}
+
+
+/* Si el header se reduce (pantallas pequeñas), mover el botón al borde derecho de la ventana */
+@media (max-width: 980px) {
+    #announcementsBtn {
+        right: 24px !important;
+        top: 16px !important;
+    }
+}
+
+/* Evitar que #announcementsBtn tape elementos en mobile landscape */
+@media (max-width: 420px) {
+    #announcementsBtn { display: none !important; } /* oculta en vistas muy pequeñas para no tapar UI */
+}
+
+/* Asegurar que el friendsBtn visible en header tenga margen suficiente si el anuncio está al lado */
+header #friendsBtn {
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+}
+
+/* Si hay estado "has-pending" mostrar el punto correctamente (abarcar ambos botones) */
+#announcementsBtn .has-pending-dot,
+#friendsBtn.has-pending::after {
+    pointer-events: none;
+}
+
+/* pequeño ajuste para mantener logo consistente */
+html body header .logo img {
+    height: 56px !important;
+    width: auto !important;
+}
+
+/* Reservar espacio para que el header flotante no tape contenido */
+html body .main-container {
+    margin-top: calc(20px + 56px + 20px);
+    transition: margin-top 0.22s ease;
+}
+
+/* Ajustes finales: sidebar con altura según su contenido + corrección de botones descolocados */
+
+/* 1) Sidebar: que mida según su contenido, pero no supere la altura disponible */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    position: fixed;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: auto;
+    max-height: calc(100vh - 48px);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* centra los iconos cuando la barra está colapsada */
+    padding: 1.4rem 0.6rem;
+    width: 80px;
+    border-radius: 12px;
+    background-color: var(--sidebar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1150;
+    border: 1.4px solid rgba(255,255,255,0.92);
+    outline: 2px solid var(--accent-color);
+    outline-offset: 6px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+    transition: width var(--transition-speed) ease, left 0.22s ease, background-color 0.35s ease;
+    box-sizing: border-box;
+}
+
+/* Si hay muchos items, scroll interno */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* Si hay demasiados items, permitir scroll interno pero no forzar altura fija. */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar .sidebar-list,
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mantener la expansión en hover */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover {
+    width: 200px;
+}
+
+/* Ajustar el contenido principal para no solaparse con la sidebar */
+html body:not(.sidebar-top):not(.sidebar-bottom) .content {
+    margin-left: calc(80px + 48px);
+    transition: margin-left var(--transition-speed) ease;
+}
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover ~ .content,
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover + .content {
+    margin-left: calc(200px + 48px);
+}
+
+/* 2) Corregir botón de amigos que se estaba posicionando fixed por un selector global:
+   - Si el botón está dentro del header debe permanecer estático y centrado verticalmente
+   - Si existe intencion de tener un botón flotante fuera del header debe ser selecto con body > #friendsBtn
+*/
+
+/* Forzar que el friends button dentro del header vuelva a su sitio (no fixed) */
+header #friendsBtn {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin-left: 0.6rem !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 0.7rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    z-index: 101 !important;
+}
+
+/* Si existiera un botón flotante fuera del header (body directo), aplicar estilo fijo allí
+   (esto no afectará al botón dentro del header porque no es child directo de body) */
+body > #friendsBtn {
+    position: fixed;
+    top: 80px;
+    left: 30px;
+    width: 54px;
+    height: 54px;
+    z-index: 3001;
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px var(--accent-color, #4169e1);
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow .2s, background .2s;
+}
+
+/* Asegurar que el indicador pendiente del friendsBtn (si lo hay) funciona también en la versión dentro del header */
+header #friendsBtn.has-pending::after,
+body > #friendsBtn.has-pending::after {
+    content: '';
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 12px; height: 12px;
+    background: #ff3366;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 8px #ff3366cc;
+    pointer-events: none;
+}
+
+/* 3) Centrar y unificar estilos de botones en header (avatar / iconos) */
+header .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Asegurar que iconos/botones en header estén centrados verticalmente */
+header .user-profile button,
+header .user-profile .user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    height: 40px;
+    padding: 0.4rem 0.6rem;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Ajuste visual para avatar en header */
+header .user-profile .user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Si el header está flotante, asegurar que sus elementos quedan centrados y con suficiente altura */
+html body header {
+    align-items: center;
+    min-height: 60px;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
+/* 4) En layouts con sidebar-right respetar la lógica de auto-height */
+html body.sidebar-right:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    left: auto;
+    right: 24px;
+    border-left: none;
+    border-right: 1.4px solid rgba(255,255,255,0.92);
+}
+
+/* 5) Responsive: en pantallas pequeñas revertir a comportamiento estático y asegurar centrado */
+@media (max-width: 900px) {
+    html body header {
+        position: static;
+        transform: none;
+        width: 100%;
+        left: 0;
+        outline: none;
+        border-radius: 0;
+        margin: 0;
+        align-items: center;
+    }
+    html body .main-container { margin-top: 0; }
+    html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        max-height: none;
+        outline: none;
+        border-radius: 8px;
+        left: 0;
+        right: 0;
+        padding: 0.8rem 0;
+    }
+    html body:not(.sidebar-top):not(.sidebar-bottom) .content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    /* botón friends en header se mantiene inline en móviles */
+    header #friendsBtn { margin-left: 0.4rem; }
+}
+
+/* Asegurar que overlays/modales sigan por encima */
+html body .modal-overlay,
+html body #authModal,
+html body #loadingScreen,
+html body #banScreen,
+html body #maintenanceScreen,
+html body #userProfileModal {
+    z-index: 30000;
+}
+
+/* Ajustes para botones flotantes (amigos/anuncios/achievements) para que no queden detrás */
+html body #friendsBtn,
+html body #announcementsBtn,
+html body #achievementsBtn,
+html body #friendsPanel {
+    z-index: 13010;
+}
+
+/* Focus visual consistente */
+html body header:focus-within,
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:focus-within {
+    box-shadow: 0 18px 48px rgba(0,0,0,0.55), 0 0 0 6px rgba(65,105,225,0.06);
+}
+
+/* Si necesitas forzar, descomenta las líneas !important (úsalas solo si no aplican por cascada) */
+/* border / outline usan variables para seguir personalización */
+ 
+/* Icono centrado y tamaño consistente */
+.sidebar-item i {
+    display: block;
+    margin: 0;
+    font-size: 1.6rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Cuando esté colapsada ocultar texto (mantener espacio reducido) */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:not(:hover) .sidebar-item span {
+    opacity: 0;
+    transform: translateX(0);
+    transition: opacity var(--transition-speed), transform var(--transition-speed);
+}
+
+/* Al expandir, mostrar texto normalmente */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar:hover .sidebar-item span {
+    opacity: 1;
+    margin-left: 1rem;
+}
+
+/* Asegurar separación consistente entre items */
+html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar .sidebar-item {
+    width: 100%;
+    margin: 0.35rem 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Mantener comportamiento responsive: en móvil revertir a estático */
+@media (max-width: 900px) {
+    html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+        position: static;
+        transform: none;
+        top: auto;
+        left: auto;
+        width: 100%;
+        max-height: none;
+        padding: 0.8rem 0;
+        border-radius: 8px;
+        justify-content: flex-start;
+    }
+    html body:not(.sidebar-top):not(.sidebar-bottom) .sidebar .sidebar-item {
+        justify-content: flex-start;
+        padding-left: 1rem;
+    }
+}
+
+/* Forzar que avatar y nombre estén siempre juntos y centrados verticalmente */
+header .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    white-space: nowrap;
+}
+header .user-profile #headerAvatar,
+header .user-profile #headerUserName {
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+header .user-profile #headerUserName {
+    margin-left: 0.45rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+
+header #announcementsBtn {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin-left: 0.6rem !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 0.7rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    background: linear-gradient(45deg, var(--highlight-color), var(--accent-color)) !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+}
+header #announcementsBtn:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--highlight-color)) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 0 4px 18px var(--accent-color, #4169e1) !important;
+}
+
+/* Mantener accesibilidad y que no tape header en pantallas pequeñas */
+@media (max-width: 980px) {
+    #announcementsBtn {
+        right: 24px;
+        top: 16px;
+    }
+}
+
+/* Si se usa sidebar-right, mantener la sidebar centrada verticalmente a la derecha */
+html body.sidebar-right:not(.sidebar-top):not(.sidebar-bottom) .sidebar {
+    left: auto;
+    right: 24px;
+    transform: translateY(-50%);
+}
+
+/* Asegurar que el friends button (si está en header) esté alineado correctamente */
+header #friendsBtn {
+    margin-left: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0.4rem;
+    border-radius: 8px;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* Cuando el header está flotante, permitir suficiente espacio vertical para sus elementos */
+html body header {
+    min-height: 60px;
+    align-items: center;
+}
+
+/* Si el anuncio está visible junto al header, evitar solapar con friendsBtn: dar margen a friendsBtn */
+header .user-profile { gap: 0.9rem; }
+
+/* Asegurar que overlays y modales altos sigan por encima */
+html body .modal-overlay,
+html body #authModal,
+html body #loadingScreen,
+html body #banScreen,
+html body #maintenanceScreen,
+html body #userProfileModal {
+    z-index: 30000;
 }

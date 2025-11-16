@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "name": "Forever",
+    "author": "GalavDev",
+    "version": "1.0"
+  },
+  "settings": {
+    "colors": {
+      "header": "#000000ff",
+      "sidebar": "#000000ff",
+      "accent": "#000000ff"
+    },
+    "backgroundUrl": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80",
+    "youtubeBgUrl": "https://youtu.be/s7wgU89y6b0?list=RDs7wgU89y6b0",
+    "customMusic": "",
+    "cursorUrl": "https://file.garden/ZrRAZUEI4Dz27sJF/Murder%20Drones%20Cyn%20%26%20Absolute%20Solver%20Animated--cursor--SweezyCursors.png",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
+  },
+  "profile": {
+    "nombre": "",
+    "apellido": "",
+    "bio": "",
+    "avatar": ""
+  },
+  "shop": {
+    "themes": ["theme_gold"],
+    "badges": ["badge_star", "badge_crown"],
+    "games": ["game_premium1"]
+  },
+  "points": 9999
+}

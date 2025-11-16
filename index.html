@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AstralProton</title>
+<title>Vexium</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="Vexium.png" type="image/png">
 <script src="script.js" defer></script>
 </head>
 </head>
@@ -45,8 +46,8 @@
     <div class="modern-loading-bg"></div>
     <div class="modern-loading-stars" id="loadingStars"></div>
     <div class="modern-loading-content">
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="modern-loading-logo">
-        <div class="modern-loading-text">Cargando AstralProton...</div>
+        <img src="Vexium.png" alt="Vexium Logo" class="modern-loading-logo">
+        <div class="modern-loading-text">Cargando Vexium...</div>
         <div class="modern-loading-spinner"></div>
     </div>
 </div>
@@ -55,8 +56,8 @@
     <div class="lock-bg"></div>
     <div class="lock-stars"></div>
     <form class="lock-box" id="lockForm" autocomplete="off">
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="lock-logo">
-        <h2>Bienvenido a AstralProton</h2>
+        <img src="Vexium.png" alt="Vexium Logo" class="lock-logo">
+        <h2>Bienvenido a Vexium</h2>
         <div class="lock-msg" id="lockMsg"></div>
         <input type="password" id="lockPassword" placeholder="Contraseña" autocomplete="current-password" required>
         <button type="submit" id="lockBtn">Entrar</button>
@@ -120,16 +121,16 @@
 </audio>
  
 <!-- Pantalla de título (mejorada, usa mismos ids) -->
-<div class="splash-screen splash-enhanced" id="splashScreen" role="dialog" aria-label="Pantalla de inicio AstralProton" aria-hidden="false">
+<div class="splash-screen splash-enhanced" id="splashScreen" role="dialog" aria-label="Pantalla de inicio Vexium" aria-hidden="false">
   <div class="splash-bg-visual" aria-hidden="true">
     <div class="stars" id="splashStars"></div>
     <div class="nebula-layer"></div>
   </div>
 
     <div class="splash-left">
-      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" class="splash-logo" id="splashLogo">
-      <h1 class="splash-title">ASTRALPROTON</h1>
-      <p class="splash-sub">Tu portal de juegos — rápido, limpio y personalizable</p>
+      <img src="Vexium.png" alt="Vexium Logo" class="splash-logo" id="splashLogo">
+      <h1 class="splash-title">Vexium</h1>
+      <p class="splash-sub">(Alias: AstralProton)</p>
     </div>
 
     <div class="splash-right">
@@ -139,13 +140,13 @@
         </button>
 
         <nav class="splash-quicklinks" aria-label="Accesos rápidos">
-          <a href="#" class="splash-link">Manual de uso (NO DISPONIBLE)</a>
-          <a href="#" class="splash-link">Reglas</a>
-          <a href="#" class="splash-link">Términos y Condiciones</a>
-          <a href="https://file.garden/ZrRAZUEI4Dz27sJF/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20(Official%20Video)%20(4K%20Remaster).mp4" class="splash-link">150 monedas gratis</a>
+          <a href="#" class="splash-link">LEER ANUNCIOS [IMPORTANTE]</a>
+          <a href="#" class="splash-link">LEER ANUNCIOS [IMPORTANTE]</a>
+          <a href="#" class="splash-link">LEER ANUNCIOS [IMPORTANTE]</a>
+          <a href="https://file.garden/ZrRAZUEI4Dz27sJF/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20(Official%20Video)%20(4K%20Remaster).mp4" class="splash-link">LEER ANUNCIOS [IMPORTANTE]</a>
         </nav>
 
-        <p class="splash-note">Consejos: <br/> Usa la opcion APASS para evitar que bloqueen la pagina <br/> Revisa las reglas. <br/> Lee los Terminos y Condiciones <br/> Lee el manual de instrucciones <br/> Sé feliz</p>
+        <p class="splash-note">Consejos: <br/> LEER ANUNCIOS [IMPORTANTE]</p>
       </div>
     </div>
 
@@ -167,17 +168,20 @@
 <!-- Header -->
 <header>
     <div class="logo">
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" style="height:56px;width:auto;margin-right:0.7em;vertical-align:middle;">
-        <span class="logo-text" data-en="AstralProton" data-es="AstralProton">AstralProton</span>
+        <img src="Vexium.png" alt="Vexium Logo">
+        <span class="logo-text">Vexium</span>
     </div>
     <div class="user-profile">
         <div class="user-avatar" id="headerAvatar">
             <i class="fas fa-user"></i>
         </div>
-        <button id="friendsBtn" title="Amigos" style="margin-left:10px;">
+        <span id="headerUserName"></span>
+        <button id="friendsBtn" title="Amigos">
             <i class="fas fa-user-friends"></i>
         </button>
-        <span id="headerUserName"></span>
+        <button id="announcementsBtn" title="Anuncios">
+            <i class="fas fa-bullhorn"></i>
+        </button>
     </div>
 </header>
 <!-- Contenedor principal -->
@@ -222,9 +226,9 @@
     <div class="content">
         <!-- Sección de inicio -->
         <div id="homeSection" class="content-section active">
-            <h1 class="welcome-message" data-en="Welcome to AstralProton!" data-es="¡Bienvenido a AstralProton!">¡Bienvenido a AstralProton!</h1>
+            <h1 class="welcome-message" data-en="Welcome to Vexium!" data-es="¡Bienvenido a Vexium!">¡Bienvenido a Vexium!</h1>
             <div class="welcome-container">
-                <p class="welcome-text" data-en="Welcome back to AstralProton! Do you like this new interface? We encourage you to join our Discord server at this link: https://discord.gg/GEPrCZkWhs" data-es="¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs">¡Bienvenid@ de vuelta a AstralProton! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs</p>
+                <p class="welcome-text" data-en="Welcome back to Vexium! Do you like this new interface? We encourage you to join our Discord server at this link: https://discord.gg/GEPrCZkWhs" data-es="¡Bienvenid@ de vuelta a Vexium! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs">¡Bienvenid@ de vuelta a Vexium! ¿Te gusta esta nueva interfaz? Te recomendamos unirte a nuestro servidor de discord desde este link: https://discord.gg/GEPrCZkWhs</p>
                 <p class="welcome-text" data-en="Now, enjoy!" data-es="Sin mas preambulo, ¡A disfrutar!">Sin mas preambulo, ¡A disfrutar!</p>
                 <p class="welcome-text" data-en="Note: In settings, if you want your desired configuration to be saved the next time you visit the page, click the SAVE SETTINGS button at the end of the section." data-es="Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.">Nota: En configuracion, si quieres que se guarde la configuracion deseada la proxima vez que visites la pagina, dale al boton GUARDAR CONFIGURACION al final del apartado.</p>
                 <p class="welcome-text" data-en="Information not readable in english, please switch to spanish language." data-es="Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop. Checalo en el apartado acerca de!">Ahora, te daremos mas informacion, esta no sera visible para aquellos que tengan la App en Ingles de manera oficial hasta una proxima drop.</p>                            
@@ -317,10 +321,10 @@
                 <i class="fas fa-info-circle"></i> <span data-en="About" data-es="Acerca de:">Acerca de:</span>
             </h1>
             <div class="welcome-container" style="background: linear-gradient(135deg, #232946 0%, #4169e1 100%); color: #fff; box-shadow: 0 8px 32px #000a;">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="AstralProton Logo" style="width:120px; margin-bottom:1.5rem; border-radius:16px; box-shadow:0 2px 18px #4169e1cc;">
-                <h2 style="font-size:2rem; font-weight:800; margin-bottom:1rem; color:#ffd700; text-shadow:0 0 12px #ffd70099;">¿Qué es AstralProton?</h2>
+                <img src="Vexium.png" alt="Vexium Logo" style="width:120px; margin-bottom:1.5rem; border-radius:16px; box-shadow:0 2px 18px #4169e1cc;">
+                <h2 style="font-size:2rem; font-weight:800; margin-bottom:1rem; color:#ffd700; text-shadow:0 0 12px #ffd70099;">¿Qué es Vexium?</h2>
                 <p class="welcome-text" style="font-size:1.15rem; margin-bottom:1.2rem;">
-                    AstralProton es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable.<br>
+                    Vexium es un portal de juegos diseñado para proporcionar una experiencia de juego fluida y agradable.<br>
                     <b>Creado por GalavDev</b>, esta página web se enfoca en proveer juegos desbloqueados para el uso de todos con una interfaz amigable, agradable y personalizable.
                 </p>
                 <div style="margin:2rem 0;">
@@ -337,9 +341,9 @@
                     </ul>
                 </div>
                 <div style="margin:2rem 0;">
-                    <h3 style="color:#ffd700; font-size:1.2rem; margin-bottom:0.7rem;">¿Quién creó AstralProton?</h3>
+                    <h3 style="color:#ffd700; font-size:1.2rem; margin-bottom:0.7rem;">¿Quién creó Vexium?</h3>
                     <p style="font-size:1.05rem;">
-                        <b>GalavDev</b> es el desarrollador principal detrás de AstralProton, con el apoyo de AstralProtonTeam.<br>
+                        <b>GalavDev</b> es el desarrollador principal detrás de Vexium, con el apoyo de VexiumTeam.<br>
                         El objetivo es ofrecer una plataforma segura, divertida y accesible para todos los usuarios.
                     </p>
                 </div>
@@ -358,10 +362,10 @@
                     </ul>
                 </div>
                 <div style="margin-top:2rem;">
-                    <h3 style="color:#ffd700; font-size:1.2rem; margin-bottom:0.7rem;">¿Por qué elegir AstralProton?</h3>
+                    <h3 style="color:#ffd700; font-size:1.2rem; margin-bottom:0.7rem;">¿Por qué elegir Vexium?</h3>
                     <p style="font-size:1.05rem;">
                         Porque aquí <b>tú eres el protagonista</b>: personaliza, juega, comparte y disfruta sin límites.<br>
-                        ¡Gracias por ser parte de la comunidad AstralProton!
+                        ¡Gracias por ser parte de la comunidad Vexium!
                     </p>
                 </div>
             </div>
@@ -551,7 +555,7 @@
                     </div>
                 </form>
                 <div class="profile-field" style="margin-top:1rem;">
-                    <label for="apassToggle">APASS (AstralProton Advanced Security System)</label>
+                    <label for="apassToggle">APASS (Vexium Advanced Security System)</label>
                     <div style="display:flex;align-items:center;gap:1rem;margin-top:0.5rem;">
                         <label class="toggle-switch" style="margin:0;">
                             <input type="checkbox" id="apassToggle">
@@ -772,7 +776,7 @@
                 <div class="background-options">
                 <div class="profile-field">
                     <label for="customPageTitle">Título personalizado de la página:</label>
-                    <input type="text" id="customPageTitle" class="profile-input" placeholder="Mi AstralProton personalizado">
+                    <input type="text" id="customPageTitle" class="profile-input" placeholder="Mi Vexium personalizado">
                     <button class="background-button primary" id="applyCustomPageTitleBtn">
                     <i class="fas fa-heading"></i> Aplicar Título
                     </button>
@@ -838,7 +842,7 @@
                     <li><b>Está prohibido compartir enlaces maliciosos o spam.</b></li>
                     <li><b>Los administradores se reservan el derecho de eliminar contenido o usuarios que consideren inapropiados.</b></li>
                     <li><b>No se permite la suplantación de identidad.</b></li>
-                    <li><b>Si usted se pelea de manera <span class="sancion">personal</span> con un administrador y esta pelea NO tiene que ver con AstralProton, el administrador <span class="sancion">NO</span> puede banearte, restarte estrellas, expulsarte ni similares de AstralProton.</b></li>
+                    <li><b>Si usted se pelea de manera <span class="sancion">personal</span> con un administrador y esta pelea NO tiene que ver con Vexium, el administrador <span class="sancion">NO</span> puede banearte, restarte estrellas, expulsarte ni similares de Vexium.</b></li>
                 </ul>
                 <p class="welcome-text" style="margin-top:2em;" data-en="If you have questions about the rules, contact the support team." data-es="Si tienes dudas sobre las reglas, contacta al equipo de soporte.">
                     Si tienes dudas sobre las reglas, contacta al equipo de soporte.
@@ -901,10 +905,10 @@
 
   <div class="maintenance-card" style="position:relative;z-index:2;max-width:900px;width:90%;padding:2rem;border-radius:18px;background:linear-gradient(180deg,#0d0b16,#161226);box-shadow:0 12px 48px rgba(0,0,0,0.7);color:#fff;">
     <div style="display:flex;gap:1rem;align-items:center;">
-      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/astrallogo-Ukan4TsfqrcvSVlWpY5ILsBQnsAfAW.png" alt="" style="width:84px;height:auto;border-radius:12px;filter:drop-shadow(0 6px 18px rgba(65,105,225,0.18));">
+      <img src="Vexium.png" alt="" style="width:84px;height:auto;border-radius:12px;filter:drop-shadow(0 6px 18px rgba(65,105,225,0.18));">
       <div>
         <h2 class="maintenance-title" style="color:#ffd700;font-size:1.8rem;margin:0 0 0.25rem;">Mantenimiento en curso</h2>
-        <p class="maintenance-sub" style="margin:0;color:rgba(255,255,255,0.85);">Estamos realizando tareas de mantenimiento para mejorar AstralProton.</p>
+        <p class="maintenance-sub" style="margin:0;color:rgba(255,255,255,0.85);">Estamos realizando tareas de mantenimiento para mejorar Vexium.</p>
       </div>
     </div>
 
@@ -1035,7 +1039,7 @@
     <i class="fas fa-volume-up"></i>
 </div>
 <div class="audio-controls" id="audioToggle">
-    <i class="fas fa-volume-up"></i> <p>APASS (AstralProton Advanced Security System)</p>
+    <i class="fas fa-volume-up"></i> <p>APASS (z Advanced Security System)</p>
 </div>
 
 <!-- Modal para mensaje de solicitud de amistad -->
@@ -1070,10 +1074,6 @@
   </div>
 </div>
 
-<button id="announcementsBtn" title="Anuncios" style="position:fixed;top:80px;right:30px;z-index:3001;background:linear-gradient(45deg,#ff3366,#4169e1);color:#fff;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #ff3366;font-size:2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:box-shadow .2s,background .2s;">
-    <i class="fas fa-bullhorn"></i>
-    <span id="announcementsAlertDot" style="display:none;position:absolute;top:8px;right:8px;width:14px;height:14px;background:#ff3366;border-radius:50%;box-shadow:0 0 8px #ff3366cc;border:2px solid #fff;"></span>
-</button>
 
 <!-- Modal de anuncios -->
 <div id="announcementsModal" style="display:none;position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,42,0.92);align-items:center;justify-content:center;">

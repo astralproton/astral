@@ -422,7 +422,7 @@ function getCurrentUserId() {
     return user.id;
 }
 
-// --- AUTENTICACIÓN AstralProton API MODERNA ---
+// --- AUTENTICACIÓN Vexium API MODERNA ---
 const API = 'https://astral-ban-api.onrender.com';
 
 // Mostrar/Ocultar modal
@@ -994,7 +994,7 @@ function lockInit() {
                     -webkit-background-clip:text;background-clip:text;color:transparent;
                     text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
                     margin-bottom:1.2rem;letter-spacing:1px;">
-                    Panel Beta Tester AstralProton
+                    Panel Beta Tester Vexium
                 </div>
                 <div style="margin-bottom:1.2rem;font-size:1.1rem;">
                     <b>Permisos de Beta Tester:</b>
@@ -1189,7 +1189,7 @@ function lockInit() {
         }, 1200);
     };
     forgotBtn.onclick = function() {
-        showLockMsg('Para eliminar la contraseña, borra las cookies y datos del sitio en tu navegador. Ve a Configuración > Privacidad > Cookies y datos de sitios, busca "AstralProton" y elimina los datos, o puedes contactarte con un administrador de la plataforma para cambiarla sin perder tus datos.', 'orange');
+        showLockMsg('Para eliminar la contraseña, borra las cookies y datos del sitio en tu navegador. Ve a Configuración > Privacidad > Cookies y datos de sitios, busca "Vexium" y elimina los datos, o puedes contactarte con un administrador de la plataforma para cambiarla sin perder tus datos.', 'orange');
     };
     // NUEVO: Opción para no poner contraseña
     noPasswordBtn.onclick = function() {
@@ -1258,7 +1258,7 @@ function lockInit() {
                     -webkit-background-clip:text;background-clip:text;color:transparent;
                     text-shadow:0 2px 12px #b400ff99,0 0 2px #fff;
                     margin-bottom:1.2rem;letter-spacing:1px;">
-                    Panel Beta Tester AstralProton
+                    Panel Beta Tester Vexium
                 </div>
                 <div style="margin-bottom:1.2rem;font-size:1.1rem;">
                     <b>Permisos de Beta Tester:</b>
@@ -1401,7 +1401,7 @@ function adminPanel() {
                 -webkit-background-clip:text;background-clip:text;color:transparent;
                 text-shadow:0 2px 12px #ffd70099,0 0 2px #fff;
                 margin-bottom:1.2rem;letter-spacing:1px;">
-                Panel de Administración AstralProton
+                Panel de Administración Vexium
             </div>
             <div style="margin-bottom:1.2rem;font-size:1.1rem;">
                 <b>Opciones avanzadas:</b>
@@ -1739,7 +1739,7 @@ function adminExportData() {
     let url = URL.createObjectURL(blob);
     let a = document.createElement('a');
     a.href = url;
-    a.download = 'astralproton_backup.json';
+    a.download = 'Vexium_backup.json';
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     alert('Datos exportados como JSON.');
@@ -1953,6 +1953,262 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // Datos de juegos
 const games = [
+    {
+        id: 2467334323,
+        title: "Dino",
+        artist: "nodefinido",
+        thumbnail: "imgjuegos/dino.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/dino/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 246734323,
+        title: "Rooftop Snipers",
+        artist: "nodefinido",
+        thumbnail: "imgjuegos/rooftop.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/rooftopsnipers/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 2467323,
+        title: "Sandtrix",
+        artist: "nodefinido",
+        thumbnail: "imgjuegos/sandtrix.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/sandtrix/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 246733,
+        title: "Fluid Simulator",
+        artist: "nodefinido",
+        thumbnail: "imgjuegos/fuidsim.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/fluidsim/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 24673,
+        title: "We become what we behold",
+        artist: "nodefinido",
+        thumbnail: "imgjuegos/wbw.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/wbwwb/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 2467,
+        title: "Run",
+        artist: "Ahora SI SIRVE DIOS MIO",
+        thumbnail: "imgjuegos/run.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/run/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 246,
+        title: "Run2",
+        artist: "Ahora SI SIRVE DIOS MIO",
+        thumbnail: "imgjuegos/run2.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/run2/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 26,
+        title: "Run3",
+        artist: "Ahora SI SIRVE DIOS MIO",
+        thumbnail: "imgjuegos/run3.jpeg",
+        song: "juegosmusica/run3.mp3",
+        url: "Juegos/run3/index.html",
+        categories: ["retro"],
+        isNew: false,
+        isUpdate: true,
+        alert: {
+            type: "loading",
+            message: "No sirve jaja",
+            redirect: "Juegos/run3fix2/index.html"
+        }
+    },
+    {
+        id: 0.00000045,
+        title: "FNAF 4",
+        artist: "?",
+        thumbnail: "imgjuegos/fnaf4.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fnaf4/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 0.00000044,
+        title: "FNAF 3",
+        artist: "?",
+        thumbnail: "imgjuegos/fnaf3.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fnaf3/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 0.00000044,
+        title: "FNAF 2",
+        artist: "?",
+        thumbnail: "imgjuegos/fnaf2.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fnaf2/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 0.00000042,
+        title: "Fireboy and Watergirl 4",
+        artist: "?",
+        thumbnail: "imgjuegos/firewater4.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fireboywatergirl4/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 0.0000004,
+        title: "Fireboy and Watergirl 3",
+        artist: "?",
+        thumbnail: "imgjuegos/firewater3.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fireboywatergirl3/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 0.0000003,
+        title: "Fireboy and Watergirl 2",
+        artist: "?",
+        thumbnail: "imgjuegos/firewater2.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/fireboywatergirl2/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 56,
+        title: "Subway Surfers",
+        artist: "SYBO Games",
+        thumbnail: "imgjuegos/SBS.jpeg",
+        song: "juegosmusica/sbs.mp3",
+        url: "Juegos/subway/index.html",
+        categories: ["arcade"],
+        isNew: false,
+        isUpdate: false,
+        alert: {
+            type: "loading",
+            message: "¿Superaras mi bellisimo record de 28765? :o",
+            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
+        }
+    },
+    {
+        id: 1.000002,
+        title: "Bad Piggies",
+        artist: "Rovio Entertainment",
+        thumbnail: "imgjuegos/badpiggies.jpeg",
+        song: "titulonuevo.mp3",
+        url: "Juegos/badpiggies/index.html",
+        categories: ["all"],
+        isNew: true,
+        isUpdate: false,
+        alert: {
+            type: "info",
+            message: "¿Te sirvio la pagina?",
+            redirect: "tube.html"
+        }
+    },
     {
         id: 1.000001,
         title: "There is no game",
@@ -2546,22 +2802,6 @@ const games = [
         }
     },
     {
-        id: 26,
-        title: "Run3",
-        artist: "Ahora no sirve lo juro 😭",
-        thumbnail: "imgjuegos/run3.jpeg",
-        song: "juegosmusica/run3.mp3",
-        url: "Juegos/run3fix2/index.html",
-        categories: ["retro"],
-        isNew: false,
-        isUpdate: true,
-        alert: {
-            type: "loading",
-            message: "No sirve jaja",
-            redirect: "Juegos/run3fix2/index.html"
-        }
-    },
-    {
         id: 27,
         title: "Astral Chess",
         artist: "AstralOriginals",
@@ -3015,22 +3255,6 @@ const games = [
             type: "loading",
             message: "¡Veremos quien es el mejor!",
             redirect: "Juegos/totm/index.html"
-        }
-    },
-    {
-        id: 56,
-        title: "Subway Surfers",
-        artist: "SYBO Games",
-        thumbnail: "imgjuegos/SBS.jpeg",
-        song: "juegosmusica/sbs.mp3",
-        url: "Juegos/subwaysurferssanfrancisco/index.html",
-        categories: ["arcade"],
-        isNew: false,
-        isUpdate: false,
-        alert: {
-            type: "loading",
-            message: "¿Superaras mi bellisimo record de 28765? :o",
-            redirect: "Juegos/subwaysurferssanfrancisco/index.html"
         }
     },
     {
@@ -5749,7 +5973,7 @@ function getCookie(name) {
 
 const SHOP_THEMES = [
     // Temas básicos
-    { id: 'theme_dark', title: 'Tema Oscuro', desc: 'El clásico tema oscuro de AstralProton.', price: 0, preview: '', apply: () => { document.body.classList.remove('light-theme'); localStorage.setItem('theme', 'dark'); } },
+    { id: 'theme_dark', title: 'Tema Oscuro', desc: 'El clásico tema oscuro de Vexium.', price: 0, preview: '', apply: () => { document.body.classList.remove('light-theme'); localStorage.setItem('theme', 'dark'); } },
     { id: 'theme_light', title: 'Tema Claro', desc: 'Tema claro para una experiencia más brillante.', price: 50, preview: '', apply: () => { document.body.classList.add('light-theme'); localStorage.setItem('theme', 'light'); } },
     // Temas adicionales
     { id: 'theme_pink', title: 'Tema Rosado', desc: 'Un tema rosado vibrante y alegre.', price: 100, preview: '', apply: () => {
@@ -6358,7 +6582,7 @@ const SHOP_BADGES = [
     { id: 'badge_fire', title: 'Fuego', desc: '¡Estás en racha!', price: 50, icon: 'fa-fire' },
     { id: 'badge_crown', title: 'Corona', desc: 'Para los verdaderos reyes.', price: 100, icon: 'fa-crown' },
     { id: 'badge_rocket', title: 'Cohete', desc: '¡Vuela alto!', price: 60, icon: 'fa-rocket' },
-    { id: 'badge_heart', title: 'Corazón', desc: '¡Mucho amor por AstralProton!', price: 40, icon: 'fa-heart' },
+    { id: 'badge_heart', title: 'Corazón', desc: '¡Mucho amor por Vexium!', price: 40, icon: 'fa-heart' },
     { id: 'badge_trophy', title: 'Trofeo', desc: '¡Eres un campeón!', price: 80, icon: 'fa-trophy' },
     { id: 'badge_moon', title: 'Luna', desc: 'Nocturno y misterioso.', price: 45, icon: 'fa-moon' },
     { id: 'badge_sun', title: 'Sol', desc: 'Brillas con luz propia.', price: 45, icon: 'fa-sun' },
@@ -8013,7 +8237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (saved) input.value = saved;
         btn.onclick = function() {
             localStorage.setItem('customPageTitle', input.value.trim());
-            document.title = input.value.trim() || "AstralProton";
+            document.title = input.value.trim() || "Vexium";
         };
     }
     // Aplicar al cargar
@@ -8114,12 +8338,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- SISTEMA DE ANUNCIOS FLOTANTE ---
 (function() {
-    // Lista de anuncios (puedes editar aquí)
+    // Lista de anuncios
     const ANNOUNCEMENTS = [
+        {
+            id: "8",
+            title: "Vexium... A ver, esto no es permanente.",
+            content: "Si se preguntan porque de la nada AstralProton se paso a llamar Vexium, es porque tuvimos un percance legal con el nombre, el cual resulto en ser una estafa, pero ya habiamos cambiado el nombre para entonces, asi que ahora, ustedes decidiran cual les gusta más. Para participar, en su descripcion de usuario ponga al final un PD: Prefiero AstralProton o PD: Prefiero Vexium. Dejaremos este nombre 1 o 2 semanas, despues, contaremos votos y el nombre ganador se queda, el perdedor se va para otro proyecto. ¡Gracias por su comprensión!",
+            date: "14/11/2025"
+        },
         {
             id: "7",
             title: "Activa APASS por favor...",
-            content: "Hemos notado que muchos usuarios no han activado APASS (AstralProton Advanced Security System). Por favor, activa APASS en tu perfil para mejorar la estabilidad de la pagina y evitar posibles bloqueos. ¡Gracias por tu cooperación!",
+            content: "Hemos notado que muchos usuarios no han activado APASS (Vexium Advanced Security System). Por favor, activa APASS en tu perfil para mejorar la estabilidad de la pagina y evitar posibles bloqueos. ¡Gracias por tu cooperación!",
             date: "19/10/2025"
         },
         {
@@ -8136,7 +8366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             id: "4",
-            title: "¿Relaciones interpersonales en AstralProton?",
+            title: "¿Relaciones interpersonales en Vexium?",
             content: "¿Relaciones Interpersonales? ¡¿QUE LE PASA A GALAVDEV?! Esto ya parece Facebook... Bueno, ya en serio, he añadido un sistema de relaciones interpersonales opcionales. ¡Disfrutenlo!",
             date: "03/10/2025"
         },
@@ -9248,7 +9478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Antes de comenzar...
                 </div>
                 <div style="font-size:1.15rem;margin-bottom:1.2rem;">
-                    <b>La opción <span style="color:#ffd700;">APASS</span> (AstralProton Advanced Security System) ha sido activada de manera obligatoria y no deberia de desactivarse.<br><br>
+                    <b>La opción <span style="color:#ffd700;">NASS</span> (Vexium Advanced Security System) ha sido activada de manera obligatoria y no deberia de desactivarse.<br><br>
                     <span style="color:#ff3366;">Si tratas de retirarlo, podrías ser baneado y perder acceso a tus juegos y recompensas.</span></b>
                 </div>
                 <div style="margin-bottom:1.2rem;">
@@ -9488,7 +9718,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(checkMaintenanceAndShow, 30 * 1000);
 });
 
-// ...existing code...
 
 // Llama al cargar y periódicamente
 document.addEventListener('DOMContentLoaded', () => {
