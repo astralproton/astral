@@ -1954,7 +1954,7 @@ window.addEventListener('DOMContentLoaded', function() {
 // Datos de juegos
 const games = [
     {
-        id: 2467334323,
+        id: 100,
         title: "Dino",
         artist: "nodefinido",
         thumbnail: "imgjuegos/dino.jpeg",
@@ -3161,7 +3161,7 @@ const games = [
     },
     {
         id: 50,
-        title: "Five Nights at Freddy's",
+        title: "FNAF 1",
         artist: "Scott",
         thumbnail: "imgjuegos/fnafbg.jpeg",
         song: "juegosmusica/fnaf.mp3",
@@ -3526,27 +3526,28 @@ function changeSection(sectionId) {
     document.querySelector(`.sidebar-item[data-section="${sectionId}"]`).classList.add('active');
 }
 
-// Función para filtrar juegos por categoría
+// ...existing code...
 function filterGamesByCategory(category) {
     const gamesGrid = document.getElementById('gamesGrid');
     gamesGrid.innerHTML = '';
-    
+
     let filteredGames = games;
-    
+
     if (category !== 'all') {
         if (category === 'favorites') {
             const favoriteGames = folders.find(folder => folder.title === "Favoritos").games;
             filteredGames = games.filter(game => favoriteGames.includes(game.id));
         } else {
-            filteredGames = games.filter(game => game.categories.includes(game.id));
+            filteredGames = games.filter(game => game.categories.includes(category));
         }
     }
-    
+
     filteredGames.forEach((game, index) => {
         const gameCard = document.createElement('div');
         gameCard.className = 'game-card';
         gameCard.style.animationDelay = `${index * 0.1}s`;
-        
+        gameCard.dataset.id = game.id;
+
         gameCard.innerHTML = `
             <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
             <div class="game-info">
@@ -3557,14 +3558,16 @@ function filterGamesByCategory(category) {
                 <i class="fas fa-play"></i>
             </div>
         `;
-        
+
+        // Cambia el handler para mostrar alerta antes de abrir el juego
         gameCard.addEventListener('click', () => {
-            openGame(game);
+            openGameWithAlerts(game);
         });
-        
+
         gamesGrid.appendChild(gameCard);
     });
 }
+// ...existing code...
 
 // Cierra el overlay y reanuda música
 window.closeGame = function() {
@@ -9583,44 +9586,49 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  function apassWrap(fn) {
+  window._apassAlertAccepted = {};
+
+// ...existing code...
+function apassWrap(fn) {
     const original = typeof fn === 'function' ? fn : defaultOpenGameFallback;
     return function(game) {
-      try {
-        if (isEnabled()) return original.call(this, game);
-
-        // usar el sistema de alertas si existe
-        if (typeof showAlert === 'function') {
-          showAlert('APASS requerido', 'Debes activar APASS para entrar a los juegos.', [
-            {
-              text: 'Activar APASS',
-              action: () => {
-                enableAPASS();
-                // cerrar alerta si existe closeAlert
-                if (typeof closeAlert === 'function') closeAlert();
-                setTimeout(() => original.call(window, game), 150);
-              }
-            },
-            {
-              text: 'Cancelar',
-              type: 'secondary',
-              action: () => { if (typeof closeAlert === 'function') closeAlert(); }
-            }
-          ]);
-          return;
+        // Si ya se aceptó la alerta para este juego, abre normal
+        if (window._apassAlertAccepted[game.id]) {
+            window._apassAlertAccepted[game.id] = false; // reset para la próxima vez
+            return original.call(this, game);
         }
 
-        // fallback nativo
-        if (confirm('Debes activar APASS para entrar a los juegos. ¿Activarlo ahora?')) {
-          enableAPASS();
-          return original.call(this, game);
-        }
-      } catch (err) {
-        console.error('APASS guard error:', err);
-        return original.call(this, game);
-      }
+        // Consulta alertas por ID antes de abrir
+        fetch(`${API}/api/game-alerts/${game.id}`)
+            .then(res => res.json())
+            .then(({ alerts }) => {
+                if (alerts && alerts.length > 0) {
+                    const alert = alerts[0];
+                    let btns = [
+                        { text: "Continuar", action: () => {
+                            window._apassAlertAccepted[game.id] = true;
+                            original.call(window, game);
+                        }},
+                        { text: "Cancelar", action: () => closeAlert() }
+                    ];
+                    let title = "Advertencia";
+                    if (alert.alert_type === "epilepsia") title = "¡Advertencia de Epilepsia!";
+                    if (alert.alert_type === "fotosensible") title = "¡Advertencia Fotosensible!";
+                    if (alert.alert_type === "rendimiento") title = "Advertencia de Rendimiento";
+                    if (alert.alert_type === "edad_minima") title = `Edad mínima: ${alert.min_age || 13}`;
+                    showAlert(title, alert.message, btns);
+                } else {
+                    window._apassAlertAccepted[game.id] = true;
+                    original.call(window, game);
+                }
+            })
+            .catch(() => {
+                window._apassAlertAccepted[game.id] = true;
+                original.call(window, game);
+            });
     };
-  }
+}
+// ...existing code...
 
   // guarda la implementación interna que devolvemos
   let internalOpenGame = apassWrap(window.openGame);
@@ -9725,6 +9733,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // volver a chequear cada 30s (ajusta si quieres)
   setInterval(checkMaintenanceAndShow, 30 * 1000);
 });
+
+async function openGameWithAlerts(game) {
+  // Consulta alertas por ID
+  const res = await fetch(`${API}/api/game-alerts/${game.id}`);
+  const { alerts } = await res.json();
+  if (alerts && alerts.length > 0) {
+    // Si hay varias, muestra la primera (puedes hacer un loop si quieres mostrar todas)
+    const alert = alerts[0];
+    let btns = [
+      { text: "Continuar", action: () => openGameWithPoints(game) },
+      { text: "Cancelar", action: () => closeAlert() }
+    ];
+    let title = "Advertencia";
+    if (alert.alert_type === "epilepsia") title = "¡Advertencia de Epilepsia!";
+    if (alert.alert_type === "fotosensible") title = "¡Advertencia Fotosensible!";
+    if (alert.alert_type === "rendimiento") title = "Advertencia de Rendimiento";
+    if (alert.alert_type === "edad_minima") title = `Edad mínima: ${alert.min_age || 13}`;
+    showAlert(title, alert.message, btns);
+    return;
+  }
+  // Si no hay alerta, abre el juego normal
+  openGameWithPoints(game);
+}
 
 // Llama a esta función al cargar la app:
 document.addEventListener('DOMContentLoaded', mostrarSolicitudesRelaciones);
