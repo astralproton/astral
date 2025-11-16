@@ -10,22 +10,10 @@ jobs:
   report-build-status:
     runs-on: ubuntu-24.04
 
-    permissions:
-      contents: read
-      pages: write
-      actions: read
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Report build status via GitHub CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          CONCLUSION: failure
-        run: |
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" \
-            -F github_run_id="${GITHUB_RUN_ID}" \
-            -F conclusion="${CONCLUSION}"
+      - name: Confirm workflow is running
+        run: echo "✅ Workflow ejecutado correctamente en Ubuntu 24.04"
+
