@@ -1,0 +1,203 @@
+﻿2025-11-16T04:44:28.3063332Z ##[group]Run actions/checkout@v4
+2025-11-16T04:44:28.3063862Z with:
+2025-11-16T04:44:28.3064038Z   ref: main
+2025-11-16T04:44:28.3064208Z   submodules: recursive
+2025-11-16T04:44:28.3064443Z   repository: astralproton/astral
+2025-11-16T04:44:28.3064797Z   token: ***
+2025-11-16T04:44:28.3064975Z   ssh-strict: true
+2025-11-16T04:44:28.3065151Z   ssh-user: git
+2025-11-16T04:44:28.3065338Z   persist-credentials: true
+2025-11-16T04:44:28.3065551Z   clean: true
+2025-11-16T04:44:28.3065738Z   sparse-checkout-cone-mode: true
+2025-11-16T04:44:28.3065970Z   fetch-depth: 1
+2025-11-16T04:44:28.3066137Z   fetch-tags: false
+2025-11-16T04:44:28.3066320Z   show-progress: true
+2025-11-16T04:44:28.3066520Z   lfs: false
+2025-11-16T04:44:28.3066714Z   set-safe-directory: true
+2025-11-16T04:44:28.3067104Z ##[endgroup]
+2025-11-16T04:44:28.4112222Z Syncing repository: astralproton/astral
+2025-11-16T04:44:28.4113472Z ##[group]Getting Git version info
+2025-11-16T04:44:28.4113824Z Working directory is '/home/runner/work/astral/astral'
+2025-11-16T04:44:28.4114377Z [command]/usr/bin/git version
+2025-11-16T04:44:28.4211270Z git version 2.51.2
+2025-11-16T04:44:28.4237514Z ##[endgroup]
+2025-11-16T04:44:28.4251676Z Temporarily overriding HOME='/home/runner/work/_temp/9f1517dd-b008-42be-91fa-826164350f87' before making global git config changes
+2025-11-16T04:44:28.4252721Z Adding repository directory to the temporary git global config as a safe directory
+2025-11-16T04:44:28.4264150Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/astral/astral
+2025-11-16T04:44:28.4302335Z Deleting the contents of '/home/runner/work/astral/astral'
+2025-11-16T04:44:28.4305666Z ##[group]Initializing the repository
+2025-11-16T04:44:28.4310065Z [command]/usr/bin/git init /home/runner/work/astral/astral
+2025-11-16T04:44:28.4427734Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-11-16T04:44:28.4428485Z hint: is subject to change. To configure the initial branch name to use in all
+2025-11-16T04:44:28.4429174Z hint: of your new repositories, which will suppress this warning, call:
+2025-11-16T04:44:28.4429545Z hint:
+2025-11-16T04:44:28.4429831Z hint: 	git config --global init.defaultBranch <name>
+2025-11-16T04:44:28.4430147Z hint:
+2025-11-16T04:44:28.4430443Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-11-16T04:44:28.4430995Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-11-16T04:44:28.4431380Z hint:
+2025-11-16T04:44:28.4431572Z hint: 	git branch -m <name>
+2025-11-16T04:44:28.4431901Z hint:
+2025-11-16T04:44:28.4432472Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-11-16T04:44:28.4433412Z Initialized empty Git repository in /home/runner/work/astral/astral/.git/
+2025-11-16T04:44:28.4444670Z [command]/usr/bin/git remote add origin https://github.com/astralproton/astral
+2025-11-16T04:44:28.4479401Z ##[endgroup]
+2025-11-16T04:44:28.4480026Z ##[group]Disabling automatic garbage collection
+2025-11-16T04:44:28.4484437Z [command]/usr/bin/git config --local gc.auto 0
+2025-11-16T04:44:28.4512104Z ##[endgroup]
+2025-11-16T04:44:28.4512700Z ##[group]Setting up auth
+2025-11-16T04:44:28.4519712Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-11-16T04:44:28.4549533Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-11-16T04:44:28.4905981Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-11-16T04:44:28.4934755Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-11-16T04:44:28.5154005Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-11-16T04:44:28.5189406Z ##[endgroup]
+2025-11-16T04:44:28.5190315Z ##[group]Fetching the repository
+2025-11-16T04:44:28.5200868Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/main*:refs/remotes/origin/main* +refs/tags/main*:refs/tags/main*
+2025-11-16T04:45:38.9404928Z From https://github.com/astralproton/astral
+2025-11-16T04:45:38.9405539Z  * [new branch]      main       -> origin/main
+2025-11-16T04:45:38.9434989Z ##[endgroup]
+2025-11-16T04:45:38.9435541Z ##[group]Determining the checkout info
+2025-11-16T04:45:38.9442994Z [command]/usr/bin/git branch --list --remote origin/main
+2025-11-16T04:45:38.9464940Z   origin/main
+2025-11-16T04:45:38.9471212Z ##[endgroup]
+2025-11-16T04:45:38.9475784Z [command]/usr/bin/git sparse-checkout disable
+2025-11-16T04:45:38.9525511Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-11-16T04:45:38.9550203Z ##[group]Checking out the ref
+2025-11-16T04:45:38.9554254Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-11-16T04:45:40.7517715Z Updating files:   6% (1167/17755)
+2025-11-16T04:45:41.0101673Z Updating files:   7% (1243/17755)
+2025-11-16T04:45:41.3956796Z Updating files:   7% (1250/17755)
+2025-11-16T04:45:41.4803273Z Updating files:   8% (1421/17755)
+2025-11-16T04:45:41.5187898Z Updating files:   9% (1598/17755)
+2025-11-16T04:45:41.5543817Z Updating files:  10% (1776/17755)
+2025-11-16T04:45:41.5680852Z Updating files:  11% (1954/17755)
+2025-11-16T04:45:41.5831291Z Updating files:  12% (2131/17755)
+2025-11-16T04:45:41.8427532Z Updating files:  13% (2309/17755)
+2025-11-16T04:45:41.9722381Z Updating files:  14% (2486/17755)
+2025-11-16T04:45:41.9815197Z Updating files:  14% (2662/17755)
+2025-11-16T04:45:42.1355803Z Updating files:  15% (2664/17755)
+2025-11-16T04:45:42.1749679Z Updating files:  16% (2841/17755)
+2025-11-16T04:45:42.1946683Z Updating files:  17% (3019/17755)
+2025-11-16T04:45:42.2553894Z Updating files:  18% (3196/17755)
+2025-11-16T04:45:42.3076158Z Updating files:  19% (3374/17755)
+2025-11-16T04:45:42.3680104Z Updating files:  20% (3551/17755)
+2025-11-16T04:45:42.3760508Z Updating files:  21% (3729/17755)
+2025-11-16T04:45:42.3843574Z Updating files:  22% (3907/17755)
+2025-11-16T04:45:42.4945986Z Updating files:  23% (4084/17755)
+2025-11-16T04:45:42.6302995Z Updating files:  24% (4262/17755)
+2025-11-16T04:45:42.6570685Z Updating files:  25% (4439/17755)
+2025-11-16T04:45:42.7273398Z Updating files:  26% (4617/17755)
+2025-11-16T04:45:42.7869020Z Updating files:  27% (4794/17755)
+2025-11-16T04:45:42.8853773Z Updating files:  28% (4972/17755)
+2025-11-16T04:45:42.9527771Z Updating files:  29% (5149/17755)
+2025-11-16T04:45:42.9719456Z Updating files:  30% (5327/17755)
+2025-11-16T04:45:43.0332466Z Updating files:  30% (5381/17755)
+2025-11-16T04:45:43.1290874Z Updating files:  31% (5505/17755)
+2025-11-16T04:45:43.2333511Z Updating files:  32% (5682/17755)
+2025-11-16T04:45:43.3011064Z Updating files:  33% (5860/17755)
+2025-11-16T04:45:43.4362727Z Updating files:  34% (6037/17755)
+2025-11-16T04:45:43.5409291Z Updating files:  35% (6215/17755)
+2025-11-16T04:45:43.6387634Z Updating files:  36% (6392/17755)
+2025-11-16T04:45:43.7547370Z Updating files:  37% (6570/17755)
+2025-11-16T04:45:43.9720260Z Updating files:  38% (6747/17755)
+2025-11-16T04:45:43.9732333Z Updating files:  38% (6923/17755)
+2025-11-16T04:45:44.0928573Z Updating files:  39% (6925/17755)
+2025-11-16T04:45:44.1757990Z Updating files:  40% (7102/17755)
+2025-11-16T04:45:44.7665877Z Updating files:  41% (7280/17755)
+2025-11-16T04:45:44.9726955Z Updating files:  42% (7458/17755)
+2025-11-16T04:45:46.0300048Z Updating files:  42% (7532/17755)
+2025-11-16T04:45:46.0876430Z Updating files:  42% (7601/17755)
+2025-11-16T04:45:46.1082089Z Updating files:  43% (7635/17755)
+2025-11-16T04:45:46.4997210Z Updating files:  44% (7813/17755)
+2025-11-16T04:45:46.9870027Z Updating files:  45% (7990/17755)
+2025-11-16T04:45:47.1102428Z Updating files:  45% (8139/17755)
+2025-11-16T04:45:47.2923599Z Updating files:  46% (8168/17755)
+2025-11-16T04:45:47.3039321Z Updating files:  47% (8345/17755)
+2025-11-16T04:45:47.5813555Z Updating files:  48% (8523/17755)
+2025-11-16T04:45:47.9789438Z Updating files:  49% (8700/17755)
+2025-11-16T04:45:48.2845469Z Updating files:  49% (8778/17755)
+2025-11-16T04:45:48.3623940Z Updating files:  50% (8878/17755)
+2025-11-16T04:45:48.3724133Z Updating files:  51% (9056/17755)
+2025-11-16T04:45:48.4407483Z Updating files:  52% (9233/17755)
+2025-11-16T04:45:48.6997504Z Updating files:  53% (9411/17755)
+2025-11-16T04:45:48.9844407Z Updating files:  54% (9588/17755)
+2025-11-16T04:45:49.1375126Z Updating files:  54% (9627/17755)
+2025-11-16T04:45:49.2093005Z Updating files:  55% (9766/17755)
+2025-11-16T04:45:49.3767371Z Updating files:  56% (9943/17755)
+2025-11-16T04:45:49.4411962Z Updating files:  57% (10121/17755)
+2025-11-16T04:45:49.5187314Z Updating files:  58% (10298/17755)
+2025-11-16T04:45:49.5751663Z Updating files:  59% (10476/17755)
+2025-11-16T04:45:49.7621149Z Updating files:  60% (10653/17755)
+2025-11-16T04:45:49.9777189Z Updating files:  61% (10831/17755)
+2025-11-16T04:45:49.9864367Z Updating files:  61% (10995/17755)
+2025-11-16T04:45:50.0618469Z Updating files:  62% (11009/17755)
+2025-11-16T04:45:50.2131685Z Updating files:  63% (11186/17755)
+2025-11-16T04:45:50.8081173Z Updating files:  64% (11364/17755)
+2025-11-16T04:45:50.9778247Z Updating files:  65% (11541/17755)
+2025-11-16T04:45:51.1905744Z Updating files:  65% (11638/17755)
+2025-11-16T04:45:51.4722077Z Updating files:  66% (11719/17755)
+2025-11-16T04:45:51.7062181Z Updating files:  67% (11896/17755)
+2025-11-16T04:45:51.9809007Z Updating files:  68% (12074/17755)
+2025-11-16T04:45:52.2681603Z Updating files:  68% (12216/17755)
+2025-11-16T04:45:52.3513828Z Updating files:  69% (12251/17755)
+2025-11-16T04:45:52.8492757Z Updating files:  70% (12429/17755)
+2025-11-16T04:45:54.6938253Z Updating files:  71% (12607/17755)
+2025-11-16T04:45:54.9479538Z Updating files:  71% (12610/17755)
+2025-11-16T04:45:54.9818741Z Updating files:  72% (12784/17755)
+2025-11-16T04:45:55.1757937Z Updating files:  72% (12798/17755)
+2025-11-16T04:45:55.5666626Z Updating files:  73% (12962/17755)
+2025-11-16T04:45:55.7631692Z Updating files:  74% (13139/17755)
+2025-11-16T04:45:55.9878441Z Updating files:  75% (13317/17755)
+2025-11-16T04:45:55.9928701Z Updating files:  75% (13470/17755)
+2025-11-16T04:45:56.1712511Z Updating files:  76% (13494/17755)
+2025-11-16T04:45:56.5587006Z Updating files:  77% (13672/17755)
+2025-11-16T04:45:56.7308278Z Updating files:  78% (13849/17755)
+2025-11-16T04:45:56.8665691Z Updating files:  79% (14027/17755)
+2025-11-16T04:45:56.8953257Z Updating files:  80% (14204/17755)
+2025-11-16T04:45:56.9571361Z Updating files:  81% (14382/17755)
+2025-11-16T04:45:56.9667059Z Updating files:  82% (14560/17755)
+2025-11-16T04:45:56.9727612Z Updating files:  83% (14737/17755)
+2025-11-16T04:45:57.0062420Z Updating files:  83% (14744/17755)
+2025-11-16T04:45:57.0305169Z Updating files:  84% (14915/17755)
+2025-11-16T04:45:57.0682912Z Updating files:  85% (15092/17755)
+2025-11-16T04:45:57.0797509Z Updating files:  86% (15270/17755)
+2025-11-16T04:45:57.1846079Z Updating files:  87% (15447/17755)
+2025-11-16T04:45:57.3855650Z Updating files:  88% (15625/17755)
+2025-11-16T04:45:57.4662922Z Updating files:  89% (15802/17755)
+2025-11-16T04:45:57.5275233Z Updating files:  90% (15980/17755)
+2025-11-16T04:45:57.5679755Z Updating files:  91% (16158/17755)
+2025-11-16T04:45:57.6498544Z Updating files:  92% (16335/17755)
+2025-11-16T04:45:57.9156607Z Updating files:  93% (16513/17755)
+2025-11-16T04:45:57.9966415Z Updating files:  94% (16690/17755)
+2025-11-16T04:45:58.0074866Z Updating files:  94% (16802/17755)
+2025-11-16T04:45:58.0312348Z Updating files:  95% (16868/17755)
+2025-11-16T04:45:58.1866740Z Updating files:  96% (17045/17755)
+2025-11-16T04:45:58.3234380Z Updating files:  97% (17223/17755)
+2025-11-16T04:45:59.0294591Z Updating files:  98% (17400/17755)
+2025-11-16T04:45:59.0755946Z Updating files:  98% (17514/17755)
+2025-11-16T04:45:59.6755749Z Updating files:  99% (17578/17755)
+2025-11-16T04:45:59.6756521Z Updating files: 100% (17755/17755)
+2025-11-16T04:45:59.6756830Z Updating files: 100% (17755/17755), done.
+2025-11-16T04:45:59.7181426Z Switched to a new branch 'main'
+2025-11-16T04:45:59.7184314Z branch 'main' set up to track 'origin/main'.
+2025-11-16T04:45:59.9060114Z ##[endgroup]
+2025-11-16T04:45:59.9060544Z ##[group]Setting up auth for fetching submodules
+2025-11-16T04:45:59.9069443Z [command]/usr/bin/git config --global http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-11-16T04:45:59.9108008Z [command]/usr/bin/git config --global --unset-all url.https://github.com/.insteadOf
+2025-11-16T04:45:59.9139358Z [command]/usr/bin/git config --global --add url.https://github.com/.insteadOf git@github.com:
+2025-11-16T04:45:59.9169565Z [command]/usr/bin/git config --global --add url.https://github.com/.insteadOf org-188138642@github.com:
+2025-11-16T04:45:59.9195227Z ##[endgroup]
+2025-11-16T04:45:59.9195577Z ##[group]Fetching submodules
+2025-11-16T04:45:59.9199601Z [command]/usr/bin/git submodule sync --recursive
+2025-11-16T04:45:59.9446891Z [command]/usr/bin/git -c protocol.version=2 submodule update --init --force --depth=1 --recursive
+2025-11-16T04:45:59.9684191Z [command]/usr/bin/git submodule foreach --recursive git config --local gc.auto 0
+2025-11-16T04:45:59.9918226Z ##[endgroup]
+2025-11-16T04:45:59.9919331Z ##[group]Persisting credentials for submodules
+2025-11-16T04:45:59.9925433Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'url\.https\:\/\/github\.com\/\.insteadOf' && git config --local --unset-all 'url.https://github.com/.insteadOf' || :"
+2025-11-16T04:46:00.0160798Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local 'http.https://github.com/.extraheader' 'AUTHORIZATION: basic ***' && git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2025-11-16T04:46:00.0396744Z [command]/usr/bin/git submodule foreach --recursive git config --local --add 'url.https://github.com/.insteadOf' 'git@github.com:'
+2025-11-16T04:46:00.0632223Z [command]/usr/bin/git submodule foreach --recursive git config --local --add 'url.https://github.com/.insteadOf' 'org-188138642@github.com:'
+2025-11-16T04:46:00.0868267Z ##[endgroup]
+2025-11-16T04:46:00.0907352Z [command]/usr/bin/git log -1 --format=%H
+2025-11-16T04:46:00.0934497Z 045f287878019383af37e4a6a75c5e1142ab7fc5
