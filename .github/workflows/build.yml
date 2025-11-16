@@ -17,8 +17,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Si tu sitio es estático (HTML/CSS/JS), no necesitas build extra.
-      # Si usas un generador (React, Vue, Astro, etc.), aquí va el paso de build.
+      # Si tu sitio es estático (HTML/CSS/JS), basta con subirlo.
+      # Si usas un framework (React, Vue, Astro, etc.), agrega aquí tu build.
       # Ejemplo para proyectos con Node:
       # - name: Setup Node
       #   uses: actions/setup-node@v4
@@ -41,4 +41,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
 
