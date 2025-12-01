@@ -1,0 +1,305 @@
+/* overrides.css - fixes for section-games: artist position, scrolling and scrollbar styling */
+/* Ensure the artist appears below the title in the game info box */
+#section-games .game-info {
+  display: grid !important;
+  grid-template-rows: auto auto;
+  gap: 6px;
+  align-items: start;
+  padding: 12px 14px !important;
+  background: linear-gradient(180deg, rgba(0,0,0,0.00), rgba(0,0,0,0.28));
+}
+
+#section-games .game-title {
+  grid-row: 1;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.05rem;
+  line-height: 1.08;
+}
+
+#section-games .game-artist {
+  grid-row: 2;
+  margin-top: 2px;
+  color: rgba(220,230,255,0.95);
+  font-size: 0.92rem;
+  opacity: 0.95;
+}
+
+/* Make the games grid scrollable (vertical) while keeping layout responsive */
+#section-games .games-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 22px !important;
+  padding: 18px !important;
+  max-height: calc(100vh - 220px) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar styling for WebKit browsers */
+#section-games .games-grid::-webkit-scrollbar {
+  width: 12px;
+}
+#section-games .games-grid::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 12px;
+  margin: 6px 0;
+}
+#section-games .games-grid::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3fd1ff 0%, #8a4cff 100%);
+  border-radius: 12px;
+  border: 3px solid rgba(0,0,0,0.45);
+}
+#section-games .games-grid::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.05);
+}
+
+/* Firefox scrollbar */
+#section-games .games-grid {
+  scrollbar-width: thin;
+  scrollbar-color: #8a4cff transparent;
+}
+
+/* Small responsive tweaks */
+@media (max-width: 640px) {
+  #section-games .games-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; max-height: calc(100vh - 200px) !important; }
+  #section-games .game-thumb { height: 100px; }
+}
+
+/* === ADJUSTMENTS: place title/artist next to Play button, widen section, fix header/search placement === */
+
+/* Make game info align horizontally with the play button */
+#section-games .game-info {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px !important;
+}
+
+/* Ensure title and artist stack on the left and take available space */
+#section-games .game-title,
+#section-games .game-artist {
+  display: block;
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+#section-games .game-artist { font-size: 0.88rem; color: rgba(220,230,255,0.92); opacity: 0.95; margin-top: 4px; }
+
+/* Ensure the play button (likely .background-button.primary) stays to the right */
+#section-games .game-info .background-button,
+#section-games .game-info .background-button.primary {
+  flex: 0 0 auto;
+  margin-left: 12px;
+}
+
+/* Reduce top-heavy spacing: make thumbnails slightly taller and overlay closer to bottom */
+#section-games .game-thumb { height: 140px; }
+#section-games .game-card { border-radius: 16px; overflow: hidden; }
+
+/* Force a wider games container (override inline styles) so more cards fit horizontally */
+#section-games .games-fullpage-container { max-width: 1600px !important; width: 100% !important; padding: 0 28px !important; }
+
+/* Make cards and grid responsive so more cards can fit per row on wide screens */
+#section-games .games-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; gap: 18px !important; max-width: 1500px !important; margin: 18px auto !important; }
+
+/* Fix title/description/search placement */
+#section-games .home-title { text-align: center; margin-bottom: 6px; }
+#section-games .home-desc { text-align: center; max-width: 1100px; margin: 0 auto 14px; color: var(--muted, rgba(200,220,255,0.6)); }
+
+#section-games .games-header-bar { align-items: center; gap: 12px; margin-bottom: 8px; }
+#section-games .games-header-bar .games-title { margin: 0; }
+#section-games .games-header-bar .games-search-bar-full { margin-left: auto; }
+
+@media (max-width: 980px) {
+  #section-games .games-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important; }
+  #section-games .games-fullpage-container { padding: 0 18px; }
+}
+
+/* Header should stay above search and content */
+.app-header {
+  z-index: 99999 !important;
+}
+
+/* Fix: remove excessive letter spacing on game titles and align them better */
+#section-games .game-title {
+  letter-spacing: normal !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+  padding-right: 8px;
+}
+
+#section-games .game-card .game-title,
+#section-games .game-card-v2 .game-title,
+#section-games .game-list-title {
+  letter-spacing: normal !important;
+}
+
+/* Make cards slightly smaller so more fit per row (final fallback) */
+#section-games .games-grid {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 16px !important;
+  max-width: 1500px !important;
+  margin: 18px auto !important;
+}
+
+/* Replace textual 'JUGAR' with a compact play-icon button visually */
+#section-games .game-info .background-button.primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(180deg,#3aa1ff,#1f74d6) !important;
+  box-shadow: 0 6px 16px rgba(15,85,200,0.28) !important;
+  color: transparent !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Keep original text accessible but visually hidden */
+#section-games .game-info .background-button.primary .btn-text,
+#section-games .game-info .background-button.primary span {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+/* Custom SVG icon (circle + triangle). Different design than the simple triangle the user sent. */
+#section-games .game-info .background-button.primary::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%23ffffff' opacity='0.09'/><polygon points='9,7 17,12 9,17' fill='%23ffffff'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+}
+
+/* Hover effect */
+#section-games .game-info .background-button.primary:hover { transform: translateY(-2px); }
+#section-games .game-info .background-button.primary:hover::before { filter: drop-shadow(0 3px 10px rgba(50,140,255,0.55)); }
+
+/* === USER REQUEST: remove the play button and give space to title/artist === */
+/* Hide any play/action button inside the games section completely */
+#section-games .game-info .background-button.primary,
+#section-games .game-info .background-button {
+  display: none !important;
+}
+
+/* Make the info stack vertically so title and artist use full width */
+#section-games .game-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 10px 12px !important;
+  gap: 6px !important;
+}
+
+#section-games .game-title {
+  font-weight: 800 !important;
+  color: #fff !important;
+  font-size: 1.02rem !important;
+  line-height: 1.08 !important;
+  letter-spacing: normal !important;
+  margin: 0 !important;
+}
+
+#section-games .game-artist {
+  font-size: 0.88rem !important;
+  color: rgba(200,220,255,0.9) !important;
+  opacity: 0.95 !important;
+  margin: 0 !important;
+}
+
+/* Slightly reduce thumbnail height so info area looks balanced */
+#section-games .game-thumb { height: 120px !important; }
+
+
+/* Ensure header/description/search layout is correct */
+#section-games .home-title { margin-top: 8px; margin-bottom: 6px; }
+#section-games .home-desc { margin-bottom: 14px; }
+#section-games .games-header-bar { position: relative; z-index: 20; margin-top: 6px; align-items: center; }
+#section-games .games-header-bar .games-search-bar-full { margin-left: auto; }
+
+/* Tweak game-info so title/artist sit left and button right, compact vertically */
+#section-games .game-info { padding: 10px 12px !important; gap: 8px; }
+#section-games .game-artist { margin: 0 12px 0 0; font-size: 0.86rem; }
+
+/* Responsive: slightly smaller thumb on small screens */
+@media (max-width: 640px) {
+  #section-games .games-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; }
+  #section-games .game-thumb { height: 100px; }
+}
+
+
+
+/* Minimal helpers for settings UI (used by applySettings in script.js) */
+/* Hide avatars when user disables them */
+body.hide-avatars img,
+body.hide-avatars .community-user-avatar img,
+body.hide-avatars .user-profile-mini img {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Reduced motion: disable animations/transitions when user enables reduced motion */
+body.reduced-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+
+/* Styling for settings action buttons */
+.settings-actions { display:flex; gap:10px; justify-content:flex-end; }
+.settings-actions .background-button {
+  background: linear-gradient(180deg,#14202b,#0b1216);
+  color: #e7f7ff;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:600;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.settings-actions .background-button:hover { transform: translateY(-2px); }
+.settings-actions .background-button.primary {
+  background: linear-gradient(180deg,#3aa1ff,#1f74d6);
+  color: #fff;
+  border: none;
+}
+
+
+/* Toast: small confirmation bubble bottom-right */
+.astral-toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  background: linear-gradient(180deg, rgba(9,12,18,0.96), rgba(14,18,26,0.98));
+  color: #e7f7ff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  font-size: 0.95rem;
+  z-index: 120000;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  pointer-events: none;
+  min-width: 140px;
+  text-align: center;
+}
+.astral-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.astral-toast.hidden { display: none; }
+
+
